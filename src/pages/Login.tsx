@@ -6,10 +6,17 @@ import {
   getAuth,
   signInWithPhoneNumber,
 } from "firebase/auth";
-import { app } from "../helpers/firebase";
+import { app, db } from "../helpers/firebase";
 import Logo from "../components/Logo";
 import { RecaptchaVerifier } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -54,7 +61,23 @@ const Login: React.FC = () => {
   const loginUserHandler = async () => {
     setPending(true);
     try {
-      const data = await user?.confirm(otp);
+      await user?.confirm(otp);
+      const q = query(
+        collection(db, "profiles"),
+        where("phone", "==", `+${countryCode}${phoneNumber}`)
+      );
+      const querySnapshot = await getDocs(q);
+      console.log(querySnapshot.docs);
+      if (!querySnapshot.docs.length) {
+        await addDoc(collection(db, "profiles"), {
+          phone: `+${countryCode}${phoneNumber}`,
+          phone_private: true,
+          name: "",
+          biography: "",
+          id: "",
+          image: "",
+        });
+      }
       navigate("/");
     } catch (e) {
       console.error(e);
