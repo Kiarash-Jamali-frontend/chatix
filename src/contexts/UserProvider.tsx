@@ -24,7 +24,7 @@ const UserProvider: React.FC<PropTypes> = ({ children }) => {
   return (
     <UserContext.Provider value={user}>
       {user === "loading" && <>Loading</>}
-      {user && user !== "loading" && children}
+      {user !== "loading" && children}
     </UserContext.Provider>
   );
 };
