@@ -6,7 +6,7 @@ const Home: React.FC = () => {
   const user = useContext(UserContext);
 
   if (user) {
-    return <>Home</>;
+    return <></>;
   }
 
   return <Navigate to={"/login"} />;
