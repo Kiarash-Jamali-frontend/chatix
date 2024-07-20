@@ -10,13 +10,7 @@ import { app, db } from "../helpers/firebase";
 import Logo from "../components/Logo";
 import { RecaptchaVerifier } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import {
-  addDoc,
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -62,17 +56,14 @@ const Login: React.FC = () => {
     setPending(true);
     try {
       await user?.confirm(otp);
-      const q = query(
-        collection(db, "profiles"),
-        where("phone", "==", `+${countryCode}${phoneNumber}`)
-      );
-      const querySnapshot = await getDocs(q);
-      console.log(querySnapshot.docs);
-      if (!querySnapshot.docs.length) {
-        await addDoc(collection(db, "profiles"), {
+      const docRef = doc(db, "profile", `+${countryCode}${phoneNumber}`);
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
+        // Create user profile in db
+        await setDoc(doc(db, "profile", `+${countryCode}${phoneNumber}`), {
           phone: `+${countryCode}${phoneNumber}`,
           phone_private: true,
-          name: "",
+          name: "New user",
           biography: "",
           id: "",
           image: "",
