@@ -5,6 +5,7 @@ const button = cva("text-center flex items-center justify-center font-medium rou
         intent: {
             default: "bg-white text-black border",
             dark: "bg-black/90 text-white/90 hover:bg-black/85",
+            danger: "bg-red-500 text-white hover:bg-red-500/85"
         },
         size: {
             medium: "text-sm px-4 py-2",
