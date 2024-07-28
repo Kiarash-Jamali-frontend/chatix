@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import input from "../cva/input";
 import button from "../cva/button";
-import {
-  ConfirmationResult,
-  getAuth,
-  signInWithPhoneNumber,
-} from "firebase/auth";
-import { app, db } from "../helpers/firebase";
+import { ConfirmationResult, signInWithPhoneNumber } from "firebase/auth";
+import { auth, db } from "../helpers/firebase";
 import Logo from "../components/Logo";
 import { RecaptchaVerifier } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +10,6 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const auth = getAuth(app);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
   const [user, setUser] = useState<ConfirmationResult | null>(null);
