@@ -6,7 +6,6 @@ import {
   and,
   collection,
   doc,
-  getDoc,
   limit,
   onSnapshot,
   or,
@@ -26,17 +25,7 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Array<any>>([]);
   const [roomData, setRoomData] = useState<any>();
 
-  const getProfileData = async () => {
-    const docRef = doc(db, "profile", String(email));
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      setProfile({ ...docSnap.data(), email: docSnap.id });
-    }
-  };
-
   useEffect(() => {
-    getProfileData();
-
     const q = query(
       collection(db, "chat_message"),
       or(
@@ -45,7 +34,7 @@ const Chat: React.FC = () => {
       ),
       orderBy("timestamp", "asc")
     );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubMessages = onSnapshot(q, (snapshot) => {
       let messagesList: Array<any> = [];
       snapshot.forEach((m) => {
         messagesList.push({ ...m.data(), id: m.id });
@@ -54,9 +43,21 @@ const Chat: React.FC = () => {
     });
 
     return () => {
-      unsubscribe();
+      unsubMessages();
     };
   }, [email]);
+
+  useEffect(() => {
+    const docRef = doc(db, "profile", String(email));
+    const unsubProfile = onSnapshot(docRef, (querySnap) => {
+      console.log("hi");
+      
+      setProfile({ ...querySnap.data(), email: querySnap.id });
+    });
+    return () => {
+      unsubProfile();
+    }
+  }, [email])
 
   useEffect(() => {
     if (profile) {

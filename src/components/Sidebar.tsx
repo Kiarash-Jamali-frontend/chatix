@@ -21,18 +21,7 @@ import ChatListItem from "./ChatListItem";
 const Sidebar: React.FC = () => {
   const user = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<any>(null);
   const [chats, setChats] = useState<Array<any>>([]);
-
-  const getUserProfile = async () => {
-    const docRef = doc(db, "profile", user.data?.email!);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      setProfile({ ...docSnap.data(), email: docSnap.id });
-    } else {
-      console.error("Profile not load");
-    }
-  };
 
   const getChats = async () => {
     const q = query(
@@ -77,21 +66,20 @@ const Sidebar: React.FC = () => {
   };
 
   useEffect(() => {
-    getUserProfile();
     if (!chats.length) {
       getChats();
     }
-  }, [user]);
+  }, [chats]);
 
-  if (profile) {
+  if (user.profile) {
     return (
       <div className="w-full max-w-[325px] h-full min-h-screen bg-white border-e flex flex-col shadow-xl">
         <div className="flex items-center p-6">
           <div className="relative">
             {/*Profile image*/}
-            {profile.photoUrl ? (
+            {user.profile.photoUrl ? (
               <img
-                src={profile.photoUrl}
+                src={user.profile.photoUrl}
                 alt={"profile"}
                 className="w-[65px] h-[65px] object-cover rounded-full"
               />
@@ -109,10 +97,10 @@ const Sidebar: React.FC = () => {
           </div>
           <div className="ps-4">
             {/*user name*/}
-            <div className="text-sm">{profile.name}</div>
+            <div className="font-bold">{user.profile.name}</div>
             {/*email*/}
             <div className="text-xs mt-2 text-black/60">
-              {profile.email}
+              {user.data?.email}
             </div>
           </div>
         </div>

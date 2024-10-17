@@ -11,19 +11,22 @@ import {
   or,
   query,
   runTransaction,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { db } from "../../helpers/firebase";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import Profile from "../../types/Profile";
 
 type PropTypes = {
-  profile: any;
+  profile: Profile & { email: string };
 };
 
 const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
   const userData = useSelector((state: RootState) => state.user.data);
   const [chatRoom, setChatRoom] = useState<any>();
+  const [nowTime, setNowTime] = useState<number>(0);
 
   const blockAndUnblockUserHandler = async () => {
     await runTransaction(db, async (transaction) => {
@@ -35,6 +38,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
   };
 
   useEffect(() => {
+    const setTimeHandler = setInterval(() => setNowTime(Timestamp.now().seconds), 5000);
     const q = query(
       collection(db, "chat_room"),
       or(
@@ -55,7 +59,10 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
       });
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearInterval(setTimeHandler);
+      unsubscribe();
+    };
   }, [profile]);
 
   return (
@@ -63,9 +70,9 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           {/*Profile image*/}
-          {profile.image ? (
+          {profile.photoUrl ? (
             <img
-              src={profile.image}
+              src={profile.photoUrl}
               alt={"profile"}
               className="w-[45px] h-[45px] object-cover rounded-full"
             />
@@ -74,9 +81,18 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
               <FontAwesomeIcon icon={faUser} size="lg" />
             </div>
           )}
-          <span className="ps-2 text-sm text-black/75 font-medium">
-            {profile.name}
-          </span>
+          <div className="ps-2 flex flex-col">
+            <span className="text-sm text-black/75 font-bold">
+              {profile.name}
+            </span>
+            {
+              nowTime - profile.lastActivity.seconds < 60 && nowTime !== 0 && (
+                <span className="text-blue-500 text-xs font-medium inline-block mt-1">
+                  Online
+                </span>
+              )
+            }
+          </div>
         </div>
         {
           chatRoom && (
