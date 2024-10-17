@@ -1,17 +1,17 @@
-import React, { useContext, useEffect } from "react";
-import { UserContext } from "../../contexts/UserProvider";
+import React, { useEffect } from "react";
 import { doc, runTransaction } from "firebase/firestore";
 import { db } from "../../helpers/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 type PropTypes = {
   message: any;
 };
 
 const Message: React.FC<PropTypes> = ({ message }) => {
-  const user = useContext(UserContext);
-
+  const user = useSelector((state: RootState) => state.user);
   const seenMessageHandler = async () => {
     const msgDocRef = doc(db, "chat_message", message.id);
     await runTransaction(db, async (transaction) => {
@@ -20,34 +20,30 @@ const Message: React.FC<PropTypes> = ({ message }) => {
   };
 
   useEffect(() => {
-    if (user && user !== "loading" && user.email === message.to) {
+    if (user.data?.email === message.to) {
       seenMessageHandler();
     }
   }, [user]);
 
-  if (user && user !== "loading") {
     return (
       <>
         <div
-          className={`flex ${
-            user.email !== message.from && "justify-end"
-          } mt-1`}
+          className={`flex ${user.data?.email !== message.from && "justify-end"
+            } mt-1`}
         >
           <div
-            className={`${
-              user.email === message.from
+            className={`${user.data?.email === message.from
                 ? "bg-blue-600 text-white"
                 : "bg-white border"
-            } w-fit max-w-[400px] min-w-32 shadow-sm p-3 text-sm rounded-lg`}
+              } w-fit max-w-[400px] min-w-32 shadow-sm p-3 text-sm rounded-lg`}
           >
             {message.content}
             <div className="mt-1 flex justify-end">
               <div
-                className={`text-xs ${
-                  user.email === message.from
+                className={`text-xs ${user.data?.email === message.from
                     ? "text-white/50"
                     : "text-black/50"
-                }`}
+                  }`}
               >
                 {`${new Date(
                   message.timestamp.seconds * 1000
@@ -55,11 +51,11 @@ const Message: React.FC<PropTypes> = ({ message }) => {
                   message.timestamp.seconds * 1000
                 ).getMinutes()}`}
               </div>
-              {message.from === user.email && (
+              {message.from === user.data?.email && (
                 <div className="translate-y-[-1px] ms-1">
-                {message.seen && (
-                  <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px] text-white" />
-                )}
+                  {message.seen && (
+                    <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px] text-white" />
+                  )}
                   <FontAwesomeIcon icon={faCheck} width={10} height={10} />
                 </div>
               )}
@@ -68,7 +64,6 @@ const Message: React.FC<PropTypes> = ({ message }) => {
         </div>
       </>
     );
-  }
 };
 
 export default Message;

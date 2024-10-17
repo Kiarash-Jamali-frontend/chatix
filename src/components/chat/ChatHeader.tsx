@@ -1,6 +1,6 @@
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import button from "../../cva/button";
 import {
   and,
@@ -14,51 +14,48 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../../helpers/firebase";
-import { UserContext } from "../../contexts/UserProvider";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 type PropTypes = {
   profile: any;
 };
 
 const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
-  const user = useContext(UserContext);
+  const userData = useSelector((state: RootState) => state.user.data);
   const [chatRoom, setChatRoom] = useState<any>();
 
   const blockAndUnblockUserHandler = async () => {
-    if (user && user !== "loading") {
-      await runTransaction(db, async (transaction) => {
-        transaction.update(doc(db, "chat_room", chatRoom.id), {
-          isBlocked: !chatRoom.isBlocked,
-          blockedFrom: chatRoom.blockedFrom ? "" : user.email,
-        });
+    await runTransaction(db, async (transaction) => {
+      transaction.update(doc(db, "chat_room", chatRoom.id), {
+        isBlocked: !chatRoom.isBlocked,
+        blockedFrom: chatRoom.blockedFrom ? "" : userData?.email,
       });
-    }
+    });
   };
 
   useEffect(() => {
-    if (user && user !== "loading") {
-      const q = query(
-        collection(db, "chat_room"),
-        or(
-          and(
-            where("user_2", "==", profile.email),
-            where("user_1", "==", user.email)
-          ),
-          and(
-            where("user_1", "==", profile.email),
-            where("user_2", "==", user.email)
-          )
+    const q = query(
+      collection(db, "chat_room"),
+      or(
+        and(
+          where("user_2", "==", profile.email),
+          where("user_1", "==", userData?.email)
         ),
-        limit(1)
-      );
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        querySnapshot.forEach((r) => {
-          setChatRoom({ ...r.data(), id: r.id })
-        });
+        and(
+          where("user_1", "==", profile.email),
+          where("user_2", "==", userData?.email)
+        )
+      ),
+      limit(1)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      querySnapshot.forEach((r) => {
+        setChatRoom({ ...r.data(), id: r.id })
       });
+    });
 
-      return () => unsubscribe();
-    }
+    return () => unsubscribe();
   }, [profile]);
 
   return (
@@ -82,19 +79,15 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
           </span>
         </div>
         {
-          chatRoom && user !== "loading" && (
-            <>
-              {
-                (chatRoom.blockedFrom === user?.email || !chatRoom.isBlocked) && (
-                  <button
-                    className={button({ intent: chatRoom.isBlocked ? "default" : "danger" })}
-                    onClick={blockAndUnblockUserHandler}
-                  >
-                    {chatRoom.isBlocked ? "Unblock" : "Block"}
-                  </button>
-                )
-              }
-            </>
+          chatRoom && (
+            (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked) && (
+              <button
+                className={button({ intent: chatRoom.isBlocked ? "default" : "danger" })}
+                onClick={blockAndUnblockUserHandler}
+              >
+                {chatRoom.isBlocked ? "Unblock" : "Block"}
+              </button>
+            )
           )
         }
       </div>

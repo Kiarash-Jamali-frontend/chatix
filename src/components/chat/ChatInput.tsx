@@ -1,31 +1,30 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import button from "../../cva/button";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "../../helpers/firebase";
-import { UserContext } from "../../contexts/UserProvider";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 type PropTypes = {
   email: string;
 };
 
 const ChatInput: React.FC<PropTypes> = ({ email }) => {
-  const user = useContext(UserContext);
+  const userEmail = useSelector((state: RootState) => state.user.data!.email);
   const [messageText, setMessageText] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
 
   const sendMessageHandler = async () => {
     setPending(true);
-    if (user && user !== "loading") {
-      setMessageText("");
-      await addDoc(collection(db, "chat_message"), {
-        content: messageText,
-        from: user.email,
-        seen: false,
-        timestamp: Timestamp.fromDate(new Date()),
-        to: email,
-        type: "text",
-      });
-    }
+    setMessageText("");
+    await addDoc(collection(db, "chat_message"), {
+      content: messageText,
+      from: userEmail,
+      seen: false,
+      timestamp: Timestamp.fromDate(new Date()),
+      to: email,
+      type: "text",
+    });
     setPending(false);
   };
 

@@ -1,15 +1,18 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
-import { UserContext } from "../contexts/UserProvider";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const Home: React.FC = () => {
-  const user = useContext(UserContext);
+  const user = useSelector((state: RootState) => state.user);
 
-  if (user) {
+  if (user.status === "authenticated") {
     return <></>;
   }
 
-  return <Navigate to={"/login"} />;
+  if (user.status === "unauthenticated") {
+    return <Navigate to={"/login"} />;
+  }
 };
 
 export default Home;
