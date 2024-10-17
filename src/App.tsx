@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import UserProvider from "./contexts/UserProvider";
 import Layout from "./Layout";
 import Chat from "./pages/Chat";
+import { useEffect } from "react";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +16,7 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "/chat/:phone",
+        path: "/chat/:email",
         element: <Chat />
       }
     ]
@@ -27,6 +28,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+
+  useEffect(() => {
+    
+  }, []);
+
   return (
     <>
       <div className="min-h-screen">

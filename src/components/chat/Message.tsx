@@ -20,7 +20,7 @@ const Message: React.FC<PropTypes> = ({ message }) => {
   };
 
   useEffect(() => {
-    if (user && user !== "loading" && user.phoneNumber === message.to) {
+    if (user && user !== "loading" && user.email === message.to) {
       seenMessageHandler();
     }
   }, [user]);
@@ -30,12 +30,12 @@ const Message: React.FC<PropTypes> = ({ message }) => {
       <>
         <div
           className={`flex ${
-            user.phoneNumber !== message.from && "justify-end"
+            user.email !== message.from && "justify-end"
           } mt-1`}
         >
           <div
             className={`${
-              user.phoneNumber === message.from
+              user.email === message.from
                 ? "bg-blue-600 text-white"
                 : "bg-white border"
             } w-fit max-w-[400px] min-w-32 shadow-sm p-3 text-sm rounded-lg`}
@@ -44,7 +44,7 @@ const Message: React.FC<PropTypes> = ({ message }) => {
             <div className="mt-1 flex justify-end">
               <div
                 className={`text-xs ${
-                  user.phoneNumber === message.from
+                  user.email === message.from
                     ? "text-white/50"
                     : "text-black/50"
                 }`}
@@ -55,7 +55,7 @@ const Message: React.FC<PropTypes> = ({ message }) => {
                   message.timestamp.seconds * 1000
                 ).getMinutes()}`}
               </div>
-              {message.from === user.phoneNumber && (
+              {message.from === user.email && (
                 <div className="translate-y-[-1px] ms-1">
                 {message.seen && (
                   <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px] text-white" />

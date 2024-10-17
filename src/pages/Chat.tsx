@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { redirect, useParams } from "react-router-dom";
 import ChatInput from "../components/chat/ChatInput";
 import ChatHeader from "../components/chat/ChatHeader";
 import {
@@ -7,6 +7,7 @@ import {
   collection,
   doc,
   getDoc,
+  limit,
   onSnapshot,
   or,
   orderBy,
@@ -19,16 +20,16 @@ import Message from "../components/chat/Message";
 
 const Chat: React.FC = () => {
   const user = useContext(UserContext);
-  const navigate = useNavigate();
-  const { phone } = useParams();
+  const { email } = useParams();
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
+  const [roomData, setRoomData] = useState<any>();
 
   const getProfileData = async () => {
-    const docRef = doc(db, "profile", String(phone));
+    const docRef = doc(db, "profile", String(email));
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      setProfile(docSnap.data());
+      setProfile({ ...docSnap.data(), email: docSnap.id });
     }
   };
 
@@ -39,8 +40,8 @@ const Chat: React.FC = () => {
       const q = query(
         collection(db, "chat_message"),
         or(
-          and(where("from", "==", phone), where("to", "==", user.phoneNumber)),
-          and(where("to", "==", phone), where("from", "==", user.phoneNumber))
+          and(where("from", "==", email), where("to", "==", user.email)),
+          and(where("to", "==", email), where("from", "==", user.email))
         ),
         orderBy("timestamp", "asc")
       );
@@ -56,7 +57,33 @@ const Chat: React.FC = () => {
         unsubscribe();
       };
     }
-  }, []);
+  }, [email]);
+
+  useEffect(() => {
+    if (user && user !== "loading" && profile) {
+      const q = query(
+        collection(db, "chat_room"),
+        or(
+          and(
+            where("user_2", "==", profile.email),
+            where("user_1", "==", user.email)
+          ),
+          and(
+            where("user_1", "==", profile.email),
+            where("user_2", "==", user.email)
+          )
+        ),
+        limit(1)
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        querySnapshot.forEach((r) => {
+          setRoomData({ ...r.data(), id: r.id })
+        });
+      });
+
+      return () => unsubscribe();
+    }
+  }, [profile]);
 
   if (profile) {
     return (
@@ -67,11 +94,39 @@ const Chat: React.FC = () => {
             <Message key={m.id} message={m} />
           ))}
         </div>
-        <ChatInput phone={`${phone}`} />
+        {
+          roomData && (
+            <>
+              {
+                roomData.isBlocked && user !== "loading" && roomData.blockedFrom === user?.email && (
+                  <div className="text-center pb-5 mt-auto">
+                    <span>
+                      You have blocked {profile.name}
+                    </span>
+                  </div>
+                )
+              }
+              {
+                roomData.isBlocked && user !== "loading" && roomData.blockedFrom === email && (
+                  <div className="text-center pb-5 mt-auto">
+                    <span>
+                      You have been blocked by {profile.name}
+                    </span>
+                  </div>
+                )
+              }
+              {
+                !roomData.isBlocked && email && (
+                  <ChatInput email={email} />
+                )
+              }
+            </>
+          )
+        }
       </div>
     );
   } else {
-    navigate("/not-found");
+    redirect("/not-found");
   }
 };
 

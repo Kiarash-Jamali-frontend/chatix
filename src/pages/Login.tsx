@@ -1,81 +1,36 @@
-import React, { useState } from "react";
-import input from "../cva/input";
-import button from "../cva/button";
-import { ConfirmationResult, signInWithPhoneNumber } from "firebase/auth";
-import { auth, db } from "../helpers/firebase";
+import React from "react";
 import Logo from "../components/Logo";
-import { RecaptchaVerifier } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import button from "../cva/button";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../helpers/firebase";
+import { redirect } from "react-router-dom";
 
 const Login: React.FC = () => {
-  const navigate = useNavigate();
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [pending, setPending] = useState<boolean>(false);
-  const [user, setUser] = useState<ConfirmationResult | null>(null);
-  const [countryCode, setCountryCode] = useState<string>("98");
-  const [otp, setOtp] = useState<string>("");
-  const [loginProcessLevel, setLoginProcessLevel] = useState<0 | 1>(0);
 
-  const sendVerificationCode = async () => {
-    setPending(true);
-    try {
-      const recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-verifier",
-        {}
-      );
-      const confirmation = await signInWithPhoneNumber(
-        auth,
-        `+${countryCode}${phoneNumber}`,
-        recaptchaVerifier
-      );
-      setUser(confirmation);
-      setLoginProcessLevel(1);
-    } catch (e) {
-      console.log(e);
-    }
-    setPending(false);
-  };
+  const auth = getAuth();
 
-  const changeOtpHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const numberedOTP = Number(e.target.value);
-    if (!isNaN(numberedOTP)) {
-      setOtp(e.target.value);
-    } else {
-      e.preventDefault();
-    }
-  };
-
-  const loginUserHandler = async () => {
-    setPending(true);
-    try {
-      await user?.confirm(otp);
-      const docRef = doc(db, "profile", `+${countryCode}${phoneNumber}`);
+  const signinHandler = async () => {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    auth.useDeviceLanguage();
+    const result = await signInWithPopup(auth, provider)
+    if (result.user.email) {
+      const docRef = doc(db, "profile", result.user.email);
       const docSnap = await getDoc(docRef);
       if (!docSnap.exists()) {
-        // Create user profile in db
-        await setDoc(doc(db, "profile", `+${countryCode}${phoneNumber}`), {
-          phone: `+${countryCode}${phoneNumber}`,
-          phone_private: true,
-          name: "New user",
+        await setDoc(doc(db, "profile", result.user.email), {
           biography: "",
-          id: "",
-          image: "",
+          isOnline: true,
+          name: `New user`,
+          photoUrl: ""
         });
       }
-      navigate("/");
-    } catch (e) {
-      console.error(e);
+      redirect("/");
     }
-    setPending(false);
-  };
-
-  const backToPrevLoginProcessLevel = () => {
-    setOtp("");
-    setUser(null);
-    setLoginProcessLevel(0);
-  };
+  }
 
   return (
     <div className="flex min-h-screen w-full justify-center items-center">
@@ -87,84 +42,10 @@ const Login: React.FC = () => {
         <span className="text-sm text-black/60">
           Welcome to <span className="font-bold text-black">Chatix</span>
         </span>
-        {loginProcessLevel === 0 && (
-          <div className="mt-4">
-            <div>
-              <label htmlFor="phoneNumber" className="text-sm text-black/80">
-                Phone Number
-              </label>
-              <div className="flex mt-2">
-                <div className="me-1 flex items-center justify-center text-center px-3 text-sm rounded-lg border focus:outline-none bg-gray-200">
-                  +
-                  <input
-                    value={`${countryCode}`}
-                    onChange={(e) => setCountryCode(e.target.value)}
-                    className="bg-transparent w-full max-w-[50px]"
-                  />
-                </div>
-                <input
-                  type="number"
-                  id="phoneNumber"
-                  className={input({ className: "w-full" })}
-                  value={phoneNumber}
-                  onChange={({ target }) => setPhoneNumber(target.value)}
-                />
-              </div>
-            </div>
-            <div id="recaptcha-verifier" className="mt-4"></div>
-            <button
-              onClick={sendVerificationCode}
-              className={button({
-                intent: "dark",
-                size: "large",
-                className: `mt-4 w-full ${
-                  pending && "opacity-70 pointer-events-none"
-                }`,
-              })}
-            >
-              Send verification code
-            </button>
-          </div>
-        )}
-        {loginProcessLevel === 1 && (
-          <div className="mt-4">
-            <div className="text-sm mb-4 text-black/60">
-              OTP sended on {`+98${phoneNumber}`}
-            </div>
-            <label htmlFor="otp" className="text-sm text-black/80">
-              Enter OTP
-            </label>
-            <input
-              type="text"
-              id="otp"
-              maxLength={6}
-              className={input({ className: "text-center" })}
-              value={otp}
-              onChange={changeOtpHandler}
-            />
-            <button
-              onClick={loginUserHandler}
-              className={button({
-                intent: "dark",
-                size: "large",
-                className: `mt-4 w-full ${
-                  pending && "opacity-70 pointer-events-none"
-                }`,
-              })}
-            >
-              Login
-            </button>
-            <button
-              onClick={backToPrevLoginProcessLevel}
-              className={button({
-                size: "large",
-                className: `mt-2 w-full`,
-              })}
-            >
-              Edit phone number
-            </button>
-          </div>
-        )}
+        <button onClick={signinHandler} className={button({ className: "w-full mt-4" })}>
+          <FontAwesomeIcon icon={faGoogle} className="size-5 me-2.5" />
+          Signin with google
+        </button>
       </div>
     </div>
   );

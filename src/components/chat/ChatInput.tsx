@@ -5,10 +5,10 @@ import { db } from "../../helpers/firebase";
 import { UserContext } from "../../contexts/UserProvider";
 
 type PropTypes = {
-  phone: string;
+  email: string;
 };
 
-const ChatInput: React.FC<PropTypes> = ({ phone }) => {
+const ChatInput: React.FC<PropTypes> = ({ email }) => {
   const user = useContext(UserContext);
   const [messageText, setMessageText] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
@@ -19,10 +19,10 @@ const ChatInput: React.FC<PropTypes> = ({ phone }) => {
       setMessageText("");
       await addDoc(collection(db, "chat_message"), {
         content: messageText,
-        from: user.phoneNumber,
+        from: user.email,
         seen: false,
         timestamp: Timestamp.fromDate(new Date()),
-        to: phone,
+        to: email,
         type: "text",
       });
     }

@@ -25,10 +25,10 @@ const Sidebar: React.FC = () => {
 
   const getUserProfile = async () => {
     if (user !== "loading" && user) {
-      const docRef = doc(db, "profile", user.phoneNumber!);
+      const docRef = doc(db, "profile", user.email!);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setProfile(docSnap.data());
+        setProfile({...docSnap.data(), email: docSnap.id});
       } else {
         console.error("Profile not load");
       }
@@ -40,24 +40,24 @@ const Sidebar: React.FC = () => {
       const q = query(
         collection(db, "chat_room"),
         or(
-          where("user_1", "==", user.phoneNumber),
-          where("user_2", "==", user.phoneNumber)
+          where("user_1", "==", user.email),
+          where("user_2", "==", user.email)
         )
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach(async (c) => {
         const chatData = c.data();
-        const oppositeUserPhone =
-          user.phoneNumber === chatData.user_1
+        const oppositeUserEmail =
+          user.email === chatData.user_1
             ? chatData.user_2
             : chatData.user_1;
-        const docRef = doc(db, "profile", oppositeUserPhone);
+        const docRef = doc(db, "profile", oppositeUserEmail);
         const docSnap = await getDoc(docRef);
 
         const q = query(
           collection(db, "chat_message"),
-          where("from", "==", oppositeUserPhone),
-          where("to", "==", user.phoneNumber),
+          where("from", "==", oppositeUserEmail),
+          where("to", "==", user.email),
           where("seen", "==", false)
         );
         const querySnapshot = await getDocs(q);
@@ -66,6 +66,7 @@ const Sidebar: React.FC = () => {
           ...prev,
           {
             ...docSnap.data(),
+            email: docSnap.id,
             notSeenedMessages: querySnapshot.size,
           },
         ]);
@@ -91,9 +92,9 @@ const Sidebar: React.FC = () => {
         <div className="flex items-center p-6">
           <div className="relative">
             {/*Profile image*/}
-            {profile.image ? (
+            {profile.photoUrl ? (
               <img
-                src={profile.image}
+                src={profile.photoUrl}
                 alt={"profile"}
                 className="w-[65px] h-[65px] object-cover rounded-full"
               />
@@ -112,9 +113,9 @@ const Sidebar: React.FC = () => {
           <div className="ps-4">
             {/*user name*/}
             <div className="text-sm">{profile.name}</div>
-            {/*phone number*/}
+            {/*email*/}
             <div className="text-xs mt-2 text-black/60">
-              Phone: {profile.phone}
+              {profile.email}
             </div>
           </div>
         </div>
@@ -152,7 +153,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
   useEffect(() => {
     const q = query(
       collection(db, "chat_message"),
-      where("from", "==", chat.phone),
+      where("from", "==", chat.email),
       where("seen", "==", false)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -167,9 +168,9 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
   return (
     <>
       <Link
-        to={`/chat/${chat.phone}`}
+        to={`/chat/${chat.email}`}
         className="flex items-center justify-between border-t hover:bg-base text-sm px-5 py-3"
-        key={chat.phone}
+        key={chat.email}
       >
         <div className="flex items-center">
           {/*Profile image*/}

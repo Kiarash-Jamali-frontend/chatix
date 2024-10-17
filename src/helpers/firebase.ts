@@ -4,13 +4,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAIzRMoHQd2AvRue0IMRHxpcobBKNdAwYE",
-    authDomain: "chatix-ae753.firebaseapp.com",
-    projectId: "chatix-ae753",
-    storageBucket: "chatix-ae753.appspot.com",
-    messagingSenderId: "74443794250",
-    appId: "1:74443794250:web:ea68747b5832c50026c3b3",
-    measurementId: "G-SFG8LZYZZS",
+    apiKey: "AIzaSyA-ZVvpX59JoXz0YCzLeJDYJ0pfqMbUAR8",
+    authDomain: "chatix-7cbc9.firebaseapp.com",
+    projectId: "chatix-7cbc9",
+    storageBucket: "chatix-7cbc9.appspot.com",
+    messagingSenderId: "464320428421",
+    appId: "1:464320428421:web:27071bcca88824e4deecec"
 };
 
 
