@@ -47,12 +47,11 @@ export const getChats = createAsyncThunk("chats/getChats", async (userEmail: str
 
 export const addChat = createAsyncThunk("chats/addChat", async ({ user_1, user_2 }: { user_1: string, user_2: string }) => {
     const notSeenedMessages = await getNotSeenedMessagesCount(user_2, user_1);
+    const profile = await getProfile(user_2);
 
     return {
-        user_1,
-        user_2,
+        ...profile!,
         notSeenedMessages: notSeenedMessages,
-        email: user_1
     }
 })
 
@@ -65,14 +64,11 @@ const chats = createSlice({
             state.list = action.payload!;
             state.status = "success";
         });
-        // builder.addCase(addChat.fulfilled, (state, { payload }) => {
-        //     state.list = [...state.list, {
-        //         user_1: payload.user_1,
-        //         user_2: payload.user_2,
-        //         notSeenedMessages: payload.notSeenedMessages,
-        //         email: payload.email
-        //     }];
-        // })
+        builder.addCase(addChat.fulfilled, (state, { payload }) => {
+            state.list = [...state.list, {
+                ...payload
+            }];
+        })
     },
 })
 

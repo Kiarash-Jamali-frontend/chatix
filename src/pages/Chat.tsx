@@ -50,8 +50,6 @@ const Chat: React.FC = () => {
   useEffect(() => {
     const docRef = doc(db, "profile", String(email));
     const unsubProfile = onSnapshot(docRef, (querySnap) => {
-      console.log("hi");
-      
       setProfile({ ...querySnap.data(), email: querySnap.id });
     });
     return () => {

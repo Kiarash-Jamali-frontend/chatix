@@ -7,13 +7,14 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { addChat } from "../redux/slices/chats";
 
 export default function CreateChat() {
 
     const dispatch = useAppDispatch();
     const user = useAppSelector((state: RootState) => state.user);
+    const navigate = useNavigate();
     const [email, setEmail] = useState<string>("");
     const [pending, setPending] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
@@ -26,10 +27,12 @@ export default function CreateChat() {
         if (docSnap.exists()) {
             await addDoc(collection(db, "chat_room"), {
                 user_1: user.data!.email,
-                user_2: email
+                user_2: email,
+                isBlocked: false,
+                blockedFrom: "",
             });
             dispatch(addChat({ user_1: user.data!.email, user_2: email })).then(() => {
-                redirect(`/chat/${email}`);
+                navigate(`/chat/${email}`);
             });
         } else {
             setError("There is no user with this email");
