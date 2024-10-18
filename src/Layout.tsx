@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect } from "react";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/Sidebar/Sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
@@ -51,7 +51,7 @@ const Layout: React.FC = () => {
 
   if (user.status !== "loading" && chatsStatus !== "loading") {
     return (
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen bg-[url('/background.svg')] bg-cover">
         {
           location.pathname !== "/login" && <Sidebar />
         }

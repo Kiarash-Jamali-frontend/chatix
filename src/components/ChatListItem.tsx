@@ -11,7 +11,7 @@ type PropTypes = {
 };
 
 const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
-    const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(chat.notSeenedMessages);
 
     useEffect(() => {
         const q = query(
@@ -32,7 +32,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
         <>
             <Link
                 to={`/chat/${chat.email}`}
-                className="flex items-center justify-between border-t hover:bg-base text-sm px-5 py-3"
+                className="flex items-center justify-between border-t hover:bg-base/50 text-sm px-5 py-3 transition-colors duration-300"
                 key={chat.email}
             >
                 <div className="flex items-center">
@@ -53,7 +53,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     </div>
                 </div>
                 {unreadMessagesCount ? (
-                    <div className="w-[20px] h-[20px] text-xs font-bold rounded-full bg-red-500 text-white text-center flex items-center justify-center">
+                    <div className="size-5 text-xs font-semibold rounded-full bg-red-500 text-white text-center flex items-center justify-center">
                         {unreadMessagesCount}
                     </div>
                 ) : (

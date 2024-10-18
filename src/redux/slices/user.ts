@@ -1,7 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Profile from "../../types/Profile";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../helpers/firebase";
+import { doc, getDoc, runTransaction } from "firebase/firestore";
+import { db, storage } from "../../helpers/firebase";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import getFileExt from "../../helpers/getFileExt";
 
 type UserState = {
     data: {
@@ -23,6 +25,38 @@ export const getUserProfile = createAsyncThunk("user/getUserProfile", async (ema
     return {
         ...docSnap.data() as Profile,
     }
+});
+
+export const changeUserProfile = createAsyncThunk("user/changeUserProfile", async ({ userEmail, name, biography, profileImage, defaultProfileUrl }:
+    { userEmail: string, name: string, biography: string, profileImage: File | null, defaultProfileUrl: string }) => {
+    let profileUrl = defaultProfileUrl;
+    if (profileImage) {
+        const profileRef = ref(storage, `profiles/${userEmail}.${getFileExt(profileImage.name)}`);
+        await uploadBytes(profileRef, profileImage);
+        profileUrl = await getDownloadURL(profileRef);
+    }
+
+    await runTransaction(db, async (transaction) => {
+        transaction.update(doc(db, "profile", userEmail), profileUrl ? {
+            name,
+            biography,
+            photoUrl: profileUrl
+        } : {
+            name,
+            biography
+        });
+    });
+
+    return {
+        name,
+        biography,
+        photoUrl: profileUrl
+    }
+});
+
+export const deleteProfileImage = createAsyncThunk("user/deleteProfileImage", async ({ userEmail, profileUrl }: { userEmail: string, profileUrl: string }) => {
+    const profileRef = ref(storage, `profiles/${userEmail}.${getFileExt(profileUrl)}`);
+    await deleteObject(profileRef);
 })
 
 const user = createSlice({
@@ -39,6 +73,17 @@ const user = createSlice({
     extraReducers(builder) {
         builder.addCase(getUserProfile.fulfilled, (state, action) => {
             state.profile = action.payload;
+        });
+        builder.addCase(changeUserProfile.fulfilled, (state, action) => {
+            if (state.profile) {
+                state.profile = {
+                    ...state.profile,
+                    ...action.payload
+                };
+            }
+        });
+        builder.addCase(deleteProfileImage.fulfilled, ({ profile }) => {
+            if (profile) profile.photoUrl = "";
         })
     },
 });

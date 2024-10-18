@@ -1,13 +1,14 @@
 import React from "react";
-import { auth } from "../helpers/firebase";
-import button from "../cva/button";
+import { auth } from "../../helpers/firebase";
+import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
-import { RootState } from "../redux/store";
-import ChatListItem from "./ChatListItem";
-import { useAppSelector } from "../redux/hooks";
+import { RootState } from "../../redux/store";
+import ChatListItem from "../ChatListItem";
+import { useAppSelector } from "../../redux/hooks";
+import SidebarProfileImage from "./SidebarProfileImage";
 
 const Sidebar: React.FC = () => {
   const user = useAppSelector((state: RootState) => state.user);
@@ -26,13 +27,9 @@ const Sidebar: React.FC = () => {
           <div className="relative">
             {/*Profile image*/}
             {user.profile.photoUrl ? (
-              <img
-                src={user.profile.photoUrl}
-                alt={"profile"}
-                className="w-[65px] h-[65px] object-cover rounded-full"
-              />
+              <SidebarProfileImage />
             ) : (
-              <div className="w-[65px] h-[65px] border-2 rounded-full bg-base flex items-center justify-center">
+              <div className="size-[65px] border-2 rounded-full bg-base flex items-center justify-center">
                 <FontAwesomeIcon icon={faUser} size="xl" />
               </div>
             )}
