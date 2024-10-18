@@ -8,7 +8,7 @@ import { auth, db } from "./helpers/firebase";
 import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
 import Loading from "./components/Loading";
 import { doc, runTransaction, Timestamp } from "firebase/firestore";
-import { getChats } from "./redux/slices/chats";
+import { changeChatsStatus, getChats } from "./redux/slices/chats";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -39,9 +39,10 @@ const Layout: React.FC = () => {
     const unsub = onAuthStateChanged(auth, (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));
       user && dispatch(getUserProfile(user.email!)).then(() => {
-        dispatch(changeUserStatus(user ? "authenticated" : "unauthenticated"));
         dispatch(getChats(user.email!));
       });
+      !user && dispatch(changeChatsStatus("userUnauthenticated"));
+      dispatch(changeUserStatus(user ? "authenticated" : "unauthenticated"));
     });
 
     return () => {

@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, or, query, where } from "firebase/firestore";
 import { db } from "../../helpers/firebase";
 import getNotSeenedMessagesCount from "../../helpers/getNotSeenedMessagesCount";
@@ -7,7 +7,7 @@ import getProfile from "../../helpers/getProfile";
 
 type ChatsState = {
     list: (Profile & { email: string, notSeenedMessages: number })[],
-    status: "loading" | "success"
+    status: "loading" | "success" | "userUnauthenticated"
 }
 
 const initialState: ChatsState = {
@@ -58,7 +58,11 @@ export const addChat = createAsyncThunk("chats/addChat", async ({ user_1, user_2
 const chats = createSlice({
     name: "chats",
     initialState,
-    reducers: {},
+    reducers: {
+        changeChatsStatus(state, action: PayloadAction<ChatsState['status']>) {
+            state.status = action.payload;
+        }
+    },
     extraReducers(builder) {
         builder.addCase(getChats.fulfilled, (state, action) => {
             state.list = action.payload!;
@@ -73,3 +77,5 @@ const chats = createSlice({
 })
 
 export default chats.reducer;
+
+export const changeChatsStatus = chats.actions.changeChatsStatus;
