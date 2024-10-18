@@ -1,10 +1,10 @@
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { db } from "../helpers/firebase";
+import { db } from "../../helpers/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
-import Profile from "../types/Profile";
+import Profile from "../../types/Profile";
 
 type PropTypes = {
     chat: Profile & { email: string, notSeenedMessages: number };
@@ -41,10 +41,10 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                         <img
                             src={chat.photoUrl}
                             alt={"profile"}
-                            className="w-[40px] h-[40px] object-cover rounded-full"
+                            className="size-10 object-cover rounded-full"
                         />
                     ) : (
-                        <div className="w-[40px] h-[40px] border-2 rounded-full bg-base flex items-center justify-center">
+                        <div className="size-10 border-2 rounded-full bg-base flex items-center justify-center">
                             <FontAwesomeIcon icon={faUser} size="lg" />
                         </div>
                     )}

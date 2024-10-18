@@ -4,6 +4,8 @@ import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "../../helpers/firebase";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 
 type PropTypes = {
   email: string;
@@ -30,7 +32,7 @@ const ChatInput: React.FC<PropTypes> = ({ email }) => {
 
   return (
     <div className="mt-auto pb-5">
-      <div className="p-3 shadow-sm rounded-xl border bg-white flex">
+      <div className="p-3 shadow-sm rounded-full border bg-white flex">
         <input
           type="text"
           placeholder="Type your message..."
@@ -41,11 +43,12 @@ const ChatInput: React.FC<PropTypes> = ({ email }) => {
         <button
           className={button({
             intent: "dark",
-            className: pending && "pointer-events-none opacity-70",
+            className: `${pending && "pointer-events-none opacity-70"} !rounded-full`,
           })}
           onClick={sendMessageHandler}
         >
           Send
+          <FontAwesomeIcon icon={faPaperPlane} className="ms-1.5" />
         </button>
       </div>
     </div>

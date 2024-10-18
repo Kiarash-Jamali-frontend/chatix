@@ -66,7 +66,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
   }, [profile]);
 
   return (
-    <div className="bg-white border shadow-sm p-4 rounded-xl mt-4">
+    <div className="bg-white border shadow-sm px-4 py-3 rounded-full mt-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           {/*Profile image*/}
@@ -74,10 +74,10 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
             <img
               src={profile.photoUrl}
               alt={"profile"}
-              className="w-[45px] h-[45px] object-cover rounded-full"
+              className="size-12 object-cover rounded-full"
             />
           ) : (
-            <div className="w-[45px] h-[45px] border-2 rounded-full bg-base flex items-center justify-center">
+            <div className="size-12 border-2 rounded-full bg-base flex items-center justify-center">
               <FontAwesomeIcon icon={faUser} size="lg" />
             </div>
           )}
@@ -98,7 +98,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
           chatRoom && (
             (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked) && (
               <button
-                className={button({ intent: chatRoom.isBlocked ? "default" : "danger" })}
+                className={button({ intent: chatRoom.isBlocked ? "default" : "danger", className:"!rounded-full" })}
                 onClick={blockAndUnblockUserHandler}
               >
                 {chatRoom.isBlocked ? "Unblock" : "Block"}

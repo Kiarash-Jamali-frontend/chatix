@@ -6,7 +6,7 @@ import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import { RootState } from "../../redux/store";
-import ChatListItem from "../ChatListItem";
+import ChatListItem from "./ChatListItem";
 import { useAppSelector } from "../../redux/hooks";
 import SidebarProfileImage from "./SidebarProfileImage";
 
