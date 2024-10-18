@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import Sidebar from "./components/Sidebar";
-import { Outlet, useNavigation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
 import { onAuthStateChanged } from "firebase/auth";
@@ -8,11 +8,13 @@ import { auth, db } from "./helpers/firebase";
 import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
 import Loading from "./components/Loading";
 import { doc, runTransaction, Timestamp } from "firebase/firestore";
+import { getChats } from "./redux/slices/chats";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const location = useLocation();
   const user = useAppSelector((state: RootState) => state.user);
+  const chatsStatus = useAppSelector((state: RootState) => state.chats.status);
 
   const handleOnlineAndOffline = async (lastActivity: any) => {
     await runTransaction(db, async (transaction) => {
@@ -36,8 +38,10 @@ const Layout: React.FC = () => {
   useLayoutEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));
-      dispatch(changeUserStatus(user ? "authenticated" : "unauthenticated"));
-      user && dispatch(getUserProfile(user.email!));
+      user && dispatch(getUserProfile(user.email!)).then(() => {
+        dispatch(changeUserStatus(user ? "authenticated" : "unauthenticated"));
+        dispatch(getChats(user.email!));
+      });
     });
 
     return () => {
@@ -45,11 +49,11 @@ const Layout: React.FC = () => {
     }
   }, []);
 
-  if (user.status !== "loading") {
+  if (user.status !== "loading" && chatsStatus !== "loading") {
     return (
-      <div className="flex">
+      <div className="flex min-h-screen">
         {
-          navigation.location?.pathname !== "/login" && <Sidebar />
+          location.pathname !== "/login" && <Sidebar />
         }
         <Outlet />
       </div>

@@ -1,77 +1,25 @@
-import React, { useEffect, useState } from "react";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  or,
-  query,
-  where,
-} from "firebase/firestore";
-import { auth, db } from "../helpers/firebase";
+import React from "react";
+import { auth } from "../helpers/firebase";
 import button from "../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import ChatListItem from "./ChatListItem";
+import { useAppSelector } from "../redux/hooks";
 
 const Sidebar: React.FC = () => {
-  const user = useSelector((state: RootState) => state.user);
+  const user = useAppSelector((state: RootState) => state.user);
+  const chats = useAppSelector((state: RootState) => state.chats.list);
   const navigate = useNavigate();
-  const [chats, setChats] = useState<Array<any>>([]);
-
-  const getChats = async () => {
-    const q = query(
-      collection(db, "chat_room"),
-      or(
-        where("user_1", "==", user.data?.email),
-        where("user_2", "==", user.data?.email)
-      )
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach(async (c) => {
-      const chatData = c.data();
-      const oppositeUserEmail =
-        user.data?.email === chatData.user_1
-          ? chatData.user_2
-          : chatData.user_1;
-      const docRef = doc(db, "profile", oppositeUserEmail);
-      const docSnap = await getDoc(docRef);
-
-      const q = query(
-        collection(db, "chat_message"),
-        where("from", "==", oppositeUserEmail),
-        where("to", "==", user.data?.email),
-        where("seen", "==", false)
-      );
-      const querySnapshot = await getDocs(q);
-
-      setChats((prev) => [
-        ...prev,
-        {
-          ...docSnap.data(),
-          email: docSnap.id,
-          notSeenedMessages: querySnapshot.size,
-        },
-      ]);
-    });
-  };
 
   const signoutFromChatix = async () => {
     await auth.signOut();
     navigate("/login");
   };
 
-  useEffect(() => {
-    if (!chats.length) {
-      getChats();
-    }
-  }, [chats]);
-
-  if (user.profile) {
+  if (user.profile && user.data?.email) {
     return (
       <div className="w-full max-w-[325px] h-full min-h-screen bg-white border-e flex flex-col shadow-xl">
         <div className="flex items-center p-6">

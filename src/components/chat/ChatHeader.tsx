@@ -86,7 +86,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
               {profile.name}
             </span>
             {
-              nowTime - profile.lastActivity.seconds < 60 && nowTime !== 0 && (
+              nowTime - profile.lastActivity.seconds < 65 && nowTime !== 0 && (
                 <span className="text-blue-500 text-xs font-medium inline-block mt-1">
                   Online
                 </span>

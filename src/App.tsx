@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Chat from "./pages/Chat";
 import Login from "./pages/Login";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import CreateChat from "./pages/CreateChat";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />
+      },
+      {
+        path: "/create-chat",
+        element: <CreateChat />,
       },
       {
         path: "/chat/:email",

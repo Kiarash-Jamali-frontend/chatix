@@ -4,9 +4,10 @@ import { Link } from "react-router-dom";
 import { db } from "../helpers/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
+import Profile from "../types/Profile";
 
 type PropTypes = {
-    chat: any;
+    chat: Profile & { email: string, notSeenedMessages: number };
 };
 
 const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
@@ -36,9 +37,9 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
             >
                 <div className="flex items-center">
                     {/*Profile image*/}
-                    {chat.image ? (
+                    {chat.photoUrl ? (
                         <img
-                            src={chat.image}
+                            src={chat.photoUrl}
                             alt={"profile"}
                             className="w-[40px] h-[40px] object-cover rounded-full"
                         />
