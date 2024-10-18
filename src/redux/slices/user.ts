@@ -57,6 +57,11 @@ export const changeUserProfile = createAsyncThunk("user/changeUserProfile", asyn
 export const deleteProfileImage = createAsyncThunk("user/deleteProfileImage", async ({ userEmail, profileUrl }: { userEmail: string, profileUrl: string }) => {
     const profileRef = ref(storage, `profiles/${userEmail}.${getFileExt(profileUrl)}`);
     await deleteObject(profileRef);
+    await runTransaction(db, async (transaction) => {
+        transaction.update(doc(db, "profile", userEmail), {
+            photoUrl: ""
+        })
+    });
 })
 
 const user = createSlice({
