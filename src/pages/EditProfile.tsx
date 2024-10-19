@@ -5,9 +5,10 @@ import { RootState } from "../redux/store"
 import Profile from "../types/Profile";
 import button from "../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { changeUserProfile } from "../redux/slices/user";
+import { Link } from "react-router-dom";
 
 export default function EditProfile() {
     const [pending, setPending] = useState<boolean>(false);
@@ -35,12 +36,17 @@ export default function EditProfile() {
     }
 
     return (
-        <div className="p-8 rounded-xl bg-white shadow-sm border w-full max-w-2xl mx-auto h-fit m-auto">
-            <h2 className="font-bold text-2xl pb-[11px] border-b">
-                Edit profile
-            </h2>
+        <div className="p-8 lg:rounded-xl bg-white shadow-sm border w-full max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-screen flex flex-col">
+            <div className="flex items-center pb-[11px] border-b">
+                <Link to={"/"} className="lg:hidden me-3">
+                    <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+                </Link>
+                <h2 className="font-bold text-2xl">
+                    Edit profile
+                </h2>
+            </div>
 
-            <div className="grid grid-cols-2 mt-3 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 mt-3 gap-4">
                 <div>
                     <label htmlFor="name" className="text-sm inline-block mb-1">Name</label>
                     <input id="name" value={profileData.name}
@@ -94,9 +100,11 @@ export default function EditProfile() {
                     rows={3} id="biography"></textarea>
             </div>
 
-            <button disabled={pending} className={button({ intent: "dark", size: "large", className: "w-full mt-4" })} onClick={changeUserProfileHandler}>
-                Submit changes
-            </button>
+            <div className="mt-auto">
+                <button disabled={pending} className={button({ intent: "dark", size: "large", className: "w-full mt-4" })} onClick={changeUserProfileHandler}>
+                    Submit changes
+                </button>
+            </div>
         </div>
     )
 }

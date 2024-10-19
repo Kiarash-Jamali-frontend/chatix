@@ -7,8 +7,9 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { addChat } from "../redux/slices/chats";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function CreateChat() {
 
@@ -46,10 +47,15 @@ export default function CreateChat() {
 
     return (
         <>
-            <div className="bg-white rounded-xl shadow-sm border p-8 h-fit m-auto w-full max-w-lg">
-                <h2 className="font-bold text-2xl">
-                    Create chat
-                </h2>
+            <div className="bg-white rounded-xl shadow-sm lg:border p-8 h-fit m-auto w-full max-w-lg max-lg:h-full max-lg:min-h-screen flex flex-col">
+                <div className="flex items-center">
+                    <Link to={"/"} className="lg:hidden me-3">
+                        <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+                    </Link>
+                    <h2 className="font-bold text-2xl">
+                        Create chat
+                    </h2>
+                </div>
                 <p className="text-sm mt-3 text-black/60">
                     Enter the desired person's email to create a new chat
                 </p>
@@ -61,10 +67,12 @@ export default function CreateChat() {
                         </div>
                     )
                 }
-                <form onSubmit={createChatHandler} className="mt-5">
-                    <label htmlFor="">Email:</label>
-                    <input type="email" required className={input()} value={email} onChange={(e) => setEmail(e.target.value)} />
-                    <button type="submit" disabled={pending} className={button({ intent: "dark", size: "large", className: "w-full mt-5" })}>Create</button>
+                <form onSubmit={createChatHandler} className="mt-5 flex-grow flex flex-col">
+                    <label htmlFor="email">Email:</label>
+                    <input type="email" id="email" required className={input()} value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <div className="mt-auto">
+                        <button type="submit" disabled={pending} className={button({ intent: "dark", size: "large", className: "w-full mt-5" })}>Create</button>
+                    </div>
                 </form>
             </div>
         </>

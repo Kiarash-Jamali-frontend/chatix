@@ -18,6 +18,8 @@ import { db } from "../../helpers/firebase";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import Profile from "../../types/Profile";
+import { Link } from "react-router-dom";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 type PropTypes = {
   profile: Profile & { email: string };
@@ -66,46 +68,51 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
   }, [profile]);
 
   return (
-    <div className="bg-white border shadow-sm px-4 py-3 rounded-full mt-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          {/*Profile image*/}
-          {profile.photoUrl ? (
-            <img
-              src={profile.photoUrl}
-              alt={"profile"}
-              className="size-12 object-cover rounded-full"
-            />
-          ) : (
-            <div className="size-12 border-2 rounded-full bg-base flex items-center justify-center">
-              <FontAwesomeIcon icon={faUser} size="lg" />
+    <div className="flex items-center mt-4">
+    <Link to={"/"} className="lg:hidden me-3">
+        <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+    </Link>
+      <div className="bg-white border shadow-sm px-4 py-3 rounded-full w-full">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            {/*Profile image*/}
+            {profile.photoUrl ? (
+              <img
+                src={profile.photoUrl}
+                alt={"profile"}
+                className="size-12 object-cover rounded-full"
+              />
+            ) : (
+              <div className="size-12 border-2 rounded-full bg-base flex items-center justify-center">
+                <FontAwesomeIcon icon={faUser} size="lg" />
+              </div>
+            )}
+            <div className="ps-2 flex flex-col">
+              <span className="text-sm text-black/75 font-bold">
+                {profile.name}
+              </span>
+              {
+                nowTime - profile.lastActivity.seconds < 65 && nowTime !== 0 && (
+                  <span className="text-blue-500 text-xs font-medium inline-block mt-1">
+                    Online
+                  </span>
+                )
+              }
             </div>
-          )}
-          <div className="ps-2 flex flex-col">
-            <span className="text-sm text-black/75 font-bold">
-              {profile.name}
-            </span>
-            {
-              nowTime - profile.lastActivity.seconds < 65 && nowTime !== 0 && (
-                <span className="text-blue-500 text-xs font-medium inline-block mt-1">
-                  Online
-                </span>
-              )
-            }
           </div>
-        </div>
-        {
-          chatRoom && (
-            (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked) && (
-              <button
-                className={button({ intent: chatRoom.isBlocked ? "default" : "danger", className:"!rounded-full" })}
-                onClick={blockAndUnblockUserHandler}
-              >
-                {chatRoom.isBlocked ? "Unblock" : "Block"}
-              </button>
+          {
+            chatRoom && (
+              (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked) && (
+                <button
+                  className={button({ intent: chatRoom.isBlocked ? "default" : "danger", className: "!rounded-full" })}
+                  onClick={blockAndUnblockUserHandler}
+                >
+                  {chatRoom.isBlocked ? "Unblock" : "Block"}
+                </button>
+              )
             )
-          )
-        }
+          }
+        </div>
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ const ChatInput: React.FC<PropTypes> = ({ email }) => {
   };
 
   return (
-    <div className="mt-auto pb-5">
+    <div className="mt-5">
       <div className="p-3 shadow-sm rounded-full border bg-white flex">
         <input
           type="text"
