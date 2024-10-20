@@ -31,26 +31,24 @@ const ChatInput: React.FC<PropTypes> = ({ email }) => {
   };
 
   return (
-    <div className="mt-5">
-      <div className="p-3 shadow-sm rounded-full border bg-white flex">
-        <input
-          type="text"
-          placeholder="Type your message..."
-          className="focus:outline-none w-full max-w-none"
-          value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
-        />
-        <button
-          className={button({
-            intent: "dark",
-            className: `${pending && "pointer-events-none opacity-70"} !rounded-full`,
-          })}
-          onClick={sendMessageHandler}
-        >
-          Send
-          <FontAwesomeIcon icon={faPaperPlane} className="ms-1.5" />
-        </button>
-      </div>
+    <div className="p-3 shadow-sm rounded-full border bg-white flex">
+      <input
+        type="text"
+        placeholder="Type your message..."
+        className="focus:outline-none w-full max-w-none"
+        value={messageText}
+        onChange={(e) => setMessageText(e.target.value)}
+      />
+      <button
+        className={button({
+          intent: "dark",
+          className: `${pending && "pointer-events-none opacity-70"} !rounded-full`,
+        })}
+        onClick={sendMessageHandler}
+      >
+        Send
+        <FontAwesomeIcon icon={faPaperPlane} className="ms-1.5" />
+      </button>
     </div>
   );
 };

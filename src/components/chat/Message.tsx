@@ -20,7 +20,7 @@ const Message: React.FC<PropTypes> = ({ message }) => {
   };
 
   useEffect(() => {
-    if (user.data?.email === message.to) {
+    if (user.data?.email === message.to && !message.seen) {
       seenMessageHandler();
     }
   }, [user]);

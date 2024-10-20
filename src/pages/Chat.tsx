@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { redirect, useParams } from "react-router-dom";
 import ChatInput from "../components/chat/ChatInput";
 import ChatHeader from "../components/chat/ChatHeader";
@@ -26,6 +26,7 @@ const Chat: React.FC = () => {
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
   const [roomData, setRoomData] = useState<any>();
+  const messagesListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // messages
@@ -85,6 +86,11 @@ const Chat: React.FC = () => {
   }, [profile]);
 
   useEffect(() => {
+    if (messagesListRef.current) {
+      console.log("hi");
+      
+      messagesListRef.current.scrollTo({ top: messagesListRef.current.scrollHeight });
+    }
     if (profile && roomData && messages) setPending(false);
   }, [profile, roomData, messages, email])
 
@@ -96,37 +102,39 @@ const Chat: React.FC = () => {
 
   if (profile && roomData) {
     return (
-      <div className="w-full max-w-[800px] min-h-screen mx-auto flex flex-col px-5">
-        <ChatHeader profile={profile} />
-        <div className="h-full flex flex-col justify-end py-5 mt-auto">
+      <div className="w-full max-w-[800px] h-svh mx-auto flex flex-col px-5">
+        <div className="mb-5">
+          <ChatHeader profile={profile} />
+        </div>
+        <div className="overflow-auto mt-auto" ref={messagesListRef}>
           {messages.map((m) => (
             <Message key={m.id} message={m} />
           ))}
-          <div>
-            {
-              roomData.isBlocked !== "loading" && roomData.blockedFrom === userData?.email && (
-                <div className="text-center pb-5 mt-auto">
-                  <span>
-                    You have blocked {profile.name}
-                  </span>
-                </div>
-              )
-            }
-            {
-              roomData.isBlocked && roomData.blockedFrom === email && (
-                <div className="text-center pb-5 mt-auto">
-                  <span>
-                    You have been blocked by {profile.name}
-                  </span>
-                </div>
-              )
-            }
-            {
-              !roomData.isBlocked && email && (
-                <ChatInput email={email} />
-              )
-            }
-          </div>
+        </div>
+        <div className="py-5">
+          {
+            roomData.isBlocked !== "loading" && roomData.blockedFrom === userData?.email && (
+              <div className="text-center pb-5 mt-auto">
+                <span>
+                  You have blocked {profile.name}
+                </span>
+              </div>
+            )
+          }
+          {
+            roomData.isBlocked && roomData.blockedFrom === email && (
+              <div className="text-center pb-5 mt-auto">
+                <span>
+                  You have been blocked by {profile.name}
+                </span>
+              </div>
+            )
+          }
+          {
+            !roomData.isBlocked && email && (
+              <ChatInput email={email} />
+            )
+          }
         </div>
       </div>
     );

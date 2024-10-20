@@ -36,7 +36,7 @@ export default function EditProfile() {
     }
 
     return (
-        <div className="p-8 lg:rounded-xl bg-white shadow-sm border w-full max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-screen flex flex-col">
+        <div className="p-8 lg:rounded-xl bg-white shadow-sm border w-full max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
             <div className="flex items-center pb-[11px] border-b">
                 <Link to={"/"} className="lg:hidden me-3">
                     <FontAwesomeIcon icon={faArrowLeft} size="lg" />

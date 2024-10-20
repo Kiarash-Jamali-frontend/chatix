@@ -47,7 +47,7 @@ export default function CreateChat() {
 
     return (
         <>
-            <div className="bg-white rounded-xl shadow-sm lg:border p-8 h-fit m-auto w-full max-w-lg max-lg:h-full max-lg:min-h-screen flex flex-col">
+            <div className="bg-white rounded-xl shadow-sm lg:border p-8 h-fit m-auto w-full max-w-lg max-lg:h-full max-lg:min-h-svh flex flex-col">
                 <div className="flex items-center">
                     <Link to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />

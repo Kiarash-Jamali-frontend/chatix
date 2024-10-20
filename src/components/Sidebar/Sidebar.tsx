@@ -28,7 +28,7 @@ const Sidebar: React.FC = () => {
 
   if (user.profile && user.data?.email) {
     return (
-      <div className={`w-full lg:max-w-[325px] h-full min-h-screen bg-white border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
+      <div className={`w-full lg:max-w-[325px] h-full min-h-svh bg-white border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
         <div className="p-6 flex items-center justify-between">
           <div className="flex items-center">
             <div className="relative">

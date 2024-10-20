@@ -18,7 +18,7 @@ export default function SidebarProfileImage() {
 
     return (
         <>
-            <div className="relative rounded-full overflow-hidden group">
+            <div className="relative rounded-full overflow-hidden group border">
                 <img
                     src={user.profile?.photoUrl}
                     alt={"profile"}

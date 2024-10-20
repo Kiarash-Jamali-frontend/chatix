@@ -52,7 +52,7 @@ const Layout: React.FC = () => {
 
   if (user.status !== "loading" && chatsStatus !== "loading") {
     return (
-      <div className="lg:flex min-h-screen bg-[url('/background.svg')] bg-cover">
+      <div className="lg:flex min-h-svh bg-[url('/background.svg')] bg-cover">
         {
           location.pathname !== "/login" && <Sidebar />
         }
