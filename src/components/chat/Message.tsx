@@ -15,6 +15,7 @@ type PropTypes = {
 const Message: React.FC<PropTypes> = ({ message }) => {
   const { parse } = Parser();
   const user = useSelector((state: RootState) => state.user);
+
   const seenMessageHandler = async () => {
     const msgDocRef = doc(db, "chat_message", message.id);
     await runTransaction(db, async (transaction) => {
@@ -23,7 +24,7 @@ const Message: React.FC<PropTypes> = ({ message }) => {
   };
 
   useEffect(() => {
-    if (user.data?.email === message.to && !message.seen) {
+    if (user.data?.email !== message.to && !message.seen) {
       seenMessageHandler();
     }
   }, [user]);

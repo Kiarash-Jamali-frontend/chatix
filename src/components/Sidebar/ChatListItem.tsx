@@ -83,41 +83,45 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                             <FontAwesomeIcon icon={faUser} size="lg" />
                         </div>
                     )}
-                    <div className="ps-2 flex-grow max-w-[calc(100%-2.5rem)]">
-                        <div className="text-sm font-medium">{chat.name}</div>
-                        {
-                            lastMessage && (
-                                <div className="flex items-center justify-between">
-                                    <div className="text-xs text-black/80 mt-1 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap">
-                                        {parse(lastMessage.content)}
-                                    </div>
-                                    <div className="text-black/60 flex items-center">
-                                        <div className="text-xs">
-                                            {getHourAndTime(lastMessage.timestamp)}
-                                        </div>
-                                        {
-                                            lastMessage.from === userEmail && (
-                                                <div className="flex items-center ms-1">
-                                                    {lastMessage.seen && (
-                                                        <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px] absolute" />
-                                                    )}
-                                                    <FontAwesomeIcon icon={faCheck} width={10} height={10} />
-                                                </div>
-                                            )
-                                        }
-                                    </div>
+                    <div className="ps-2 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
+                        <div className="flex-grow">
+                            <div className="text-sm font-medium">{chat.name}</div>
+                            <div className="text-xs text-black/80 mt-1 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap">
+                                {parse(lastMessage?.content)}
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            {unreadMessagesCount ? (
+                                <div className="size-4 text-[10px] rounded-full bg-red-500 text-white text-center flex items-center justify-center ms-auto mb-1">
+                                    {unreadMessagesCount}
                                 </div>
-                            )
-                        }
+                            ) : (
+                                ""
+                            )}
+                            {
+                                lastMessage && (
+                                    <div className="flex items-center justify-between">
+                                        <div className="text-black/60 flex items-center">
+                                            <div className="text-xs">
+                                                {getHourAndTime(lastMessage.timestamp)}
+                                            </div>
+                                            {
+                                                lastMessage.from === userEmail && (
+                                                    <div className="flex items-center ms-1">
+                                                        {lastMessage.seen && (
+                                                            <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px] absolute" />
+                                                        )}
+                                                        <FontAwesomeIcon icon={faCheck} width={10} height={10} />
+                                                    </div>
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        </div>
                     </div>
                 </div>
-                {unreadMessagesCount ? (
-                    <div className="size-5 text-xs font-semibold rounded-full bg-red-500 text-white text-center flex items-center justify-center">
-                        {unreadMessagesCount}
-                    </div>
-                ) : (
-                    ""
-                )}
             </Link>
         </>
     );
