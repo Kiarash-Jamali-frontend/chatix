@@ -6,6 +6,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { Parser } from "html-to-react";
+import getHourAndTime from "../../helpers/getHourAndTime";
 
 type PropTypes = {
   message: any;
@@ -47,11 +48,7 @@ const Message: React.FC<PropTypes> = ({ message }) => {
                 : "text-black/50"
                 }`}
             >
-              {`${new Date(
-                message.timestamp.seconds * 1000
-              ).getHours()}:${new Date(
-                message.timestamp.seconds * 1000
-              ).getMinutes()}`}
+              {getHourAndTime(message.timestamp)}
             </div>
             {message.from === user.data?.email && (
               <div className="translate-y-[-1px] ms-1">
