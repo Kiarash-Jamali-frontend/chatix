@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import button from "../cva/button";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "../helpers/firebase";
 import { redirect } from "react-router-dom";
 
@@ -23,7 +23,7 @@ const Login: React.FC = () => {
       if (!docSnap.exists()) {
         await setDoc(doc(db, "profile", result.user.email), {
           biography: "",
-          isOnline: true,
+          lastActivity: Timestamp.fromDate(new Date()),
           name: `New user`,
           photoUrl: ""
         });

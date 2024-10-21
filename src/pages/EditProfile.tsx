@@ -29,10 +29,17 @@ export default function EditProfile() {
 
     const changeUserProfileHandler = () => {
         setPending(true);
-        dispatch(changeUserProfile({ userEmail: userEmail, biography: profileData.biography, name: profileData.name, profileImage, defaultProfileUrl: profile!.photoUrl })).then(() => {
-            setPending(false);
-            removeProfileImageHandler();
-        });
+        dispatch(changeUserProfile({
+            userEmail: userEmail,
+            biography: profileData.biography,
+            name: profileData.name,
+            profileImage,
+            defaultProfileUrl: profile!.photoUrl
+        }))
+            .then(() => {
+                setPending(false);
+                removeProfileImageHandler();
+            });
     }
 
     return (

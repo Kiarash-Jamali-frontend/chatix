@@ -28,6 +28,10 @@ const Chat: React.FC = () => {
   const [roomData, setRoomData] = useState<any>();
   const messagesListRef = useRef<HTMLDivElement>(null);
 
+  const scrollDownHandler = () => {
+    messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
+  }
+
   useEffect(() => {
     // messages
     const q = query(
@@ -86,13 +90,18 @@ const Chat: React.FC = () => {
   }, [profile]);
 
   useEffect(() => {
-    if (messagesListRef.current) {
-      console.log("hi");
-      
-      messagesListRef.current.scrollTo({ top: messagesListRef.current.scrollHeight });
-    }
     if (profile && roomData && messages) setPending(false);
-  }, [profile, roomData, messages, email])
+  }, [profile, roomData, messages, email]);
+
+  useEffect(() => {
+    if (messagesListRef.current) {
+      scrollDownHandler();
+      const observer = new MutationObserver(scrollDownHandler);
+      observer.observe(messagesListRef.current, { subtree: true, childList: true });
+
+      return () => observer.disconnect();
+    }
+  }, [messagesListRef, email, roomData, profile, messages, pending]);
 
   if (pending) {
     return (
@@ -106,7 +115,7 @@ const Chat: React.FC = () => {
         <div className="mb-5">
           <ChatHeader profile={profile} />
         </div>
-        <div className="overflow-auto mt-auto" ref={messagesListRef}>
+        <div className="overflow-auto mt-auto scrollbar-hidden" ref={messagesListRef}>
           {messages.map((m) => (
             <Message key={m.id} message={m} />
           ))}

@@ -88,7 +88,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
               </div>
             )}
             <div className="ps-2 flex flex-col">
-              <span className="text-sm text-black/75 font-bold">
+              <span className="font-semibold">
                 {profile.name}
               </span>
               {

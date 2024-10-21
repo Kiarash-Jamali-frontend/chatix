@@ -5,12 +5,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { Parser } from "html-to-react";
 
 type PropTypes = {
   message: any;
 };
 
 const Message: React.FC<PropTypes> = ({ message }) => {
+  const { parse } = Parser();
   const user = useSelector((state: RootState) => state.user);
   const seenMessageHandler = async () => {
     const msgDocRef = doc(db, "chat_message", message.id);
@@ -25,45 +27,45 @@ const Message: React.FC<PropTypes> = ({ message }) => {
     }
   }, [user]);
 
-    return (
-      <>
+  return (
+    <>
+      <div
+        className={`flex ${user.data?.email !== message.from && "justify-end"
+          } mt-1`}
+      >
         <div
-          className={`flex ${user.data?.email !== message.from && "justify-end"
-            } mt-1`}
+          className={`${user.data?.email === message.from
+            ? "bg-blue-600 text-white"
+            : "bg-white border"
+            } w-fit max-w-[400px] min-w-32 shadow-sm p-3 text-sm rounded-lg`}
         >
-          <div
-            className={`${user.data?.email === message.from
-                ? "bg-blue-600 text-white"
-                : "bg-white border"
-              } w-fit max-w-[400px] min-w-32 shadow-sm p-3 text-sm rounded-lg`}
-          >
-            {message.content}
-            <div className="mt-1 flex justify-end">
-              <div
-                className={`text-xs ${user.data?.email === message.from
-                    ? "text-white/50"
-                    : "text-black/50"
-                  }`}
-              >
-                {`${new Date(
-                  message.timestamp.seconds * 1000
-                ).getHours()}:${new Date(
-                  message.timestamp.seconds * 1000
-                ).getMinutes()}`}
-              </div>
-              {message.from === user.data?.email && (
-                <div className="translate-y-[-1px] ms-1">
-                  {message.seen && (
-                    <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px] text-white" />
-                  )}
-                  <FontAwesomeIcon icon={faCheck} width={10} height={10} />
-                </div>
-              )}
+          {parse(message.content)}
+          <div className="mt-1 flex justify-end">
+            <div
+              className={`text-xs ${user.data?.email === message.from
+                ? "text-white/50"
+                : "text-black/50"
+                }`}
+            >
+              {`${new Date(
+                message.timestamp.seconds * 1000
+              ).getHours()}:${new Date(
+                message.timestamp.seconds * 1000
+              ).getMinutes()}`}
             </div>
+            {message.from === user.data?.email && (
+              <div className="translate-y-[-1px] ms-1">
+                {message.seen && (
+                  <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px] text-white" />
+                )}
+                <FontAwesomeIcon icon={faCheck} width={10} height={10} />
+              </div>
+            )}
           </div>
         </div>
-      </>
-    );
+      </div>
+    </>
+  );
 };
 
 export default Message;
