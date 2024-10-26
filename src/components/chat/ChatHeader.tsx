@@ -20,6 +20,7 @@ import { RootState } from "../../redux/store";
 import Profile from "../../types/Profile";
 import { Link } from "react-router-dom";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { formatRelative, subDays } from "date-fns";
 
 type PropTypes = {
   profile: Profile & { email: string };
@@ -69,9 +70,9 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
 
   return (
     <div className="flex items-center mt-4">
-    <Link to={"/"} className="lg:hidden me-3">
+      <Link to={"/"} className="lg:hidden me-3">
         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
-    </Link>
+      </Link>
       <div className="bg-white border shadow-sm px-4 py-3 rounded-full w-full">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -92,11 +93,17 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
                 {profile.name}
               </span>
               {
-                nowTime - profile.lastActivity.seconds < 65 && nowTime !== 0 && (
+                nowTime - profile.lastActivity.seconds < 65 && nowTime !== 0 ? (
                   <span className="text-blue-500 text-xs font-medium inline-block mt-1">
                     Online
                   </span>
-                )
+                ) : <>
+                  <span className="text-xs mt-1 inline-block text-black/75">
+                    {formatRelative(subDays(
+                      new Date(Timestamp.fromMillis(profile.lastActivity.seconds * 10 ** 3).toDate()), 0),
+                      new Date())}
+                  </span>
+                </>
               }
             </div>
           </div>

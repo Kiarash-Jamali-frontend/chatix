@@ -25,6 +25,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
         const unreadMessagesQuery = query(
             collection(db, "chat_message"),
             where("from", "==", chat.email),
+            where("to", "==", userEmail),
             where("seen", "==", false)
         );
         const unsubscribeUnreadMessagesCount = onSnapshot(unreadMessagesQuery, (querySnapshot) => {
@@ -76,10 +77,10 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                         <img
                             src={chat.photoUrl}
                             alt={"profile"}
-                            className="size-10 min-w-10 object-cover rounded-full"
+                            className="size-11 min-w-11 object-cover rounded-full"
                         />
                     ) : (
-                        <div className="size-10 min-w-10 border-2 rounded-full bg-base flex items-center justify-center">
+                        <div className="size-11 min-w-11 border-2 rounded-full bg-base flex items-center justify-center">
                             <FontAwesomeIcon icon={faUser} size="lg" />
                         </div>
                     )}

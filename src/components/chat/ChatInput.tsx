@@ -15,7 +15,7 @@ type PropTypes = {
 };
 
 const ChatInput: React.FC<PropTypes> = ({ email }) => {
-  const parser = Parser();
+  const { parse } = Parser();
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
   const userEmail = useSelector((state: RootState) => state.user.data!.email);
   const [messageText, setMessageText] = useState<string>("");
@@ -47,7 +47,7 @@ const ChatInput: React.FC<PropTypes> = ({ email }) => {
     <div className="relative">
 
       <EmojiPicker open={emojiPickerIsOpen} className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl"
-        height={300} searchDisabled={true} lazyLoadEmojis={true}
+        height={300} searchDisabled={true} lazyLoadEmojis={true} 
         onEmojiClick={(e) => setMessageText((prev) => prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.25em;height:1.25em" />`)} />
 
       <div className="p-3 shadow-sm rounded-full border bg-white flex items-center">
@@ -60,7 +60,7 @@ const ChatInput: React.FC<PropTypes> = ({ email }) => {
           className="focus:outline-none w-full text-sm max-w-none placeholder:text-sm max-h-11 overflow-hidden"
           onBlur={changeMessageHandler}
           suppressContentEditableWarning={true}
-        >{parser.parse(messageText)}</div>
+        >{parse(messageText)}</div>
         <button
           className={button({
             intent: "dark",

@@ -101,7 +101,7 @@ const Chat: React.FC = () => {
 
       return () => observer.disconnect();
     }
-  }, [messagesListRef, email, roomData, profile, messages, pending]);
+  });
 
   if (pending) {
     return (
