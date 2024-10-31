@@ -17,7 +17,7 @@ const Layout: React.FC = () => {
   const chatsStatus = useAppSelector((state: RootState) => state.chats.status);
 
   const updateLastActivity = async () => {
-    const newDate = Timestamp.fromDate(new Date());
+    const newDate = Timestamp.now();
     await runTransaction(db, async (transaction) => {
       transaction.update(doc(db, "profile", user.data!.email), { lastActivity: newDate });
     })

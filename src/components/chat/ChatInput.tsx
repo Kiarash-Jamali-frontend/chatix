@@ -29,7 +29,7 @@ const ChatInput: React.FC<PropTypes> = ({ email }) => {
       content: messageText,
       from: userEmail,
       seen: false,
-      timestamp: Timestamp.fromDate(new Date()),
+      timestamp: Timestamp.now(),
       to: email,
       type: "text",
     });

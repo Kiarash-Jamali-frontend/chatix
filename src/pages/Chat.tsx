@@ -14,7 +14,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../helpers/firebase";
-import Message from "../components/chat/Message";
+import Message from "../components/chat/Message/Message";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import Loading from "../components/Loading";
@@ -23,6 +23,7 @@ const Chat: React.FC = () => {
   const userData = useSelector((state: RootState) => state.user.data);
   const { email } = useParams();
   const [pending, setPending] = useState<boolean>(true);
+  const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
   const [roomData, setRoomData] = useState<any>();
@@ -117,7 +118,7 @@ const Chat: React.FC = () => {
         </div>
         <div className="overflow-auto mt-auto scrollbar-hidden" ref={messagesListRef}>
           {messages.map((m) => (
-            <Message key={m.id} message={m} />
+            <Message key={m.id} message={m} selectedMessage={selectedMessage} setSelectedMessage={setSelectedMessage} />
           ))}
         </div>
         <div className="py-5">

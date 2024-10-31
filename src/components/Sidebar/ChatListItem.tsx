@@ -87,7 +87,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     <div className="ps-2 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
                         <div className="flex-grow">
                             <div className="text-sm font-medium">{chat.name}</div>
-                            <div className="text-xs text-black/80 mt-1 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap">
+                            <div className="text-xs font-Vazir text-black/80 mt-1 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap">
                                 {parse(lastMessage?.content)}
                             </div>
                         </div>

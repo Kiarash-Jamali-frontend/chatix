@@ -7,7 +7,8 @@ export default {
         base: "#F6F6F6",
       },
       fontFamily: {
-        Inter: "Inter"
+        Inter: "Inter",
+        Vazir: "Vazirmatn"
       }
     },
   },

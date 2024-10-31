@@ -23,7 +23,7 @@ const Login: React.FC = () => {
       if (!docSnap.exists()) {
         await setDoc(doc(db, "profile", result.user.email), {
           biography: "",
-          lastActivity: Timestamp.fromDate(new Date()),
+          lastActivity: Timestamp.now(),
           name: `New user`,
           photoUrl: ""
         });
