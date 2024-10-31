@@ -6,16 +6,22 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   plugins: [react(), VitePWA({
     registerType: "autoUpdate",
-    includeAssets: ['Logo.jpg', 'background.svg'],
+    includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
     manifest: {
       theme_color: "#fff",
       name: "Chatix",
       short_name: "Chatix",
+      id: "Chatix",
       icons: [
         {
-          src: "/Logo.jpg",
-          sizes: "48x48",
-          type: "image/jpg"
+          src: 'pwa-192x192.png',
+          sizes: '192x192',
+          type: 'image/png'
+        },
+        {
+          src: 'pwa-512x512.png',
+          sizes: '512x512',
+          type: 'image/png'
         }
       ]
     }
