@@ -46,7 +46,7 @@ const ChatInput: React.FC<PropTypes> = ({ email }) => {
   return (
     <div className="relative">
 
-      <EmojiPicker open={emojiPickerIsOpen} className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl"
+      <EmojiPicker open={emojiPickerIsOpen} className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50"
         height={300} searchDisabled={true} lazyLoadEmojis={true} 
         onEmojiClick={(e) => setMessageText((prev) => prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.25em;height:1.25em" />`)} />
 
