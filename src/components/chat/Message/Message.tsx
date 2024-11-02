@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { Parser } from "html-to-react";
 import getHourAndTime from "../../../helpers/getHourAndTime";
-import { EmojiClickData } from "emoji-picker-react";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import DeleteMessageButton from "./DeleteMessageButton";
 
@@ -32,10 +31,10 @@ const Message: React.FC<PropTypes> = ({ message, selectedMessage, setSelectedMes
     await deleteDoc(doc(db, "chat_message", message.id));
   }
 
-  const reactionToMessageHandler = async (e: EmojiClickData) => {
+  const changeReactionHandler = async (reaction: string) => {
     await runTransaction(db, async (transaction) => {
       transaction.update(doc(db, "chat_message", message.id), {
-        reaction: `<img src="${e.getImageUrl()}" style="display:inline;width:1.25em;height:1.25em" />`
+        reaction
       })
     });
   }
@@ -49,7 +48,7 @@ const Message: React.FC<PropTypes> = ({ message, selectedMessage, setSelectedMes
   return (
     <>
       <div
-        className={`flex relative ${user.data?.email !== message.from && "justify-end"
+        className={`flex relative ${user.data?.email !== message.from && "flex-row-reverse"
           } mt-1`}
       >
         <button
@@ -59,7 +58,7 @@ const Message: React.FC<PropTypes> = ({ message, selectedMessage, setSelectedMes
             ? "bg-blue-600 text-white hover:opacity-90"
             : "bg-white border hover:bg-gray-50"
             } ${selectedMessage?.id === message.id && "opacity-90"} ${user.data?.email === message.from && selectedMessage?.id === message.id && "rounded-e-none"}
-             w-fit max-w-[400px] min-w-32 shadow-sm p-3 z-10 text-[0.925em] rounded-lg text-start transition-all font-light font-Vazir relative`}
+             w-fit max-w-[400px] min-w-32 shadow-sm p-3 text-[0.925em] z-30 rounded-lg text-start transition-all font-light font-Vazir relative`}
         >
           {parse(message.content)}
           <div className="mt-1 flex justify-end">
@@ -80,17 +79,19 @@ const Message: React.FC<PropTypes> = ({ message, selectedMessage, setSelectedMes
               </div>
             )}
           </div>
-          {
-            message.reaction && (
-              <div className={`absolute ${message.from === user.data?.email ? "right-[-1.35rem]" : "left-[-1.35rem]"} flex items-end top-0 bottom-0`}>
-                <div className="size-8 border flex items-center justify-center bg-white rounded-full">
-                  {parse(message.reaction)}
-                </div>
-              </div>
-            )
-          }
-          <ReactionsEmojiPicker callback={reactionToMessageHandler} message={message} selectedMessage={selectedMessage} />
+          <ReactionsEmojiPicker callback={(e) => changeReactionHandler(`<img src="${e.getImageUrl()}" style="display:inline;width:1.25em;height:1.25em" />`)}
+            message={message} selectedMessage={selectedMessage} />
         </button>
+        {
+          message.reaction && (
+            <button className={`flex items-end top-0 bottom-0 z-20 mx-1`}
+              onClick={() => changeReactionHandler("")}>
+              <div className="size-8 border flex items-center justify-center bg-white rounded-full">
+                {parse(message.reaction)}
+              </div>
+            </button>
+          )
+        }
         <DeleteMessageButton callback={deleteMessageHandler} message={message} selectedMessage={selectedMessage} />
       </div>
     </>

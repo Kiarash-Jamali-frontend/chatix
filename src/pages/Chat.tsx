@@ -116,12 +116,12 @@ const Chat: React.FC = () => {
         <div className="mb-5">
           <ChatHeader profile={profile} />
         </div>
-        <div className="overflow-auto mt-auto scrollbar-hidden" ref={messagesListRef}>
+        <div className="overflow-auto mt-auto scrollbar-hidden py-5" ref={messagesListRef}>
           {messages.map((m) => (
             <Message key={m.id} message={m} selectedMessage={selectedMessage} setSelectedMessage={setSelectedMessage} />
           ))}
         </div>
-        <div className="py-5">
+        <div className="mb-5">
           {
             roomData.isBlocked !== "loading" && roomData.blockedFrom === userData?.email && (
               <div className="text-center pb-5 mt-auto">

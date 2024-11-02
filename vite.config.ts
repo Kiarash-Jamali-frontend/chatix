@@ -7,7 +7,6 @@ export default defineConfig({
   plugins: [react(), VitePWA({
     registerType: "autoUpdate",
     includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-    injectRegister: 'auto',
     manifest: {
       theme_color: "#000",
       name: "Chatix",

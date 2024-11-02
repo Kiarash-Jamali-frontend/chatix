@@ -1,14 +1,14 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import Sidebar from "./components/Sidebar/Sidebar";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, redirect, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
 import { auth, db } from "./helpers/firebase";
 import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
 import Loading from "./components/Loading";
-import { doc, runTransaction, Timestamp } from "firebase/firestore";
+import { doc, getDoc, runTransaction, setDoc, Timestamp } from "firebase/firestore";
 import { changeChatsStatus, getChats } from "./redux/slices/chats";
-import { onAuthStateChanged } from "firebase/auth";
+import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -29,6 +29,23 @@ const Layout: React.FC = () => {
     }, 30000);
   }
 
+  const getGoogleSigninRedirectResult = async () => {
+    const result = await getRedirectResult(auth);
+    if (result?.user.email) {
+      const docRef = doc(db, "profile", result.user.email);
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
+        await setDoc(doc(db, "profile", result.user.email), {
+          biography: "",
+          lastActivity: Timestamp.now(),
+          name: `New user`,
+          photoUrl: ""
+        });
+      }
+      redirect("/");
+    }
+  }
+
   useEffect(() => {
     if (user.status === "authenticated") {
       updateLastActivity();
@@ -39,6 +56,7 @@ const Layout: React.FC = () => {
   }, [user]);
 
   useLayoutEffect(() => {
+    getGoogleSigninRedirectResult();
     const unsub = onAuthStateChanged(auth, (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));
       user && dispatch(getUserProfile(user.email!)).then(() => {
@@ -56,11 +74,11 @@ const Layout: React.FC = () => {
     }
   }, []);
 
-  if (user.status === "authenticated" && chatsStatus === "success") {
+  if ((user.status === "authenticated" && chatsStatus === "success") || location.pathname === "/login" || location.pathname === "/create-account") {
     return (
       <div className="lg:flex min-h-svh bg-[url('/background.svg')] bg-cover">
         {
-          location.pathname !== "/login" && <Sidebar />
+          (location.pathname !== "/login" && location.pathname !== "/create-account") && <Sidebar />
         }
         <Outlet />
       </div>
@@ -68,7 +86,7 @@ const Layout: React.FC = () => {
   }
 
   if (user.status === "unauthenticated") {
-    <Navigate to={"/login"} />
+    return <Navigate to={"/login"} />
   }
 
   return <Loading />

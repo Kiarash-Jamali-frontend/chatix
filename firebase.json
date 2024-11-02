@@ -8,7 +8,7 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "regex": "/^[^_][^_].*|^[_]{2}[^].*|^.*[^_]$",
         "destination": "/index.html"
       }
     ]
