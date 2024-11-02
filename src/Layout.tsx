@@ -67,8 +67,6 @@ const Layout: React.FC = () => {
       });
     });
 
-    dispatch(changeUserStatus(auth.currentUser ? "authenticated" : "unauthenticated"));
-
     return () => {
       unsub();
     }

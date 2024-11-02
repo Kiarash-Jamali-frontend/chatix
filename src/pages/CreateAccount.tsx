@@ -9,6 +9,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../redux/hooks";
 import { changeUserData, getUserProfile } from "../redux/slices/user";
 import toastConf from "../helpers/toastConfig";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { db } from "../helpers/firebase";
 
 const CreateAccount: React.FC = () => {
 
@@ -40,15 +42,25 @@ const CreateAccount: React.FC = () => {
     }
 
     const createAccountHandler = async () => {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                dispatch(changeUserData({ email: userCredential.user.email! }));
-                dispatch(getUserProfile(userCredential.user.email!)).then(() => {
-                    navigate("/");
+        setDoc(doc(db, "profile", email), {
+            biography: "",
+            name: "New user",
+            lastActivity: Timestamp.now(),
+            photoUrl: ""
+        }).then(() => {
+            createUserWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    dispatch(changeUserData({ email }));
+                    dispatch(getUserProfile(email)).then(() => {
+                        navigate("/");
+                    });
+                }).catch((error) => {
+                    toast.error(error.message, toastConf);
                 })
-            }).catch((error) => {
-                toast.error(error.message, toastConf);
-            }).finally(() => setLoading(false))
+        }).catch((error) => {
+            toast.error(error.message, toastConf);
+        })
+            .finally(() => setLoading(false))
     }
 
     return (
