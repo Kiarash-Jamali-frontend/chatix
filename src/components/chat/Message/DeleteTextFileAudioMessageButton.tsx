@@ -3,20 +3,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
+import deleteMessage from "../../../helpers/deleteMessage";
+import MessagePropTypes from "../../../types/MessagePropTypes";
 
-type PropTypes = {
-    selectedMessage: any;
-    message: any;
-    callback: () => void;
-}
-
-export default function DeleteMessageButton({ selectedMessage, message, callback }: PropTypes) {
+export default function DeleteTextFileAudioMessageButton({ message }: MessagePropTypes) {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
+    const selectedMessageID = useAppSelector((state: RootState) => state.selectedMessage.data?.id);
+    const messageIsForCurrentUser = userEmail === message.from;
     return (
         <>
             <AnimatePresence>
                 {
-                    selectedMessage?.id === message.id && userEmail === message.from && (
+                    selectedMessageID === message.id && messageIsForCurrentUser && (
                         <motion.div initial={{
                             opacity: 0,
                             translateX: "-1rem",
@@ -27,7 +25,8 @@ export default function DeleteMessageButton({ selectedMessage, message, callback
                             opacity: 0,
                             translateX: "-1rem",
                         }}>
-                            <button className="px-2 h-full bg-white flex items-center rounded-e-lg border border-black/10 border-s-transparent" onClick={callback}>
+                            <button className="px-2 h-full bg-white flex items-center rounded-e-lg border border-black/10 border-s-transparent"
+                                onClick={() => deleteMessage(message.id)}>
                                 <FontAwesomeIcon icon={faTrashCan} color="#000" />
                             </button>
                         </motion.div>

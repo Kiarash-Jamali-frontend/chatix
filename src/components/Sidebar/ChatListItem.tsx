@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { db } from "../../helpers/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { faFile, faImage, faUser } from "@fortawesome/free-regular-svg-icons";
 import Profile from "../../types/Profile";
 import { Parser } from "html-to-react";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faVideo } from "@fortawesome/free-solid-svg-icons";
 import getHourAndTime from "../../helpers/getHourAndTime";
 
 type PropTypes = {
@@ -87,8 +87,21 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     <div className="ps-2 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
                         <div className="flex-grow">
                             <div className="text-sm font-medium">{chat.name}</div>
-                            <div className="text-xs font-Vazir text-black/80 mt-1 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap">
-                                {parse(lastMessage?.content)}
+                            <div className="text-xs font-Vazir text-black/80 mt-1 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap break-words max-w-40">
+                                {
+                                    lastMessage && (
+                                        lastMessage?.type !== "text" && (
+                                            <div className="flex capitalize">
+                                                <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
+                                                    className="me-1" />
+                                                {lastMessage?.type}
+                                            </div>
+                                        )
+                                    )
+                                }
+                                {
+                                    lastMessage?.type === "text" && parse(lastMessage.content)
+                                }
                             </div>
                         </div>
                         <div className="flex flex-col">

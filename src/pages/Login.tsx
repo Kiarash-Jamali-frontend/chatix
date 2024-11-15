@@ -32,8 +32,6 @@ const Login: React.FC = () => {
   const loginHandler = async () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential);
-        
         dispatch(changeUserData({ email: userCredential.user.email! }));
         dispatch(getUserProfile(userCredential.user.email!)).then(() => {
           navigate("/");

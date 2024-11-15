@@ -23,7 +23,6 @@ const Chat: React.FC = () => {
   const userData = useSelector((state: RootState) => state.user.data);
   const { email } = useParams();
   const [pending, setPending] = useState<boolean>(true);
-  const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
   const [roomData, setRoomData] = useState<any>();
@@ -95,14 +94,8 @@ const Chat: React.FC = () => {
   }, [profile, roomData, messages, email]);
 
   useEffect(() => {
-    if (messagesListRef.current) {
-      scrollDownHandler();
-      const observer = new MutationObserver(scrollDownHandler);
-      observer.observe(messagesListRef.current, { subtree: true, childList: true });
-
-      return () => observer.disconnect();
-    }
-  });
+    scrollDownHandler();
+  }, [messages.length])
 
   if (pending) {
     return (
@@ -116,9 +109,9 @@ const Chat: React.FC = () => {
         <div className="mb-5">
           <ChatHeader profile={profile} />
         </div>
-        <div className="overflow-auto mt-auto scrollbar-hidden py-5" ref={messagesListRef}>
+        <div className="overflow-auto mt-auto scrollbar-hidden py-5 transition-all scroll-smooth" ref={messagesListRef}>
           {messages.map((m) => (
-            <Message key={m.id} message={m} selectedMessage={selectedMessage} setSelectedMessage={setSelectedMessage} />
+            <Message key={m.id} message={m} scrollDown={scrollDownHandler} />
           ))}
         </div>
         <div className="mb-5">
@@ -142,7 +135,7 @@ const Chat: React.FC = () => {
           }
           {
             !roomData.isBlocked && email && (
-              <ChatInput email={email} />
+              <ChatInput chatId={roomData.id} email={email} />
             )
           }
         </div>
