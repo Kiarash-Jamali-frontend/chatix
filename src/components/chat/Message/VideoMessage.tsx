@@ -44,10 +44,10 @@ export default function VideoMessage({ message, scrollDown }: PropTypes) {
         <>
             <button
                 className={`${messageIsForCurrentUser
-                    ? "bg-blue-600 text-white"
-                    : "bg-white border"
+                    ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white"
+                    : "bg-white"
                     }
-               w-fit min-w-32 shadow-sm p-3 text-[0.925em] z-30 rounded-lg text-start transition-all font-light font-Vazir`}
+               w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light font-Vazir`}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >

@@ -15,12 +15,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../helpers/firebase";
 import Message from "../components/chat/Message/Message";
-import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import Loading from "../components/Loading";
+import { useAppSelector } from "../redux/hooks";
 
 const Chat: React.FC = () => {
-  const userData = useSelector((state: RootState) => state.user.data);
+  const userData = useAppSelector((state: RootState) => state.user.data);
+  const userProfile = useAppSelector((state: RootState) => state.user.profile);
   const { email } = useParams();
   const [pending, setPending] = useState<boolean>(true);
   const [profile, setProfile] = useState<any>();
@@ -110,9 +111,17 @@ const Chat: React.FC = () => {
           <ChatHeader profile={profile} />
         </div>
         <div className="overflow-auto mt-auto scrollbar-hidden py-5 transition-all scroll-smooth" ref={messagesListRef}>
-          {messages.map((m) => (
-            <Message key={m.id} message={m} scrollDown={scrollDownHandler} />
-          ))}
+          {messages.map((m) => {
+            const replyToMessage = messages.find((message) => m.replyTo === message.id);
+            return (
+              <Message key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
+                m.replyTo ? {
+                  ...replyToMessage,
+                  sender: replyToMessage.from === userData?.email ? userProfile : profile
+                } : null
+              } />
+            )
+          })}
         </div>
         <div className="mb-5">
           {
@@ -135,7 +144,7 @@ const Chat: React.FC = () => {
           }
           {
             !roomData.isBlocked && email && (
-              <ChatInput chatId={roomData.id} email={email} />
+              <ChatInput chatId={roomData.id} oppositeProfile={profile} />
             )
           }
         </div>

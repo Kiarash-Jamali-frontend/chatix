@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import userReducer from "./slices/user";
 import chatsReducer from "./slices/chats";
 import selectedMessageReducer from "./slices/selectedMessage";
+import messageSelectedForReplyReducer from "./slices/messageSelectedForReply";
 import currentPlayingMediaReducer from "./slices/currentPlayingMedia";
 
 export const store = configureStore({
@@ -9,7 +10,8 @@ export const store = configureStore({
         user: userReducer,
         chats: chatsReducer,
         selectedMessage: selectedMessageReducer,
-        currentPlayingMedia: currentPlayingMediaReducer
+        currentPlayingMedia: currentPlayingMediaReducer,
+        messageSelectedForReply: messageSelectedForReplyReducer
     },
 })
 

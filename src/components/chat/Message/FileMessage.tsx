@@ -20,15 +20,15 @@ export default function FileMessage({ message }: MessagePropTypes) {
     const messageIsForCurrentUser = userEmail === message.from;
 
     return (
-        <>
+        <div className="flex">
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 className={`${messageIsForCurrentUser
-                    ? "bg-blue-600 text-white hover:opacity-90"
-                    : "bg-white border hover:bg-gray-50"
+                    ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:opacity-90"
+                    : "bg-white hover:bg-gray-50"
                     } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-e-none" : ""}
-             w-fit min-w-32 shadow-sm pt-3 px-3 pb-1.5 text-[0.925em] z-30 rounded-lg text-start transition-all font-Vazir relative cursor-default`}
+             w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all font-Vazir relative cursor-default`}
             >
                 <div className="flex relative">
                     <a href={message.content} className={`flex items-center justify-center size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-600" : "bg-black/5 text-black border shadow-sm"}`}>
@@ -48,6 +48,6 @@ export default function FileMessage({ message }: MessagePropTypes) {
                 </div>
             </button>
             <DeleteTextFileAudioMessageButton message={message} />
-        </>
+        </div>
     )
 }

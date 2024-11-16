@@ -25,7 +25,7 @@ export default function DeleteTextFileAudioMessageButton({ message }: MessagePro
                             opacity: 0,
                             translateX: "-1rem",
                         }}>
-                            <button className="px-2 h-full bg-white flex items-center rounded-e-lg border border-black/10 border-s-transparent"
+                            <button className="px-2 h-full bg-white flex items-center rounded-br-lg"
                                 onClick={() => deleteMessage(message.id)}>
                                 <FontAwesomeIcon icon={faTrashCan} color="#000" />
                             </button>
