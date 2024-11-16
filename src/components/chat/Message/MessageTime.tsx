@@ -8,16 +8,14 @@ export default function MessageTime({ message }: { message: any }) {
     const messageIsForCurrentUser = userEmail === message.from;
 
     return (
-        <>
-            <div
-                className={`text-xs ${messageIsForCurrentUser
-                    ? "text-white/50"
-                    : "text-black/50"
-                    }`}
+        <div
+            className={`text-xs ${messageIsForCurrentUser
+                ? "text-white/50"
+                : "text-black/50"
+                }`}
 
-            >
-                {getHourAndTime(message.timestamp)}
-            </div>
-        </>
+        >
+            {getHourAndTime(message.timestamp)}
+        </div>
     )
 }

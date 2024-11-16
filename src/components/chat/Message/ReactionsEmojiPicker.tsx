@@ -20,14 +20,14 @@ export default function ReactionsEmojiPicker({ message }: PropTypes) {
         <AnimatePresence>
             {
                 messageIsSelected && !messageIsForCurrentUser && (
-                    <motion.div className={`absolute right-[50%] flex items-center`} initial={{
-                        top: "-20px",
+                    <motion.div className={`absolute right-3 lg:right-[50%] flex items-center z-50`} initial={{
+                        top: "-1rem",
                         opacity: 0
                     }} animate={{
-                        top: "-40px",
+                        top: "-1.35rem",
                         opacity: 1
                     }} exit={{
-                        top: "-20px",
+                        top: "-1rem",
                         opacity: 0
                     }}>
                         <EmojiPicker reactionsDefaultOpen={true} allowExpandReactions={false} className="!bg-white" onReactionClick={(e) => changeReaction(message.id, e.getImageUrl())} />

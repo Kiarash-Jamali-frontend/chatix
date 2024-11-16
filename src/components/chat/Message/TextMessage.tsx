@@ -8,7 +8,6 @@ import MessageSeen from "./MessageSeen";
 import MessagePropTypes from "../../../types/MessagePropTypes";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { changeSelectedMessage } from "../../../redux/slices/selectedMessage";
-import MessageReaction from "./MessageReaction";
 
 const TextMessage: React.FC<MessagePropTypes> = ({ message }) => {
   const { parse } = Parser();
@@ -42,7 +41,6 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message }) => {
           <ReactionsEmojiPicker
             message={message} />
         </button>
-        <MessageReaction message={message} />
         <DeleteTextFileAudioMessageButton message={message} />
     </>
   );

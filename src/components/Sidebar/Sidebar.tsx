@@ -50,7 +50,7 @@ const Sidebar: React.FC = () => {
             {/*user name*/}
             <div className="font-bold">{user.profile?.name}</div>
             {/*email*/}
-            <div className="text-xs mt-2 text-black/60">
+            <div className="text-xs mt-2 text-black/60 max-w-44 whitespace-nowrap overflow-hidden text-ellipsis">
               {user.data?.email}
             </div>
           </div>

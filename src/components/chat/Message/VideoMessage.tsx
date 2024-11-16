@@ -10,7 +10,6 @@ import { changeSelectedMessage } from "../../../redux/slices/selectedMessage";
 import { useEffect, useRef } from "react";
 import { changeCurrentPlayingMedia } from "../../../redux/slices/currentPlayingMedia";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
-import MessageReaction from "./MessageReaction";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
@@ -63,7 +62,7 @@ export default function VideoMessage({ message, scrollDown }: PropTypes) {
                         )
                     }
                     <video onLoadedData={scrollDown} src={message.content} ref={videoRef} onPlay={playVideoHandler}
-                        className="rounded-lg object-cover max-w-[400px] max-h-[275px]" controls>
+                        className="rounded-lg object-cover max-w-[400px] max-h-[275px] w-full" controls>
 
                     </video>
                     <ReactionsEmojiPicker
@@ -76,7 +75,6 @@ export default function VideoMessage({ message, scrollDown }: PropTypes) {
                     </div>
                 </div>
             </button>
-            <MessageReaction message={message} />
         </>
     )
 }

@@ -13,6 +13,7 @@ import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 
 export default function AudioMessage({ message }: MessagePropTypes) {
 
+    const [isStopped, setIsStopped] = useState<boolean>(true);
     const [duration, setDuration] = useState<number>(0);
     const [progressTime, setProgressTime] = useState<number>(0);
 
@@ -109,7 +110,7 @@ export default function AudioMessage({ message }: MessagePropTypes) {
 
     return (
         <>
-            <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata}></audio>
+            <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata} onPlay={() => setIsStopped(false)} onPause={() => setIsStopped(true)}></audio>
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
@@ -122,12 +123,12 @@ export default function AudioMessage({ message }: MessagePropTypes) {
                 <div className="flex relative">
                     <button onClick={changeIsPlayingHandler}
                         className={`flex items-center justify-center size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-600" : "bg-black/5 text-black border shadow-sm"}`}>
-                        <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} size="lg" />
+                        <FontAwesomeIcon icon={!isStopped ? faPause : faPlay} size="lg" />
                     </button>
                     <ReactionsEmojiPicker message={message} />
                     <div className="ms-2">
                         <div className="flex items-center">
-                            <div className="font-light break-words max-w-60 text-sm">{message.fileName}</div>
+                            <div className="font-light break-words max-w-44 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>
                             <a href={message.content} className={`size-6 flex items-center justify-center text-xs rounded-full ms-1 ${messageIsForCurrentUser ? "bg-white/10 text-white" : "bg-black/5 text-black"}`}>
                                 <FontAwesomeIcon icon={faDownload} />
                             </a>

@@ -59,6 +59,10 @@ const Layout: React.FC = () => {
     getGoogleSigninRedirectResult();
     const unsub = onAuthStateChanged(auth, (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));
+      if (!user) {
+        dispatch(changeUserStatus("unauthenticated"));
+        dispatch(changeChatsStatus("userUnauthenticated"));
+      }
       user && dispatch(getUserProfile(user.email!)).then(() => {
         dispatch(changeUserStatus("authenticated"));
         dispatch(getChats(user.email!)).then(() => {
@@ -76,7 +80,7 @@ const Layout: React.FC = () => {
     return (
       <div className="lg:flex min-h-svh bg-[url('/background.svg')] bg-cover">
         {
-          (location.pathname !== "/login" && location.pathname !== "/create-account") && <Sidebar />
+          (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
         }
         <Outlet />
       </div>

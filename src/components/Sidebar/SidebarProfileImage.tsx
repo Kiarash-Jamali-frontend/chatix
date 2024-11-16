@@ -22,7 +22,7 @@ export default function SidebarProfileImage() {
                 <img
                     src={user.profile?.photoUrl}
                     alt={"profile"}
-                    className="size-[65px] object-cover"
+                    className="size-[65px] object-cover object-center"
                 />
                 <div
                     onClick={deleteProfileImageHandler}

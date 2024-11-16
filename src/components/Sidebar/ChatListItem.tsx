@@ -29,6 +29,16 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
             where("seen", "==", false)
         );
         const unsubscribeUnreadMessagesCount = onSnapshot(unreadMessagesQuery, (querySnapshot) => {
+            if (!window.navigator.userActivation.isActive) {
+                querySnapshot.docs.map((snapshot) => {
+                    const data = snapshot.data();
+                    new Notification(chat.name, {
+                        icon: chat.photoUrl,
+                        tag: "chatix-new-message",
+                        body: data.type !== "text" ? data.type : data.content,
+                    })
+                });
+            }
             setUnreadMessagesCount(querySnapshot.size);
         });
 

@@ -10,6 +10,7 @@ import Helmet from "react-helmet";
 import EditProfile from "./pages/EditProfile";
 import 'react-toastify/dist/ReactToastify.css';
 import CreateAccount from "./pages/CreateAccount";
+import ResetPassword from "./pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/edit-profile",
         element: <EditProfile />
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />
       }
     ]
   },

@@ -67,6 +67,11 @@ const Login: React.FC = () => {
           <Link to={"/create-account"} className={button({ className: "w-full mt-2", size: "large" })}>
             I don't have account
           </Link>
+          <div className="flex justify-center mt-5">
+            <Link to={"/reset-password"} className="text-sm text-black/75 hover:underline">
+              I forgot my password
+            </Link>
+          </div>
         </div>
       </div>
     </div>

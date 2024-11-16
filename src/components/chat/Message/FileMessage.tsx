@@ -36,7 +36,7 @@ export default function FileMessage({ message }: MessagePropTypes) {
                     </a>
                     <ReactionsEmojiPicker message={message} />
                     <div className="ms-2">
-                        <div className="font-light mb-0.5 break-words max-w-60">{message.fileName}</div>
+                        <div className="font-light break-words max-w-48 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 mb-0.5 text-sm">{message.fileName}</div>
                         <div className={`text-xs ${messageIsForCurrentUser ? "text-white/60" : "text-black/50"}`}>{getFileSizeByMB(message.fileSize)} Mb</div>
                     </div>
                 </div>
