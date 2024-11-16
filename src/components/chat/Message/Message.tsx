@@ -79,12 +79,13 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage }) =
 
   return (
     <div id={message.id}
-      className={`flex relative ${!messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-lg mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/10" : ""}`} onDoubleClick={selectMessageForReply}>
-      <div className={`lg:max-w-none max-w-[90%] flex flex-col rounded-lg overflow-hidden border ${!messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
+      className={`flex relative ${!messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-lg mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/10" : ""}`}
+      onDoubleClick={selectMessageForReply}>
+      <div className={`lg:max-w-none max-w-[90%] flex flex-col ${!messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
         {
           replyedMessage && (
             <button onClick={scrollToMessageHandler}
-              className="bg-gradient-to-tr p-2 flex flex-col from-gray-600 to-gray-900 text-white">
+              className="bg-gradient-to-tr p-2 flex rounded-t-lg flex-col from-gray-600 to-gray-900 text-white">
               <span className="text-sm font-medium">
                 <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
                 {replyedMessage.sender.name}

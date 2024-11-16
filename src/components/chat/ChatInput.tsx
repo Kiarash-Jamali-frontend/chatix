@@ -117,7 +117,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
         <AnimatePresence>
           {
             messageSelectedForReply && (
-              <motion.div className="py-2.5 px-3 overflow-hidden absolute w-full -top-[90%] z-[60] shadow-sm rounded-full border bg-gradient-to-br from-gray-600 to-gray-800" variants={{
+              <motion.div className="py-2.5 px-3 overflow-hidden absolute w-full -top-[90%] z-[60] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800" variants={{
                 hide: {
                   opacity: 0
                 },
