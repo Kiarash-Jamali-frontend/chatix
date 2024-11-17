@@ -115,7 +115,7 @@ const Chat: React.FC = () => {
             const replyToMessage = messages.find((message) => m.replyTo === message.id);
             return (
               <Message key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
-                m.replyTo ? {
+                replyToMessage ? {
                   ...replyToMessage,
                   sender: replyToMessage.from === userData?.email ? userProfile : profile
                 } : null
