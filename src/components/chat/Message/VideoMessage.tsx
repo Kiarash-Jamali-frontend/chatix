@@ -47,7 +47,7 @@ export default function VideoMessage({ message, scrollDown }: PropTypes) {
                     ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white"
                     : "bg-white"
                     }
-               w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light font-Vazir ${message.replyTo ? "rounded-b-lg" : "rounded-lg border"}`}
+               w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light ${message.replyTo ? "rounded-b-lg" : "rounded-lg border"}`}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >

@@ -79,9 +79,9 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage }) =
 
   return (
     <div id={message.id}
-      className={`flex relative ${!messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-lg mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/10" : ""}`}
+      className={`flex relative ${!messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-lg mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/5" : ""}`}
       onDoubleClick={selectMessageForReply}>
-      <div className={`lg:max-w-none max-w-[90%] flex flex-col ${!messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
+      <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${!messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
         {
           replyedMessage && (
             <button onClick={scrollToMessageHandler}

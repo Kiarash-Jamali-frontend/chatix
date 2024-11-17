@@ -14,6 +14,7 @@ import getFileExt from "../../helpers/getFileExt";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changeMessageSelectedForReply } from "../../redux/slices/messageSelectedForReply";
+import { Parser } from "html-to-react";
 
 type PropTypes = {
   oppositeProfile: any;
@@ -21,6 +22,7 @@ type PropTypes = {
 };
 
 const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
+  const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
   const userProfile = useAppSelector((state: RootState) => state.user.profile);
   const messageSelectedForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
@@ -125,17 +127,17 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
                   opacity: 1
                 }
               }} initial="hide" exit="hide" animate="open">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between font-Vazir">
                   <div className="flex items-center text-xs md:text-sm">
                     <span className="text-white/75">
                       <FontAwesomeIcon icon={faReply} className="rotate-180 me-1.5" />
                       Reply {messageSelectedForReply.from === userEmail ? userProfile?.name : oppositeProfile.name}:
                     </span>
-                    <div className="ms-1.5 max-w-24 text-white overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div className="ms-1.5 lg:max-w-44 max-w-24 text-white overflow-hidden text-ellipsis whitespace-nowrap">
                       {
                         messageSelectedForReply.type !== "text" ? <span className="capitalize">{messageSelectedForReply.type}</span> : (
-                          messageSelectedForReply.content
-                        )
+                          parse(messageSelectedForReply.content)
+                      )
                       }
                     </div>
                   </div>

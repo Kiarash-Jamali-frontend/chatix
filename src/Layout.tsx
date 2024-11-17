@@ -76,7 +76,12 @@ const Layout: React.FC = () => {
     }
   }, []);
 
-  if ((user.status === "authenticated" && chatsStatus === "success") || location.pathname === "/login" || location.pathname === "/create-account") {
+  if (
+    (user.status === "authenticated" && chatsStatus === "success")
+    || location.pathname === "/login"
+    || location.pathname === "/create-account"
+    || location.pathname === "/reset-password"
+  ) {
     return (
       <div className="lg:flex min-h-svh bg-[url('/background.svg')] bg-cover">
         {
