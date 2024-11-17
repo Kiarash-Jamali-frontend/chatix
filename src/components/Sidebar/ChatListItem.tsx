@@ -110,7 +110,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                                     )
                                 }
                                 {
-                                    lastMessage?.type === "text" && parse(lastMessage.content.replace(/ +/g, ""))
+                                    lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(""))
                                 }
                             </div>
                         </div>
