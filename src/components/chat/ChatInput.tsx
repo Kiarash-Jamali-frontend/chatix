@@ -156,7 +156,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
           <ContentEditable
             html={messageText ? messageText : ""}
             onChange={(e) => setMessageText(e.target.value)}
-            className="focus:outline-none w-full text-sm max-w-none placeholder:text-sm max-h-11 overflow-hidden"
+            className="focus:outline-none w-full text-sm max-w-none placeholder:text-sm max-h-11 overflow-hidden font-Vazir"
           />
           {
             filePending ? (

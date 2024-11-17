@@ -96,7 +96,11 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     scrollDownHandler();
-  }, [messages.length])
+  }, [messages.length]);
+
+  useEffect(() => {
+    if (!pending) scrollDownHandler();
+  }, [pending])
 
   if (pending) {
     return (
