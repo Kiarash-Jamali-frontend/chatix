@@ -1,14 +1,11 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
-import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import deleteMessage from "../../../helpers/deleteMessage";
 import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import MessagePropTypes from "../../../types/MessagePropTypes";
 import { changeSelectedMessage } from "../../../redux/slices/selectedMessage";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
+import { changeImage } from "../../../redux/slices/openedImage";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
@@ -17,10 +14,6 @@ type PropTypes = MessagePropTypes & {
 export default function ImageMessage({ message, scrollDown }: PropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
-    const selectedMessageID = useAppSelector((state: RootState) => state.selectedMessage.data?.id);
-
-    const messageIsSelected = selectedMessageID === message.id;
-    const messageIsForCurrentUser = userEmail === message.from;
 
     const dispatch = useAppDispatch();
 
@@ -39,29 +32,9 @@ export default function ImageMessage({ message, scrollDown }: PropTypes) {
                     <div className="relative z-30">
                         <ReactionsEmojiPicker message={message} />
                     </div>
-                    <div className="relative rounded-lg overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/30 before:to-transparent">
+                    <div className="relative rounded-lg overflow-hidden cursor-pointer"
+                        onClick={() => dispatch(changeImage(message))}>
                         <img onLoad={scrollDown} src={message.content} className="object-cover max-w-[400px] max-h-[275px] w-full" />
-                        <div className={`bottom-3 right-3 absolute flex items-center z-50 ${!messageIsSelected ? "opacity-0" : ""} transition-all`}>
-                            {
-                                userEmail === message.from && (
-                                    <button
-                                        onClick={() => deleteMessage(message.id)}
-                                        className={`me-2 size-8 text-sm flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
-                                        <FontAwesomeIcon icon={faTrashCan} />
-                                    </button>
-                                )
-                            }
-                            <a href={message.content}
-                                className={`${userEmail === message.from ? "size-8" : "h-8 px-2"} text-sm flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
-                                <FontAwesomeIcon icon={faDownload} />
-                                {
-                                    !messageIsForCurrentUser &&
-                                    <span className="font-medium text-xs ms-1">
-                                        Download
-                                    </span>
-                                }
-                            </a>
-                        </div>
                     </div>
                 </div>
 

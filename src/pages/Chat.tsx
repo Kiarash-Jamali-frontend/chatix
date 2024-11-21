@@ -18,10 +18,12 @@ import Message from "../components/chat/Message/Message";
 import { RootState } from "../redux/store";
 import Loading from "../components/Loading";
 import { useAppSelector } from "../redux/hooks";
+import ImageModal from "../components/ImageModal";
 
 const Chat: React.FC = () => {
   const userData = useAppSelector((state: RootState) => state.user.data);
   const userProfile = useAppSelector((state: RootState) => state.user.profile);
+  const selectedMessageForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
   const { email } = useParams();
   const [pending, setPending] = useState<boolean>(true);
   const [profile, setProfile] = useState<any>();
@@ -111,10 +113,11 @@ const Chat: React.FC = () => {
   if (profile && roomData) {
     return (
       <div className="w-full max-w-[800px] h-svh mx-auto flex flex-col px-5">
+        <ImageModal />
         <div className="mb-5">
           <ChatHeader profile={profile} />
         </div>
-        <div className="overflow-auto mt-auto scrollbar-hidden py-5 transition-all scroll-smooth" ref={messagesListRef}>
+        <div className={`overflow-auto mt-auto scrollbar-hidden py-5 transition-all scroll-smooth`} ref={messagesListRef}>
           {messages.map((m) => {
             const replyToMessage = messages.find((message) => m.replyTo === message.id);
             return (
@@ -126,6 +129,7 @@ const Chat: React.FC = () => {
               } />
             )
           })}
+           {selectedMessageForReply ? <div className="pb-10"></div> : null}
         </div>
         <div className="mb-5">
           {

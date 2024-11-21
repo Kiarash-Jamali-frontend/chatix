@@ -21,6 +21,14 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
     const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(chat.notSeenedMessages);
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
 
+    const sendNewMessageNotification = (msg: any) => {
+        new Notification(chat.name, {
+            icon: chat.photoUrl,
+            tag: "chatix-new-message",
+            body: msg.type !== "text" ? msg.type : msg.content,
+        });
+    }
+
     useEffect(() => {
         const unreadMessagesQuery = query(
             collection(db, "chat_message"),
@@ -32,11 +40,15 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
             if (!window.navigator.userActivation.isActive) {
                 querySnapshot.docs.map((snapshot) => {
                     const data = snapshot.data();
-                    new Notification(chat.name, {
-                        icon: chat.photoUrl,
-                        tag: "chatix-new-message",
-                        body: data.type !== "text" ? data.type : data.content,
-                    })
+                    if (Notification.permission !== "granted") {
+                        Notification.requestPermission((permission) => {
+                            if (permission === "granted") {
+                                sendNewMessageNotification(data)
+                            }
+                        })
+                    } else {
+                        sendNewMessageNotification(data);
+                    }
                 });
             }
             setUnreadMessagesCount(querySnapshot.size);

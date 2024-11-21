@@ -4,6 +4,7 @@ import chatsReducer from "./slices/chats";
 import selectedMessageReducer from "./slices/selectedMessage";
 import messageSelectedForReplyReducer from "./slices/messageSelectedForReply";
 import currentPlayingMediaReducer from "./slices/currentPlayingMedia";
+import openedImageReducer from "./slices/openedImage";
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
         chats: chatsReducer,
         selectedMessage: selectedMessageReducer,
         currentPlayingMedia: currentPlayingMediaReducer,
-        messageSelectedForReply: messageSelectedForReplyReducer
+        messageSelectedForReply: messageSelectedForReplyReducer,
+        openedImage: openedImageReducer,
     },
 })
 

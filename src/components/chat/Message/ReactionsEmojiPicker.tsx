@@ -21,11 +21,14 @@ export default function ReactionsEmojiPicker({ message }: PropTypes) {
             {
                 messageIsSelected && !messageIsForCurrentUser && (
                     <motion.div className={`absolute right-3 top-[-1.35rem] flex items-center z-50`} initial={{
-                        opacity: 0
+                        opacity: 0,
+                        transform: "scale(0.9) translateX(15px)"
                     }} animate={{
-                        opacity: 1
+                        opacity: 1,
+                        transform: "scale(1) translateX(0px)"
                     }} exit={{
-                        opacity: 0
+                        opacity: 0,
+                        transform: "scale(0.9) translateX(15px)"
                     }}>
                         <EmojiPicker reactionsDefaultOpen={true} allowExpandReactions={false} className="!bg-white" onReactionClick={(e) => changeReaction(message.id, e.getImageUrl())} />
                     </motion.div>

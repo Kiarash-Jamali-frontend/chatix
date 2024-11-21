@@ -102,10 +102,12 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
           emojiPickerIsOpen && (
             <motion.div variants={{
               hide: {
-                opacity: 0
+                opacity: 0,
+                transform: "scale(0.9) translate(-10px, 20px)"
               },
               open: {
-                opacity: 1
+                opacity: 1,
+                transform: "scale(1) translate(0px, 0px)"
               }
             }} initial="hide" exit="hide" animate="open" className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
               <EmojiPicker open={emojiPickerIsOpen}
@@ -136,7 +138,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
                     <div className="ms-1.5 lg:max-w-44 max-w-24 text-white overflow-hidden text-ellipsis whitespace-nowrap">
                       {
                         messageSelectedForReply.type !== "text" ? <span className="capitalize">{messageSelectedForReply.type}</span> : (
-                          parse(messageSelectedForReply.content)
+                          parse(messageSelectedForReply.content.split("<br>").join(""))
                       )
                       }
                     </div>

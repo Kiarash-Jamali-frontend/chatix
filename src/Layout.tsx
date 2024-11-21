@@ -9,6 +9,7 @@ import Loading from "./components/Loading";
 import { doc, getDoc, runTransaction, setDoc, Timestamp } from "firebase/firestore";
 import { changeChatsStatus, getChats } from "./redux/slices/chats";
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
+import Modal from "./components/Modal";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -83,11 +84,14 @@ const Layout: React.FC = () => {
     || location.pathname === "/reset-password"
   ) {
     return (
-      <div className="lg:flex min-h-svh bg-[url('/background.svg')] bg-cover">
-        {
-          (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
-        }
-        <Outlet />
+      <div className="lg:flex min-h-svh select-none before:absolute before:inset-0 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0">
+        <div className="relative z-10 w-full h-full flex">
+          {
+            (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
+          }
+          <Outlet />
+        </div>
+        <Modal />
       </div>
     );
   }
