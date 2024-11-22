@@ -11,6 +11,8 @@ import { changeUserData, getUserProfile } from "../redux/slices/user";
 import toastConf from "../helpers/toastConfig";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "../helpers/firebase";
+import Lottie from 'react-lottie-player';
+import LoginMessageAnimation from '../lottie/LoginMessageAnimation.json';
 
 const CreateAccount: React.FC = () => {
 
@@ -66,34 +68,44 @@ const CreateAccount: React.FC = () => {
     return (
         <div className="flex min-h-svh w-full justify-center items-center">
             <ToastContainer />
-            <div className="bg-white rounded-2xl px-10 py-9 w-full max-w-[450px] shadow">
-                <h1 className="text-2xl font-bold mb-2 mt-5">Create account</h1>
-                <span className="text-sm text-black/60">
-                    Fill out the form below to create an account
-                </span>
-                <div className="mt-4">
+            <div className="bg-white h-full lg:h-auto lg:rounded-2xl w-full lg:max-w-[900px] grid gap-x-5 grid-cols-1 lg:grid-cols-2 shadow-xl">
+                <div className="px-10 py-8 lg:py-9 lg:border-e mt-auto lg:mt-0 max-lg:border-t">
+                    <h1 className="text-2xl font-bold mb-2">Create Account</h1>
+                    <span className="text-sm text-black/60">
+                        Fill out the form below to create an account
+                    </span>
                     <div className="mt-4">
-                        <label htmlFor="email" className="text-sm font-medium">Email:</label>
-                        <input id="email" type="email" placeholder="Enter your email ..." className={input()} required
-                            value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <div className="mt-4">
+                            <label htmlFor="email" className="text-sm font-medium">Email:</label>
+                            <input id="email" type="email" placeholder="Enter your email ..." className={input()} required
+                                value={email} onChange={(e) => setEmail(e.target.value)} />
+                        </div>
+                        <div className="mt-4">
+                            <label htmlFor="password" className="text-sm font-medium">Password: <span className="text-[11px] text-black/60 font-light">(It must contain numbers and special characters)</span></label>
+                            <input type="password" id="password" placeholder="Enter your password ..." className={input()}
+                                value={password} onChange={(e) => setPassword(e.target.value)} />
+                        </div>
+                        <div className="mt-4">
+                            <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password:</label>
+                            <input type="password" id="confirmPassword" placeholder="Enter your confirm password ..." className={input()}
+                                value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        </div>
+                        <button onClick={validateInputs}
+                            className={button({ intent: "primary", className: "w-full mt-4", size: "large" })} disabled={loading}>
+                            Create account <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
+                        </button>
+                        <Link to={"/login"} className={button({ className: "w-full mt-2", size: "large" })}>
+                            I have account
+                        </Link>
                     </div>
-                    <div className="mt-4">
-                        <label htmlFor="password" className="text-sm font-medium">Password: <span className="text-[11px] text-black/60 font-light">(It must contain numbers and special characters)</span></label>
-                        <input type="password" id="password" placeholder="Enter your password ..." className={input()}
-                            value={password} onChange={(e) => setPassword(e.target.value)} />
-                    </div>
-                    <div className="mt-4">
-                        <label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password:</label>
-                        <input type="password" id="confirmPassword" placeholder="Enter your confirm password ..." className={input()}
-                            value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                    </div>
-                    <button onClick={validateInputs}
-                        className={button({ intent: "dark", className: "w-full mt-4", size: "large" })} disabled={loading}>
-                        Create account <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
-                    </button>
-                    <Link to={"/login"} className={button({ className: "w-full mt-2", size: "large" })}>
-                        I have account
-                    </Link>
+                </div>
+                <div className="flex lg:pe-5 -order-1 lg:order-2">
+                    <Lottie
+                        loop
+                        className="flex lg:grow w-auto mx-auto"
+                        animationData={LoginMessageAnimation}
+                        play
+                    />
                 </div>
             </div>
         </div>

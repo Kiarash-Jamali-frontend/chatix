@@ -34,7 +34,7 @@ export default function ResetPassword() {
             <div className="flex min-h-svh w-full justify-center items-center">
                 <ToastContainer />
                 <div className="bg-white rounded-2xl px-10 py-9 w-full max-w-[450px] shadow">
-                    <h1 className="text-2xl font-bold mb-2 mt-5">Reset password</h1>
+                    <h1 className="text-2xl font-bold mb-2">Reset password</h1>
                     <span className="text-sm text-black/60">
                         {
                             !emailIsSended ? "Enter your email to send verification email to reset your password" : `Verification email sent to ${email}`
@@ -50,7 +50,7 @@ export default function ResetPassword() {
                                             value={email} onChange={(e) => setEmail(e.target.value)} />
                                     </div>
                                     <button onClick={sendVerificationEmail}
-                                        className={button({ intent: "dark", className: "w-full mt-4", size: "large" })} disabled={pending}>
+                                        className={button({ intent: "primary", className: "w-full mt-4", size: "large" })} disabled={pending}>
                                         Send verification email  <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
                                     </button>
                                     <Link to={"/login"} className={button({ className: "w-full mt-2", size: "large" })}>

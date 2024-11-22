@@ -168,9 +168,10 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
             ) : (
               <button
                 className={button({
-                  intent: "dark",
-                  className: `${textMessagePending && "pointer-events-none opacity-70"} !rounded-full`,
+                  intent: "primary",
+                  className: `!py-2 !rounded-full`,
                 })}
+                disabled={textMessagePending}
                 onClick={sendMessageHandler}
               >
                 Send

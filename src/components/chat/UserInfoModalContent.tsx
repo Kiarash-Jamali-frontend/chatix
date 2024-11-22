@@ -103,6 +103,12 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                             </button>
                         )
                     }
+
+                    {
+                        (chatRoom.blockedFrom === userProfile.email && chatRoom.isBlocked) && (
+                            <p className="text-sm text-center my-auto text-black/75">MR.X has blocked you.</p>
+                        )
+                    }
                 </div>
             </motion.div>
         </AnimatePresence>

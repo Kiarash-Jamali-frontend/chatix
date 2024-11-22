@@ -176,7 +176,7 @@ export default function EditProfile() {
                 </div>
 
                 <div className="mt-auto">
-                    <button disabled={pending} className={button({ intent: "dark", size: "large", className: "w-full mt-4" })} onClick={changeUserProfileHandler}>
+                    <button disabled={pending} className={button({ intent: "primary", size: "large", className: "w-full mt-4" })} onClick={changeUserProfileHandler}>
                         Submit changes
                     </button>
                 </div>

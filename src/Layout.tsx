@@ -9,7 +9,6 @@ import Loading from "./components/Loading";
 import { doc, getDoc, runTransaction, setDoc, Timestamp } from "firebase/firestore";
 import { changeChatsStatus, getChats } from "./redux/slices/chats";
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
-import Modal from "./components/Modal";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -91,7 +90,6 @@ const Layout: React.FC = () => {
           }
           <Outlet />
         </div>
-        <Modal />
       </div>
     );
   }

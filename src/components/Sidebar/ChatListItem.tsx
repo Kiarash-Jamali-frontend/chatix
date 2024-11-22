@@ -22,10 +22,12 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
 
     const sendNewMessageNotification = (msg: any) => {
+        const domParser = new DOMParser();
+        const parsedMsg = domParser.parseFromString(msg.content, "text/html");
         new Notification(chat.name, {
             icon: chat.photoUrl,
             tag: "chatix-new-message",
-            body: msg.type !== "text" ? msg.type : msg.content,
+            body: msg.type !== "text" ? msg.type : parsedMsg.body.innerText ? parsedMsg.body.innerText : "Emoji",
         });
     }
 

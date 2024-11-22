@@ -4,7 +4,7 @@ import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { faPencil, faShareNodes } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faPlus, faRightFromBracket, faShareNodes } from "@fortawesome/free-solid-svg-icons";
 import { RootState } from "../../redux/store";
 import ChatListItem from "./ChatListItem";
 import { useAppSelector } from "../../redux/hooks";
@@ -90,13 +90,14 @@ const Sidebar: React.FC = () => {
         <div className="p-6 mt-auto">
           <Link
             to={"/create-chat"}
-            className={button({ intent: "dark", className: "w-full hidden lg:flex" })}
+            className={button({ intent: "primaryOutline", className: "w-full hidden lg:flex" })}
           >
+            <FontAwesomeIcon icon={faPlus} className="me-2" />
             Create chat
           </Link>
           <Link
             to={"/create-chat"}
-            className={button({ intent: "dark", size: "large", className: "w-full flex lg:hidden" })}
+            className={button({ intent: "primary", size: "large", className: "w-full flex lg:hidden" })}
           >
             Create chat
           </Link>
@@ -105,6 +106,7 @@ const Sidebar: React.FC = () => {
             onClick={signoutFromChatix}
             className={button({ className: "w-full max-lg:hidden mt-2" })}
           >
+            <FontAwesomeIcon icon={faRightFromBracket} className="rotate-180 me-2" />
             Logout
           </button>
         </div>
