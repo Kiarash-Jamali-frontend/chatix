@@ -35,15 +35,12 @@ export default function ImageModal() {
                                 transform: "scale(1) translateY(0px)"
                             }
                         }} initial="hide" animate="open" exit="hide">
-                        <div className="fixed inset-0 max-lg:pointer-events-none" onClick={() => dispatch(hideImage())}>
+                        <div className="fixed inset-0" onClick={() => dispatch(hideImage())}>
 
                         </div>
-                        <button className="lg:hidden bg-white text-black size-12 flex items-center justify-center rounded-full fixed top-7 left-4 z-[999]" onClick={() => dispatch(hideImage())}>
-                            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
-                        </button>
                         <div className="relative px-4">
                             <div className="relative">
-                                <img src={openedImageMessage.content} className="object-contain w-full h-full" />
+                                <img src={openedImageMessage.content} className="object-contain w-full h-full max-h-[calc(100svh-12rem)] max-w-[calc(100svw-1.5rem)]" />
                                 <div className={`bottom-3 right-3 absolute flex items-center z-50 transition-all`}>
                                     {
                                         userEmail === openedImageMessage.from && (
