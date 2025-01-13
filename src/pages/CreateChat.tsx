@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react"
 import input from "../cva/input";
 import button from "../cva/button";
 import { addDoc, collection, doc, getDoc, } from "firebase/firestore";
-import { db } from "../helpers/firebase";
+import { db } from "../../utils/firebase";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -52,7 +52,7 @@ export default function CreateChat() {
                     <Link to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
                     </Link>
-                    <h2 className="font-bold text-2xl">
+                    <h2 className="font-bold text-2xl text-neutral-800">
                         Create chat
                     </h2>
                 </div>

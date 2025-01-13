@@ -1,21 +1,21 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { RootState } from "../../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import deleteMessage from "../../../helpers/deleteMessage";
+import deleteMessage from "../../helpers/messages/deleteMessage";
 import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
-import MessagePropTypes from "../../../types/MessagePropTypes";
-import { changeSelectedMessage } from "../../../redux/slices/selectedMessage";
+import MessagePropTypes from "../../types/MessagePropTypes";
+import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import { useEffect, useRef } from "react";
-import { changeCurrentPlayingMedia } from "../../../redux/slices/currentPlayingMedia";
+import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
 }
 
-export default function VideoMessage({ message, scrollDown }: PropTypes) {
+export default function VideoMessage({ message, scrollDown, isGroupMessage }: PropTypes) {
 
     const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -44,10 +44,10 @@ export default function VideoMessage({ message, scrollDown }: PropTypes) {
         <>
             <button
                 className={`${messageIsForCurrentUser
-                    ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white"
+                    ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
                     : "bg-white"
                     }
-               w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light ${message.replyTo ? "rounded-b-lg" : "rounded-lg border"}`}
+               w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >
@@ -55,7 +55,7 @@ export default function VideoMessage({ message, scrollDown }: PropTypes) {
                     {
                         messageIsForCurrentUser && (
                             <button
-                                onClick={() => deleteMessage(message.id)}
+                                onClick={() => deleteMessage(message.id, isGroupMessage)}
                                 className={`${!messageIsSelected ? "opacity-0" : ""} absolute z-50 size-8 text-sm top-3 left-3 flex items-center justify-center bg-white hover:bg-gray-50 transition-all text-black rounded-full`}>
                                 <FontAwesomeIcon icon={faTrashCan} />
                             </button>
@@ -65,11 +65,11 @@ export default function VideoMessage({ message, scrollDown }: PropTypes) {
                         className="rounded-lg object-cover max-w-[400px] max-h-[275px] w-full" controls>
 
                     </video>
-                    <ReactionsEmojiPicker
+                    <ReactionsEmojiPicker isGroupMessage={isGroupMessage}
                         message={message} />
                     <div className="flex items-center justify-end mt-2">
                         <MessageTime message={message} />
-                        {message.from === userEmail && (
+                        {message.from === userEmail && !isGroupMessage && (
                             <MessageSeen message={message} />
                         )}
                     </div>

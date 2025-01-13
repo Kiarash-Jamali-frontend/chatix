@@ -1,5 +1,5 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "./firebase";
+import { db } from "../../../utils/firebase";
 
 export default async function getNotSeenedMessagesCount(from: string, to: string) {
     const q = query(

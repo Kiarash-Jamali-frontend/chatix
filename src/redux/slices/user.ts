@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Profile from "../../types/Profile";
 import { doc, getDoc, runTransaction } from "firebase/firestore";
-import { db, storage } from "../../helpers/firebase";
+import { db, storage } from "../../../utils/firebase";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import getFileExt from "../../helpers/getFileExt";
+import getFileExt from "../../helpers/files/getFileExt";
 
 type UserState = {
     data: {
         email: string,
     } | null,
-    profile: Profile | null;
+    profile: (Profile & { id: string }) | null;
     status: "loading" | "authenticated" | "unauthenticated"
 }
 
@@ -24,6 +24,7 @@ export const getUserProfile = createAsyncThunk("user/getUserProfile", async (ema
     const docSnap = await getDoc(docRef);
     return {
         ...docSnap.data() as Profile,
+        id: docSnap.id
     }
 });
 

@@ -6,8 +6,8 @@ import button from "../cva/button";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../helpers/firebase";
-import toastConf from "../helpers/toastConfig";
+import { auth } from "../../utils/firebase";
+import toastConf from "../../utils/toastConfig";
 
 export default function ResetPassword() {
 

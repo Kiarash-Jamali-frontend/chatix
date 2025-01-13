@@ -1,17 +1,17 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { changeSelectedMessage } from "../../../redux/slices/selectedMessage";
-import { RootState } from "../../../redux/store";
-import MessagePropTypes from "../../../types/MessagePropTypes";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
+import { RootState } from "../../redux/store";
+import MessagePropTypes from "../../types/MessagePropTypes";
 import DeleteTextFileAudioMessageButton from "./DeleteTextFileAudioMessageButton";
 import { faDownload, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
 import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { changeCurrentPlayingMedia } from "../../../redux/slices/currentPlayingMedia";
+import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 
-export default function AudioMessage({ message }: MessagePropTypes) {
+export default function AudioMessage({ message, isGroupMessage }: MessagePropTypes) {
 
     const [isStopped, setIsStopped] = useState<boolean>(true);
     const [duration, setDuration] = useState<number>(0);
@@ -115,17 +115,17 @@ export default function AudioMessage({ message }: MessagePropTypes) {
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 className={`${messageIsForCurrentUser
-                    ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:opacity-95"
+                    ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white hover:opacity-95"
                     : "bg-white hover:bg-gray-50"
-                    } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-e-none" : ""}
-             w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default ${message.replyTo ? "rounded-b-lg" : "rounded-lg border"}`}
+                    } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-e-none" : ""}
+             w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
             >
                 <div className="flex relative">
                     <button onClick={changeIsPlayingHandler}
-                        className={`flex items-center justify-center size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-600" : "bg-black/5 text-black border shadow-sm"}`}>
+                        className={`flex items-center justify-center size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-sm"}`}>
                         <FontAwesomeIcon icon={!isStopped ? faPause : faPlay} size="lg" />
                     </button>
-                    <ReactionsEmojiPicker message={message} />
+                    <ReactionsEmojiPicker isGroupMessage={isGroupMessage} message={message} />
                     <div className="ms-2">
                         <div className="flex items-center">
                             <div className="font-light break-words max-w-44 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>
@@ -135,14 +135,14 @@ export default function AudioMessage({ message }: MessagePropTypes) {
                         </div>
                         <div className={`flex items-center mt-1 ${messageIsForCurrentUser ? "text-white/60" : "text-black/60"}`}>
                             <span className="text-xs">{formatTime(progressTime)}</span>
-                            <input type="range" value={progressTime} onChange={setAudioCurrentTimeHandler} ref={audioProgressBarRef} className="mx-1.5 h-1.5" />
+                            <input type="range" value={progressTime} onChange={setAudioCurrentTimeHandler} ref={audioProgressBarRef} className="mx-1.5 h-1.5 audio-message-timeline-range-thumb" />
                             <span className="text-xs">{formatTime(duration)}</span>
                         </div>
                     </div>
                 </div>
                 <div className="mt-1 flex justify-end">
                     <MessageTime message={message} />
-                    {message.from === userEmail && (
+                    {message.from === userEmail && !isGroupMessage && (
                         <MessageSeen message={message} />
                     )}
                 </div>

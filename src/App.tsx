@@ -11,6 +11,8 @@ import EditProfile from "./pages/EditProfile";
 import 'react-toastify/dist/ReactToastify.css';
 import CreateAccount from "./pages/CreateAccount";
 import ResetPassword from "./pages/ResetPassword";
+import CreateGroup from "./pages/CreateGroup";
+import Group from "./pages/Group";
 
 const router = createBrowserRouter([
   {
@@ -26,8 +28,16 @@ const router = createBrowserRouter([
         element: <CreateChat />,
       },
       {
+        path: "/create-group",
+        element: <CreateGroup />,
+      },
+      {
         path: "/chat/:email",
         element: <Chat />
+      },
+      {
+        path: "/group/:groupId",
+        element: <Group />
       },
       {
         path: "/login",
@@ -51,7 +61,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="min-h-svh">
+    <div className="min-h-svh select-none">
       <Helmet>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />

@@ -22,11 +22,11 @@ export default function SidebarProfileImage() {
                 <img
                     src={user.profile?.photoUrl}
                     alt={"profile"}
-                    className="size-[65px] object-cover object-center"
+                    className="size-16 object-cover object-center"
                 />
                 <div
                     onClick={deleteProfileImageHandler}
-                    className={`${!pending && "opacity-0"} absolute inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center group-hover:opacity-100 transition-opacity duration-300 cursor-pointer`}>
+                    className={`${!pending && "opacity-0 cursor-pointer"} absolute inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center group-hover:opacity-100 transition-opacity duration-300`}>
                     {
                         !pending ? (
                             <FontAwesomeIcon icon={faTrashCan} color="#fff" size="xl" />

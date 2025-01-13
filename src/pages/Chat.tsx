@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { redirect, useParams } from "react-router-dom";
-import ChatInput from "../components/chat/ChatInput";
 import ChatHeader from "../components/chat/ChatHeader";
 import {
   and,
@@ -13,18 +12,21 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../helpers/firebase";
-import Message from "../components/chat/Message/Message";
+import { db } from "../../utils/firebase";
+import Message from "../components/Message/Message";
 import { RootState } from "../redux/store";
 import Loading from "../components/Loading";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import ImageModal from "../components/ImageModal";
+import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
+import ChatInput from "../components/ChatInput";
 
 const Chat: React.FC = () => {
   const userData = useAppSelector((state: RootState) => state.user.data);
   const userProfile = useAppSelector((state: RootState) => state.user.profile);
   const selectedMessageForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
   const { email } = useParams();
+  const dispatch = useAppDispatch();
   const [pending, setPending] = useState<boolean>(true);
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
@@ -34,6 +36,14 @@ const Chat: React.FC = () => {
   const scrollDownHandler = () => {
     messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
   }
+
+  useEffect(() => {
+    dispatch(changeSelectedChatOrGroupID(email));
+
+    return () => {
+      dispatch(changeSelectedChatOrGroupID(null));
+    }
+  }, [email])
 
   useEffect(() => {
     // messages
@@ -112,12 +122,10 @@ const Chat: React.FC = () => {
 
   if (profile && roomData) {
     return (
-      <div className="w-full max-w-[800px] h-svh mx-auto flex flex-col px-5">
+      <div className="w-full flex flex-col h-svh">
+        <ChatHeader profile={profile} />
         <ImageModal />
-        <div className="mb-5">
-          <ChatHeader profile={profile} />
-        </div>
-        <div className={`overflow-auto mt-auto scrollbar-hidden py-5 transition-all scroll-smooth`} ref={messagesListRef}>
+        <div className={`overflow-auto p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`} ref={messagesListRef}>
           {messages.map((m) => {
             const replyToMessage = messages.find((message) => m.replyTo === message.id);
             return (
@@ -129,7 +137,7 @@ const Chat: React.FC = () => {
               } />
             )
           })}
-           {selectedMessageForReply ? <div className="pb-10"></div> : null}
+          {selectedMessageForReply ? <div className="pb-10"></div> : null}
         </div>
         <div className="mb-5">
           {
@@ -150,11 +158,13 @@ const Chat: React.FC = () => {
               </div>
             )
           }
-          {
-            !roomData.isBlocked && email && (
-              <ChatInput chatId={roomData.id} oppositeProfile={profile} />
-            )
-          }
+          <div className="px-5 mx-auto max-w-[810px]">
+            {
+              !roomData.isBlocked && email && (
+                <ChatInput mode="private" chatId={roomData.id} oppositeProfile={profile} />
+              )
+            }
+          </div>
         </div>
       </div>
     );

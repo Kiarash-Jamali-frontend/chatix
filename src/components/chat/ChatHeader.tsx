@@ -1,4 +1,3 @@
-import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import button from "../../cva/button";
@@ -11,7 +10,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../../helpers/firebase";
+import { db } from "../../../utils/firebase";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import Profile from "../../types/Profile";
@@ -21,6 +20,7 @@ import UserLastActivity from "./UserLastActivity";
 import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
 import Modal from "../Modal";
 import UserInfoModalContent from "./UserInfoModalContent";
+import GradiantProfile from "../GradiantProfile";
 
 type PropTypes = {
   profile: Profile & { email: string };
@@ -63,13 +63,13 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
       <Modal isActive={userInfoModalIsActive} setIsActive={setUserInfoModalIsActive}>
         <UserInfoModalContent chatRoom={chatRoom} setIsActive={setUserInfoModalIsActive} userProfile={profile} />
       </Modal>
-      <div className="flex items-center mt-4">
-        <Link to={"/"} className="lg:hidden me-3">
-          <FontAwesomeIcon icon={faArrowLeft} size="lg" />
-        </Link>
-        <div className="bg-white border shadow-sm px-4 py-3 rounded-full w-full">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center cursor-pointer" onClick={() => setUserInfoModalIsActive(true)}>
+      <div className="flex items-center">
+        <div className="bg-white shadow-sm border-b px-4 py-3 w-full flex items-center">
+          <Link to={"/"} className="lg:hidden me-3">
+            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+          </Link>
+          <div className="flex items-center justify-between flex-grow">
+            <div className="flex items-center cursor-pointer flex-grow" onClick={() => setUserInfoModalIsActive(true)}>
               {/*Profile image*/}
               {profile.photoUrl ? (
                 <img
@@ -78,12 +78,10 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
                   className="size-12 object-cover rounded-full"
                 />
               ) : (
-                <div className="size-12 border-2 rounded-full bg-base flex items-center justify-center">
-                  <FontAwesomeIcon icon={faUser} size="lg" />
-                </div>
+                <GradiantProfile name={profile.name} />
               )}
               <div className="ps-2 flex flex-col">
-                <div className="font-semibold mb-1">
+                <div className="font-semibold mb-0.5 font-Vazir">
                   {profile.name}
                 </div>
                 <UserLastActivity profile={profile} />
@@ -93,7 +91,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
               chatRoom && (
                 (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked) && (
                   <button
-                    className={button({ intent: chatRoom.isBlocked ? "default" : "danger", className: "!rounded-full" })}
+                    className={button({ intent: chatRoom.isBlocked ? "default" : "danger", size: "small", className: "!rounded-full" })}
                     onClick={changeIsBlockingUser}
                   >
                     {chatRoom.isBlocked ? "Unblock" : "Block"}

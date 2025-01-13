@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "./firebase";
-import Profile from "../types/Profile";
+import { db } from "../../../utils/firebase";
+import Profile from "../../types/Profile";
 
 export default async function getProfile(email: string): Promise<(Profile & { email: string }) | null> {
     const docRef = doc(db, "profile", email);

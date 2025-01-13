@@ -1,18 +1,18 @@
 import { faClose, faShareNodes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Profile from "../../types/Profile";
-import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import UserLastActivity from "./UserLastActivity";
 import { useAppSelector } from "../../redux/hooks";
 import button from "../../cva/button";
-import toastConf from "../../helpers/toastConfig";
+import toastConf from "../../../utils/toastConfig";
 import { toast } from "react-toastify";
-import shareData from "../../helpers/shareData";
-import canBrowserShareData from "../../helpers/canBrowserShareData";
+import shareData from "../../helpers/shareWebAPI/shareData";
+import canBrowserShareData from "../../helpers/shareWebAPI/canBrowserShareData";
 import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
 import { RootState } from "../../redux/store";
 import { Dispatch, SetStateAction } from "react";
+import GradiantProfile from "../GradiantProfile";
 
 type PropTypes = {
     userProfile: Profile & { email: string },
@@ -43,11 +43,11 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                 variants={{
                     hide: {
                         opacity: 0,
-                        transform: "scale(0.95) translateY(40px)"
+                        transform: "translateY(25px)"
                     },
                     open: {
                         opacity: 1,
-                        transform: "scale(1) translateY(0px)"
+                        transform: "translateY(0px)"
                     }
                 }} transition={{ duration: 0.35 }}>
                 <div className="flex justify-between items-center">
@@ -60,13 +60,11 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                                     className="size-14 object-cover rounded-full"
                                 />
                             ) : (
-                                <div className="size-14 border-2 rounded-full bg-base flex items-center justify-center">
-                                    <FontAwesomeIcon icon={faUser} size="lg" />
-                                </div>
+                                <GradiantProfile name={userProfile.name} />
                             )
                         }
                         <div className="ms-3 flex flex-col">
-                            <div className="font-semibold mb-1">{userProfile.name}</div>
+                            <div className="font-semibold mb-0.5 font-Vazir">{userProfile.name}</div>
                             <UserLastActivity profile={userProfile} />
                         </div>
                     </div>

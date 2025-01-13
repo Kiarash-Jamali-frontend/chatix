@@ -8,9 +8,9 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../redux/hooks";
 import { changeUserData, getUserProfile } from "../redux/slices/user";
-import toastConf from "../helpers/toastConfig";
+import toastConf from "../../utils/toastConfig";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
-import { db } from "../helpers/firebase";
+import { db } from "../../utils/firebase";
 import Lottie from 'react-lottie-player';
 import LoginMessageAnimation from '../lottie/LoginMessageAnimation.json';
 

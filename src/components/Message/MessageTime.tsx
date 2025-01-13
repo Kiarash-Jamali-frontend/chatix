@@ -1,6 +1,6 @@
-import getHourAndTime from "../../../helpers/getHourAndTime";
-import { useAppSelector } from "../../../redux/hooks";
-import { RootState } from "../../../redux/store";
+import getHourAndTime from "../../helpers/getHourAndTime";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
 
 export default function MessageTime({ message }: { message: any }) {
 

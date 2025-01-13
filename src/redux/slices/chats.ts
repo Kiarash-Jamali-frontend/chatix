@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { collection, getDocs, or, query, where } from "firebase/firestore";
-import { db } from "../../helpers/firebase";
-import getNotSeenedMessagesCount from "../../helpers/getNotSeenedMessagesCount";
+import { db } from "../../../utils/firebase";
+import getNotSeenedMessagesCount from "../../helpers/chat/getNotSeenedMessagesCount";
 import Profile from "../../types/Profile";
-import getProfile from "../../helpers/getProfile";
+import getProfile from "../../helpers/usersAndProfiles/getProfile";
 
 type ChatsState = {
     list: (Profile & { email: string, notSeenedMessages: number })[],

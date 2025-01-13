@@ -1,10 +1,15 @@
 import { Parser } from "html-to-react";
-import changeReaction from "../../../helpers/changeReaction";
-import { useAppSelector } from "../../../redux/hooks";
-import { RootState } from "../../../redux/store";
+import changeReaction from "../../helpers/messages/changeReaction";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function MessageReaction({ message }: { message: any }) {
+type PropTypes = {
+    message: any;
+    isGroupMessage?: boolean;
+}
+
+export default function MessageReaction({ message, isGroupMessage }: PropTypes) {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const messageIsForCurrentUser = userEmail === message.from;
     const { parse } = Parser();
@@ -25,7 +30,7 @@ export default function MessageReaction({ message }: { message: any }) {
                         }} animate="open" exit="hide" initial="hide"
                         className={`flex items-end top-0 bottom-0 z-20 mx-1 ${!messageIsForCurrentUser ? "" : "cursor-default"}`}
                         onClick={() => {
-                            !messageIsForCurrentUser && changeReaction(message.id, "")
+                            !messageIsForCurrentUser && changeReaction(message.id, "", isGroupMessage ? true : false)
                         }}>
                         <div className="size-8 border flex items-center justify-center bg-white rounded-full">
                             {parse(message.reaction)}

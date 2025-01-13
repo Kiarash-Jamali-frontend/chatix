@@ -1,0 +1,115 @@
+import { Link } from "react-router-dom";
+import { useAppSelector } from "../../redux/hooks";
+import { SidebarGroupData } from "../../redux/slices/groups";
+import { RootState } from "../../redux/store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFile, faVideo } from "@fortawesome/free-solid-svg-icons";
+import getHourAndTime from "../../helpers/getHourAndTime";
+import { useEffect, useState } from "react";
+import { db } from "../../../utils/firebase";
+import { collection, doc, getDoc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { faImage } from "@fortawesome/free-regular-svg-icons";
+import { Parser } from "html-to-react";
+import GradiantProfile from "../GradiantProfile";
+
+export default function GroupListItem({ group }: { group: SidebarGroupData }) {
+    const { parse } = Parser();
+    const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
+    const selectedChatOrGroupID = useAppSelector((state: RootState) => state.selectedChatOrGroup.id);
+    const groupIsSelected = selectedChatOrGroupID === group.id;
+    const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
+
+    useEffect(() => {
+        const lastMessageQuery = query(
+            collection(db, "group_message"),
+            where("to", "==", group.id),
+            orderBy("timestamp", "desc"),
+            limit(1)
+        );
+        const unsubscribeLastMessage = onSnapshot(lastMessageQuery, async (querySnapshot) => {
+            if (querySnapshot.size) {
+                const lastMsgData = querySnapshot.docs[0].data();
+                const senderProfileDocRef = doc(db, "profile", lastMsgData.from);
+                const senderProfileSnapshot = await getDoc(senderProfileDocRef);
+                const senderProfile = senderProfileSnapshot.data();
+                setLastMessage({ ...lastMsgData, senderProfile: { ...senderProfile, email: lastMsgData.from } });
+            }
+        });
+
+        return () => {
+            unsubscribeLastMessage();
+        }
+    }, [])
+    return (
+        <>
+            <div className="px-2">
+                <Link
+                    to={`/group/${group.id}`}
+                    className={`flex items-center justify-between ${groupIsSelected ? "bg-blue-500 hover:bg-blue-600" : "hover:bg-base/50 hover:border-black/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors duration-300`}
+                    key={group.id}
+                >
+                    <div className="flex items-center w-full flex-grow">
+                        {/*Profile image*/}
+                        {group.groupPhotoUrl ? (
+                            <img
+                                src={group.groupPhotoUrl}
+                                alt={"profile"}
+                                className="size-12 min-w-12 object-cover rounded-full"
+                            />
+                        ) : (
+                            <GradiantProfile name={group.groupName} />
+                        )}
+                        <div className="ps-2 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
+                            <div className="flex-grow">
+                                <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>{group.groupName}</div>
+                                <div className={`text-xs font-Vazir ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap break-words max-w-60`}>
+                                    {
+                                        lastMessage && (
+                                            lastMessage?.type !== "text" && (
+                                                <div className="flex capitalize">
+                                                    <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
+                                                        className="me-1" />
+                                                    {lastMessage?.type}
+                                                </div>
+                                            )
+                                        )
+                                    }
+                                    {
+                                        lastMessage && (
+                                            <span className={`${groupIsSelected ? "text-white" : "text-black"} font-medium`}>
+                                                {lastMessage?.senderProfile.email == userEmail ? "You: " : `${lastMessage?.senderProfile.name}: `}
+                                            </span>
+                                        )
+                                    }
+                                    {
+                                        lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(""))
+                                    }
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                {group.notSeenedMessages ? (
+                                    <div className="size-4 text-[10px] rounded-full bg-red-500 text-white text-center flex items-center justify-center ms-auto mb-1">
+                                        {group.notSeenedMessages}
+                                    </div>
+                                ) : (
+                                    ""
+                                )}
+                                {
+                                    lastMessage && (
+                                        <div className="flex items-center justify-between">
+                                            <div className={`${groupIsSelected ? "text-white/60" : "text-black/60"} flex items-center`}>
+                                                <div className="text-xs">
+                                                    {getHourAndTime(lastMessage.timestamp)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </Link>
+            </div>
+        </>
+    )
+}

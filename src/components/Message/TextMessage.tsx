@@ -1,15 +1,15 @@
 import React from "react";
-import { RootState } from "../../../redux/store";
+import { RootState } from "../../redux/store";
 import { Parser } from "html-to-react";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import DeleteTextFileAudioMessageButton from "./DeleteTextFileAudioMessageButton";
 import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
-import MessagePropTypes from "../../../types/MessagePropTypes";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { changeSelectedMessage } from "../../../redux/slices/selectedMessage";
+import MessagePropTypes from "../../types/MessagePropTypes";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 
-const TextMessage: React.FC<MessagePropTypes> = ({ message }) => {
+const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
@@ -24,24 +24,24 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message }) => {
           onBlur={() => dispatch(changeSelectedMessage(null))}
           onFocus={() => dispatch(changeSelectedMessage(message))}
           className={`${messageIsForCurrentUser
-            ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:opacity-95"
+            ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white hover:opacity-95"
             : "bg-white hover:bg-gray-50"
-            } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-e-none" : ""}
-             w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative ${message.replyTo ? "rounded-b-lg" : "rounded-lg border"}`}
+            } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-e-none" : ""}
+             w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative border ${message.replyTo ? "rounded-b-xl border-t-0" : "rounded-xl"}`}
         >
           <p className="max-w-[400px] break-words">
             {parse(message.content)}
           </p>
           <div className="mt-1 flex justify-end">
             <MessageTime message={message} />
-            {message.from === userEmail && (
+            {message.from === userEmail && !isGroupMessage && (
               <MessageSeen message={message} />
             )}
           </div>
-          <ReactionsEmojiPicker
+          <ReactionsEmojiPicker isGroupMessage={isGroupMessage}
             message={message} />
         </button>
-        <DeleteTextFileAudioMessageButton message={message} />
+        <DeleteTextFileAudioMessageButton message={message} isGroupMessage={isGroupMessage} />
     </div>
   );
 };

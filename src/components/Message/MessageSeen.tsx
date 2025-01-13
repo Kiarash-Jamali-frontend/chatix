@@ -1,7 +1,7 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAppSelector } from "../../../redux/hooks";
-import { RootState } from "../../../redux/store";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
 
 export default function MessageSeen({ message }: { message: any }) {
 

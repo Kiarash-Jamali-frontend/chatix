@@ -1,5 +1,5 @@
 import { doc, runTransaction } from "firebase/firestore";
-import { db } from "../helpers/firebase";
+import { db } from "../../utils/firebase";
 import { useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 

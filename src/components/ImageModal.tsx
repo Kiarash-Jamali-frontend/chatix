@@ -4,8 +4,8 @@ import { RootState } from "../redux/store"
 import { hideImage } from "../redux/slices/openedImage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import deleteMessage from "../helpers/deleteMessage";
-import { faArrowLeft, faDownload } from "@fortawesome/free-solid-svg-icons";
+import deleteMessage from "../helpers/messages/deleteMessage";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 
 export default function ImageModal() {
 
@@ -16,7 +16,11 @@ export default function ImageModal() {
     const messageIsForCurrentUser = userEmail === openedImageMessage?.from;
 
     const deleteMessageHandler = () => {
-        deleteMessage(openedImageMessage.id);
+        if (openedImageMessage.isGroupMessage) {
+            deleteMessage(openedImageMessage.id, openedImageMessage.isGroupMessage);
+        } else {
+            deleteMessage(openedImageMessage.id);
+        }
         dispatch(hideImage());
     }
 
@@ -24,15 +28,15 @@ export default function ImageModal() {
         <AnimatePresence>
             {
                 openedImageMessage && (
-                    <motion.div className="fixed inset-[-15%] bg-black/50 backdrop-blur-sm z-[999] grid place-items-center"
+                    <motion.div className="fixed inset-[-25%] bg-black/50 backdrop-blur-sm z-[999] grid place-items-center"
                         variants={{
                             hide: {
                                 opacity: 0,
-                                transform: "scale(0.8) translateY(60px)"
+                                transform: "translateY(25px)"
                             },
                             open: {
                                 opacity: 1,
-                                transform: "scale(1) translateY(0px)"
+                                transform: "translateY(0px)"
                             }
                         }} initial="hide" animate="open" exit="hide">
                         <div className="fixed inset-0" onClick={() => dispatch(hideImage())}>
@@ -40,7 +44,7 @@ export default function ImageModal() {
                         </div>
                         <div className="relative px-4">
                             <div className="relative">
-                                <img src={openedImageMessage.content} className="object-contain w-full h-full max-h-[calc(100svh-12rem)] max-w-[calc(100svw-1.5rem)]" />
+                                <img src={openedImageMessage.content} className="rounded-xl object-contain w-full h-full max-h-[calc(100svh-12rem)] max-w-[calc(100svw-1.5rem)]" />
                                 <div className={`bottom-3 right-3 absolute flex items-center z-50 transition-all`}>
                                     {
                                         userEmail === openedImageMessage.from && (

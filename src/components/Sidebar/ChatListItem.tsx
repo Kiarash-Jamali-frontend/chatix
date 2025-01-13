@@ -1,25 +1,28 @@
 import { and, collection, limit, onSnapshot, or, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { db } from "../../helpers/firebase";
+import { db } from "../../../utils/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFile, faImage, faUser } from "@fortawesome/free-regular-svg-icons";
+import { faFile, faImage } from "@fortawesome/free-regular-svg-icons";
 import Profile from "../../types/Profile";
 import { Parser } from "html-to-react";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { faCheck, faVideo } from "@fortawesome/free-solid-svg-icons";
 import getHourAndTime from "../../helpers/getHourAndTime";
+import GradiantProfile from "../GradiantProfile";
 
 type PropTypes = {
     chat: Profile & { email: string, notSeenedMessages: number };
 };
 
 const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
+    const selectedChatOrGroupID = useAppSelector((state: RootState) => state.selectedChatOrGroup.id);
     const { parse } = Parser();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email)
     const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(chat.notSeenedMessages);
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
+    const chatIsSelected = selectedChatOrGroupID === chat.email;
 
     const sendNewMessageNotification = (msg: any) => {
         const domParser = new DOMParser();
@@ -79,7 +82,9 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                 limit(1)
             );
             const unsubscribeLastMessage = onSnapshot(lastMessageQuery, (querySnapshot) => {
-                setLastMessage(querySnapshot.docs[0].data());
+                if (querySnapshot.size) {
+                    setLastMessage(querySnapshot.docs[0].data());
+                }
             });
 
             return () => {
@@ -89,10 +94,10 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
     }, [userEmail])
 
     return (
-        <>
+        <div className="px-2">
             <Link
                 to={`/chat/${chat.email}`}
-                className="flex items-center justify-between border-t hover:bg-base/50 text-sm px-5 py-3 transition-colors duration-300"
+                className={`flex items-center justify-between ${chatIsSelected ? "bg-blue-500 hover:bg-blue-600" : "hover:bg-base/50 hover:border-black/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors duration-300`}
                 key={chat.email}
             >
                 <div className="flex items-center w-full flex-grow">
@@ -101,17 +106,15 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                         <img
                             src={chat.photoUrl}
                             alt={"profile"}
-                            className="size-11 min-w-11 object-cover rounded-full"
+                            className="size-12 min-w-12 object-cover rounded-full"
                         />
                     ) : (
-                        <div className="size-11 min-w-11 border-2 rounded-full bg-base flex items-center justify-center">
-                            <FontAwesomeIcon icon={faUser} size="lg" />
-                        </div>
+                        <GradiantProfile name={chat.name} />
                     )}
                     <div className="ps-2 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
                         <div className="flex-grow">
-                            <div className="text-sm font-medium">{chat.name}</div>
-                            <div className="text-xs font-Vazir text-black/80 mt-1 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap break-words max-w-40">
+                            <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>{chat.name}</div>
+                            <div className={`text-xs ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap break-words max-w-60`}>
                                 {
                                     lastMessage && (
                                         lastMessage?.type !== "text" && (
@@ -139,7 +142,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                             {
                                 lastMessage && (
                                     <div className="flex items-center justify-between">
-                                        <div className="text-black/60 flex items-center">
+                                        <div className={`${chatIsSelected ? "text-white/60" : "text-black/60"} flex items-center`}>
                                             <div className="text-xs">
                                                 {getHourAndTime(lastMessage.timestamp)}
                                             </div>
@@ -161,7 +164,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     </div>
                 </div>
             </Link>
-        </>
+        </div>
     );
 };
 

@@ -1,27 +1,29 @@
 import React, { useRef, useState } from "react";
-import button from "../../cva/button";
+import button from "../cva/button";
 import { v4 as uuidv4 } from 'uuid';
 import { addDoc, collection, Timestamp } from "firebase/firestore";
-import { db, storage } from "../../helpers/firebase";
-import { RootState } from "../../redux/store";
+import { db, storage } from "../../utils/firebase";
+import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker from "emoji-picker-react";
 import { faClose, faPaperclip, faReply } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import getFileExt from "../../helpers/getFileExt";
+import getFileExt from "../helpers/files/getFileExt";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { changeMessageSelectedForReply } from "../../redux/slices/messageSelectedForReply";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { changeMessageSelectedForReply } from "../redux/slices/messageSelectedForReply";
 import { Parser } from "html-to-react";
 
 type PropTypes = {
-  oppositeProfile: any;
-  chatId: string;
+  mode: "group" | "private";
+  groupId?: string;
+  oppositeProfile?: any;
+  chatId?: string;
 };
 
-const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
+const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
   const userProfile = useAppSelector((state: RootState) => state.user.profile);
@@ -33,18 +35,21 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
   const [filePending, setFilePending] = useState<boolean>(false);
   const [textMessagePending, setTextMessagePending] = useState<boolean>(false);
 
+  const isPrivateChat = (mode == "private" || !mode);
+  const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sendMessageHandler = async () => {
     setTextMessagePending(true);
     removeMessageSelectedForRelpy();
     setMessageText("");
-    await addDoc(collection(db, "chat_message"), {
+    await addDoc(collection(db, "group_message"), {
       content: messageText.trim(),
       from: userEmail,
       seen: false,
       timestamp: Timestamp.now(),
-      to: oppositeProfile.email,
+      to: messageTo,
       type: "text",
       replyTo: messageSelectedForReply?.id || null
     });
@@ -63,7 +68,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
       let i = 0;
       while (i < fileInputRef.current.files.length) {
         const file = fileInputRef.current.files[i];
-        const fileStorageRef = ref(storage, `chats/${chatId}/${uuidv4()}.${getFileExt(file.name)}`);
+
+        const fileStorageRef = ref(storage, `${isPrivateChat ? `chats/${chatId}` : `groups/${groupId}`}/${uuidv4()}.${getFileExt(file.name)}`);
         await uploadBytes(fileStorageRef, file);
         const fileUrl = await getDownloadURL(fileStorageRef);
         let fileType = "";
@@ -77,14 +83,14 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
           from: userEmail,
           seen: false,
           timestamp: Timestamp.now(),
-          to: oppositeProfile.email,
+          to: messageTo,
           type: fileType
         };
         if (fileType === "file" || fileType === "audio") {
           data.fileName = file.name;
           data.fileSize = file.size;
         }
-        await addDoc(collection(db, "chat_message"), data);
+        await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
         i++;
       }
     }
@@ -121,7 +127,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
         <AnimatePresence>
           {
             messageSelectedForReply && (
-              <motion.div className="py-2.5 px-3 overflow-hidden absolute w-full -top-[90%] z-[60] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800" variants={{
+              <motion.div className="py-2.5 px-3 overflow-hidden absolute w-full -top-[90%] z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800" variants={{
                 hide: {
                   opacity: 0
                 },
@@ -139,11 +145,11 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId }) => {
                       {
                         messageSelectedForReply.type !== "text" ? <span className="capitalize">{messageSelectedForReply.type}</span> : (
                           parse(messageSelectedForReply.content.split("<br>").join(""))
-                      )
+                        )
                       }
                     </div>
                   </div>
-                  <button onClick={removeMessageSelectedForRelpy} className="text-white">
+                  <button onClick={removeMessageSelectedForRelpy} className="text-white flex items-center">
                     <FontAwesomeIcon icon={faClose} />
                   </button>
                 </div>

@@ -1,12 +1,12 @@
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAppSelector } from "../../../redux/hooks";
-import { RootState } from "../../../redux/store";
-import deleteMessage from "../../../helpers/deleteMessage";
-import MessagePropTypes from "../../../types/MessagePropTypes";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
+import deleteMessage from "../../helpers/messages/deleteMessage";
+import MessagePropTypes from "../../types/MessagePropTypes";
 
-export default function DeleteTextFileAudioMessageButton({ message }: MessagePropTypes) {
+export default function DeleteTextFileAudioMessageButton({ message, isGroupMessage }: MessagePropTypes) {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessageID = useAppSelector((state: RootState) => state.selectedMessage.data?.id);
     const messageIsForCurrentUser = userEmail === message.from;
@@ -25,8 +25,8 @@ export default function DeleteTextFileAudioMessageButton({ message }: MessagePro
                             opacity: 0,
                             translateX: "-1rem",
                         }}>
-                            <button className="px-2 h-full bg-white flex items-center rounded-e-lg border border-s-transparent"
-                                onClick={() => deleteMessage(message.id)}>
+                            <button className={`px-2 h-full bg-white flex items-center ${message.replyTo ? "rounded-br-xl" : "rounded-r-xl"} border border-s-transparent`}
+                                onClick={() => deleteMessage(message.id, isGroupMessage)}>
                                 <FontAwesomeIcon icon={faTrashCan} color="#000" />
                             </button>
                         </motion.div>

@@ -1,32 +1,43 @@
 import React, { useEffect } from "react";
 import { doc, runTransaction } from "firebase/firestore";
-import { db } from "../../../helpers/firebase";
-import { RootState } from "../../../redux/store";
+import { db } from "../../../utils/firebase";
+import { RootState } from "../../redux/store";
 import ImageMessage from "./ImageMessage";
 import VideoMessage from "./VideoMessage";
 import TextMessage from "./TextMessage";
 import FileMessage from "./FileMessage";
 import AudioMessage from "./AudioMessage";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import MessageReaction from "./MessageReaction";
-import { changeMessageSelectedForReply } from "../../../redux/slices/messageSelectedForReply";
+import { changeMessageSelectedForReply } from "../../redux/slices/messageSelectedForReply";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faReply } from "@fortawesome/free-solid-svg-icons";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Parser } from "html-to-react";
+import Profile from "../../types/Profile";
+import GradiantProfile from "../GradiantProfile";
 
 type PropTypes = {
   message: any;
   scrollDown: () => void;
   replyedMessage: any;
+  senderProfile?: Profile & {
+    id: string
+  };
+  isGroupMessage?: boolean;
 };
 
-const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage }) => {
+const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage, senderProfile }) => {
+  const { parse } = Parser();
   const user = useAppSelector((state: RootState) => state.user);
+  const chatsList = useAppSelector((state: RootState) => state.chats.list);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
   const messageIsForCurrentUser = user.data?.email === message.from;
+
+  const chatIsCreated = isGroupMessage && chatsList.find((c) => c.email === message.from);
 
   const seenMessageHandler = async () => {
     const msgDocRef = doc(db, "chat_message", message.id);
@@ -79,41 +90,65 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage }) =
 
   return (
     <div id={message.id}
-      className={`flex relative ${!messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-lg mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/5" : ""}`}
+      className={`flex relative ${!messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/5" : ""}`}
       onDoubleClick={selectMessageForReply}>
+      {
+        isGroupMessage && message.from != user.data?.email && senderProfile && (
+          <Link to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
+            className={`mt-auto ms-2`}>
+            {
+              senderProfile?.photoUrl ? (
+                <img src={senderProfile?.photoUrl} className="size-10 object-cover rounded-full object-center" />
+              ) : (
+                <GradiantProfile name={senderProfile?.name} size="sm" />
+              )
+            }
+          </Link>
+        )
+      }
       <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${!messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
         {
           replyedMessage && (
             <button onClick={scrollToMessageHandler}
-              className="bg-gradient-to-tr p-2 flex rounded-t-lg flex-col from-gray-600 to-gray-900 text-white">
+              className="bg-gradient-to-tr p-2 flex rounded-t-xl flex-col from-gray-600 to-gray-900 text-white">
               <span className="text-sm font-medium">
                 <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
                 {replyedMessage.sender.name}
               </span>
               <p className="text-xs mt-1">
-                {replyedMessage.content}
+                {
+                  replyedMessage.type !== "text" ? <span className="capitalize">{replyedMessage.type}</span> : (
+                    parse(replyedMessage.content.split("<br>").join(""))
+                  )
+                }
               </p>
             </button>
           )
         }
         {
-          message.type === "image" && <ImageMessage key={message.id} message={message} scrollDown={scrollDown} />
+          message.type === "image" && <ImageMessage key={message.id} message={message} isGroupMessage={isGroupMessage}
+            senderProfile={senderProfile}
+            scrollDown={scrollDown} />
         }
         {
-          message.type === "video" && <VideoMessage key={message.id} message={message} scrollDown={scrollDown} />
+          message.type === "video" && <VideoMessage key={message.id} message={message} isGroupMessage={isGroupMessage}
+            senderProfile={senderProfile}
+            scrollDown={scrollDown} />
         }
         {
-          message.type === "file" && <FileMessage key={message.id} message={message} />
+          message.type === "file" && <FileMessage key={message.id} message={message} isGroupMessage={isGroupMessage}
+            senderProfile={senderProfile} />
         }
         {
-          message.type === "audio" && <AudioMessage key={message.id} message={message} />
+          message.type === "audio" && <AudioMessage key={message.id} message={message} isGroupMessage={isGroupMessage}
+            senderProfile={senderProfile} />
         }
         {
           message.type === "text" &&
-          <TextMessage key={message.id} message={message} />
+          <TextMessage key={message.id} message={message} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
         }
       </div>
-      <MessageReaction message={message} />
+      <MessageReaction message={message} isGroupMessage={isGroupMessage} />
     </div>
   );
 };

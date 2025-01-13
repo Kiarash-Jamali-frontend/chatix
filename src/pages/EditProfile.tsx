@@ -10,9 +10,9 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { changeUserProfile } from "../redux/slices/user";
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import toastConf from "../helpers/toastConfig";
+import toastConf from "../../utils/toastConfig";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, validatePassword } from "firebase/auth";
-import { auth } from "../helpers/firebase";
+import { auth } from "../../utils/firebase";
 
 export default function EditProfile() {
     const [pending, setPending] = useState<boolean>(false);
