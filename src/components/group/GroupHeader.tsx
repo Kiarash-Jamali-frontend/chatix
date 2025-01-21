@@ -10,6 +10,8 @@ import Profile from "../../types/Profile";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
+import Modal from "../Modal";
+import GroupInfoModalContent from "./GroupInfoModalContent";
 
 type PropTypes = {
   groupData: SidebarGroupData;
@@ -21,6 +23,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const [membersCount, setMembersCount] = useState<number>(0);
   const [onlineMembersCount, setOnlineMembersCount] = useState<number>(0);
+  const [groupInfoModalIsActive, setGroupInfoModalIsActive] = useState<boolean>(false);
 
   const getOnlineMembersCount = useCallback(() => {
     let onlineMembersCount = 0;
@@ -45,13 +48,19 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
 
   return (
     <>
+      <Modal isActive={groupInfoModalIsActive} setIsActive={setGroupInfoModalIsActive}>
+        <GroupInfoModalContent
+          groupData={groupData}
+          membersProfiles={membersProfiles}
+          setIsActive={setGroupInfoModalIsActive} />
+      </Modal>
       <div className="flex items-center">
         <div className="bg-white shadow-sm border-b px-4 py-3 w-full flex items-center">
           <Link to={"/"} className="lg:hidden me-3">
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </Link>
           <div className="flex items-center justify-between flex-grow">
-            <div className="flex items-center cursor-pointer flex-grow">
+            <div className="flex items-center cursor-pointer flex-grow" onClick={() => setGroupInfoModalIsActive(true)}>
               {groupData.groupPhotoUrl ? (
                 <img
                   src={groupData.groupPhotoUrl}

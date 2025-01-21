@@ -16,7 +16,7 @@ import { RootState } from "../../redux/store";
 import Profile from "../../types/Profile";
 import { Link } from "react-router-dom";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import UserLastActivity from "./UserLastActivity";
+import UserLastActivity from "../UserLastActivity";
 import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
 import Modal from "../Modal";
 import UserInfoModalContent from "./UserInfoModalContent";

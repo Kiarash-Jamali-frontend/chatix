@@ -2,7 +2,7 @@ import { faClose, faShareNodes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Profile from "../../types/Profile";
 import { AnimatePresence, motion } from "framer-motion";
-import UserLastActivity from "./UserLastActivity";
+import UserLastActivity from "../UserLastActivity";
 import { useAppSelector } from "../../redux/hooks";
 import button from "../../cva/button";
 import toastConf from "../../../utils/toastConfig";

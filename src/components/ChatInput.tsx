@@ -117,7 +117,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
               }
             }} initial="hide" exit="hide" animate="open" className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
               <EmojiPicker open={emojiPickerIsOpen}
-                height={300} searchDisabled={true} lazyLoadEmojis={true}
+                height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
                 onEmojiClick={(e) => setMessageText((prev) => prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.25em;height:1.25em" />`)} />
             </motion.div>
           )

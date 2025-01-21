@@ -1,12 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import button from "../../cva/button";
-import { faClose, faShareNodes } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight, faClose } from "@fortawesome/free-solid-svg-icons";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import Profile from "../../types/Profile";
 import GradiantProfile from "../GradiantProfile";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import getGroupMembersCount from "../../helpers/group/getGroupMembersCount";
+import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
+import { Link } from "react-router-dom";
+import UserLastActivity from "../UserLastActivity";
 
 type PropTypes = {
     groupData: SidebarGroupData;
@@ -16,8 +20,22 @@ type PropTypes = {
 
 export default function GroupInfoModalContent({ groupData, membersProfiles, setIsActive }: PropTypes) {
 
+    const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
+    const chatsList = useAppSelector((state: RootState) => state.chats.list);
     const [onlineMembersCount, setOnlineMembersCount] = useState<number>(0);
     const [membersCount, setMembersCount] = useState<number>(0);
+
+    const getOnlineMembersCount = useCallback(() => {
+        let onlineMembersCount = 0;
+        membersProfiles.forEach((p) => {
+            userEmail != p.email && userIsOnline(p.lastActivity) && (onlineMembersCount = onlineMembersCount + 1);
+        });
+        setOnlineMembersCount(onlineMembersCount);
+    }, [membersProfiles])
+
+    useEffect(() => {
+        getOnlineMembersCount();
+    }, [getOnlineMembersCount])
 
     useEffect(() => {
         const unsub = getGroupMembersCount(groupData.id, (snapshot) => {
@@ -81,24 +99,47 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                         <FontAwesomeIcon icon={faClose} />
                     </button>
                 </div>
-                {userProfile.biography && (
-                    <div className="bg-gray-50 py-2.5 px-4 border text-sm rounded-xl mt-5">
-                        <span className="font-medium">Biography: </span>
-                        <p className="text-black/75">
-                            {userProfile.biography}
-                        </p>
-                    </div>
-                )}
-                <div className="bg-gray-50 flex items-center py-2.5 px-4 border text-sm rounded-xl mt-4">
-                    <span className="font-medium me-1">Email: </span>
-                    <p className="text-black/60">{userProfile.email}</p>
+                <div className="mt-4 grid grid-cols-1 gap-y-4 max-h-40 overflow-auto scrollbar border-t pt-4">
+                    {
+                        membersProfiles.map((p) => {
+                            const chatIsCreated = chatsList.find((c) => c.email === p.email);
+                            return (
+                                <Link key={p.id}
+                                    className={`flex group items-center justify-between ${userEmail == p.email && "pointer-events-none"}`}
+                                    to={userEmail == p.email ? "#" : chatIsCreated ? `/chat/${p.email}` : `/create-chat?email=${p.email}`}>
+                                    <div className="flex items-center">
+                                        <div className="size-12">
+                                            {
+                                                p.photoUrl ? (
+                                                    <img src={p.photoUrl} alt="profile"
+                                                        className="size-12 object-cover object-center rounded-full" />
+                                                ) : (
+                                                    <GradiantProfile name={p.name} size="md" />
+                                                )
+                                            }
+                                        </div>
+                                        <div className="ps-3">
+                                            <div className="text-sm flex items-center font-medium">{p.name} {groupData.creator == p.email && (
+                                                <span className="text-xs text-gray-400 ms-1">| Owner</span>
+                                            )}</div>
+                                            <UserLastActivity profile={p} />
+                                        </div>
+                                    </div>
+                                    {userEmail != p.email && (
+                                        <div className="flex items-center">
+                                            <div className="h-0.5 w-0 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:w-4 transition-all bg-gray-400">
+
+                                            </div>
+                                            <FontAwesomeIcon icon={faChevronRight}
+                                                className="me-3 group-hover:me-2 transition-all text-gray-400" />
+                                        </div>
+                                    )}
+                                </Link>
+                            )
+                        })
+                    }
                 </div>
-                <div className="grid grid-cols-2 gap-2 mt-4">
-                    <button className={button({ intent: "dark" })}>
-                        <FontAwesomeIcon icon={faShareNodes} className="me-1.5" />
-                        Share
-                    </button>
-                </div>
+
             </motion.div>
         </AnimatePresence>
     )

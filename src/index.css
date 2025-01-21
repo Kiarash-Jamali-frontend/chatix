@@ -8,15 +8,18 @@
 .scrollbar-hidden::-webkit-scrollbar {
     display: none;
 }
+
 .scrollbar-hidden {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbar::-webkit-scrollbar {
   width: 5px;
   border-radius: 10px;
   background:#e0e0e0;
 }
+
 .scrollbar::-webkit-scrollbar-thumb {
   width: 5px;
   border-radius: 10px;

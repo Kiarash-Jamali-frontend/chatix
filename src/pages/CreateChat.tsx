@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import { FormEvent, useLayoutEffect, useState } from "react"
 import input from "../cva/input";
 import button from "../cva/button";
 import { addDoc, collection, doc, getDoc, } from "firebase/firestore";
@@ -7,12 +7,13 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { addChat } from "../redux/slices/chats";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function CreateChat() {
 
+    const [searchParams] = useSearchParams();
     const dispatch = useAppDispatch();
     const user = useAppSelector((state: RootState) => state.user);
     const navigate = useNavigate();
@@ -44,6 +45,11 @@ export default function CreateChat() {
         setEmail("");
         setPending(false);
     }
+
+    useLayoutEffect(() => {
+        const emailParam = searchParams.get("email")
+        emailParam && setEmail(emailParam);
+    }, [])
 
     return (
         <>
