@@ -4,18 +4,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import GradiantProfile from "../GradiantProfile";
 import { useCallback, useEffect, useState } from "react";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "../../../utils/firebase";
-import Profile from "../../types/Profile";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
 import Modal from "../Modal";
 import GroupInfoModalContent from "./GroupInfoModalContent";
+import { MemberProfile } from "../../pages/Group";
+import getGroupMembersCount from "../../helpers/group/getGroupMembersCount";
 
 type PropTypes = {
   groupData: SidebarGroupData;
-  membersProfiles: (Profile & { id: string; email: string })[];
+  membersProfiles: MemberProfile[];
 }
 
 export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
@@ -28,7 +27,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
   const getOnlineMembersCount = useCallback(() => {
     let onlineMembersCount = 0;
     membersProfiles.forEach((p) => {
-      userEmail != p.email && userIsOnline(p.lastActivity) && (onlineMembersCount = onlineMembersCount + 1);
+      userEmail != p.email && !p.removedFromGroup && userIsOnline(p.lastActivity) && (onlineMembersCount = onlineMembersCount + 1);
     });
     setOnlineMembersCount(onlineMembersCount);
   }, [membersProfiles])
@@ -38,12 +37,11 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
   }, [getOnlineMembersCount])
 
   useEffect(() => {
-    const groupMembersQuery = query(collection(db, "group_member"), where("groupId", "==", groupData.id));
-    const unsubGroupMembersCount = onSnapshot(groupMembersQuery, (snapshot) => {
+    const unsub = getGroupMembersCount(groupData.id, (snapshot) => {
       setMembersCount(snapshot.size);
     });
 
-    return () => unsubGroupMembersCount();
+    return () => { unsub() }
   }, []);
 
   return (
@@ -76,11 +74,11 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
                 </div>
                 <div className="text-xs flex items-center text-black/60">
                   {
-                    membersCount && (
+                    membersCount ? (
                       <span>
                         {membersCount} members
                       </span>
-                    )
+                    ) : null
                   }
                   {
                     onlineMembersCount ? (

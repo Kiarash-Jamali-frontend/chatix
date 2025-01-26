@@ -118,7 +118,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             }} initial="hide" exit="hide" animate="open" className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
               <EmojiPicker open={emojiPickerIsOpen}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
-                onEmojiClick={(e) => setMessageText((prev) => prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.25em;height:1.25em" />`)} />
+                onEmojiClick={(e) => setMessageText((prev) => prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.3em;height:1.3em" />`)} />
             </motion.div>
           )
         }
@@ -127,14 +127,15 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         <AnimatePresence>
           {
             messageSelectedForReply && (
-              <motion.div className="py-2.5 px-3 overflow-hidden absolute w-full -top-[90%] z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800" variants={{
-                hide: {
-                  opacity: 0
-                },
-                open: {
-                  opacity: 1
-                }
-              }} initial="hide" exit="hide" animate="open">
+              <motion.div className="py-2.5 px-3 overflow-hidden absolute w-full -top-[90%] z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800"
+                variants={{
+                  hide: {
+                    opacity: 0
+                  },
+                  open: {
+                    opacity: 1
+                  }
+                }} initial="hide" exit="hide" animate="open">
                 <div className="flex items-center justify-between font-Vazir">
                   <div className="flex items-center text-xs md:text-sm">
                     <span className="text-white/75">
@@ -168,9 +169,13 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           />
           {
             filePending ? (
-              <span className="text-sm text-black/60 min-w-24">
-                Sending file ...
-              </span>
+              <div>
+                <div className="size-7 rounded-full border-4 border-r-transparent animate-spin">
+                </div>
+              </div>
+              // <span className="text-sm text-black/60 min-w-24">
+              // Sending file ...
+              // </span>
             ) : (
               <button
                 className={button({

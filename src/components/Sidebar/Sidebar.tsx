@@ -91,8 +91,8 @@ const Sidebar: React.FC = () => {
         </div>
         <div>
           <div>
-            <Swiper className="mt-1.5 font-Vazir overflow-hidden flex flex-col">
-              <GroupsAndChatsListButtons selectedList={selectedList} setSelectedList={setSelectedList} />
+            <Swiper onSlideChange={() => setSelectedList((prev) => prev == "chats" ? "groups" : "chats")} className="mt-1.5 font-Vazir overflow-hidden flex flex-col">
+              <GroupsAndChatsListButtons selectedList={selectedList} />
               <SwiperSlide>
                 <div className="grid gap-y-1">
                   {chats.map((c, index) => {
@@ -127,7 +127,7 @@ const Sidebar: React.FC = () => {
             Logout
           </button>
         </div>
-      </div >
+      </div>
     </>
   );
 };

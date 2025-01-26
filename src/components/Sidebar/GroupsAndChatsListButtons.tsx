@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import { useSwiper } from "swiper/react";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,10 +5,9 @@ import { faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 
 type PropTypes = {
     selectedList: "chats" | "groups";
-    setSelectedList: Dispatch<SetStateAction<"chats" | "groups">>;
 }
 
-export default function GroupsAndChatsListButtons({ selectedList, setSelectedList }: PropTypes) {
+export default function GroupsAndChatsListButtons({ selectedList }: PropTypes) {
     const swiper = useSwiper();
 
     return (
@@ -19,7 +17,6 @@ export default function GroupsAndChatsListButtons({ selectedList, setSelectedLis
             </div>
             <div className="grid grid-cols-2 relative">
                 <button onClick={() => {
-                    setSelectedList("chats");
                     swiper.slidePrev();
                 }}
                     className={button({
@@ -29,7 +26,6 @@ export default function GroupsAndChatsListButtons({ selectedList, setSelectedLis
                     <FontAwesomeIcon icon={faUser} className="me-2" /> Chats
                 </button>
                 <button onClick={() => {
-                    setSelectedList("groups");
                     swiper.slideNext();
                 }}
                     className={button({

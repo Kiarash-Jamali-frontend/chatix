@@ -46,7 +46,8 @@ export default function CreateGroup() {
                     addDoc(collection(db, "group_member"), {
                         groupId: docRef.id,
                         memberEmail: e,
-                        notSeenedMessagesCount: 0
+                        notSeenedMessagesCount: 0,
+                        removedFromGroup: false
                     })
                 });
                 if (groupProfile) {

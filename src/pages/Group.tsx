@@ -3,7 +3,7 @@ import { redirect, useParams } from "react-router-dom"
 import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { SidebarGroupData } from "../redux/slices/groups";
-import { collection, doc, getDoc, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { and, collection, doc, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import Loading from "../components/Loading";
 import GroupHeader from "../components/group/GroupHeader";
@@ -11,6 +11,9 @@ import ChatInput from "../components/ChatInput";
 import Message from "../components/Message/Message";
 import { RootState } from "../redux/store";
 import Profile from "../types/Profile";
+import GroupMember from "../types/GroupMember";
+
+export type MemberProfile = (Profile & { id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean });
 
 export default function Group() {
 
@@ -21,7 +24,7 @@ export default function Group() {
     const [groupData, setGroupData] = useState<SidebarGroupData | null>(null);
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const userProfile = useAppSelector((state: RootState) => state.user.profile);
-    const [membersProfiles, setMembersProfiles] = useState<(Profile & { id: string; email: string })[]>([]);
+    const [membersProfiles, setMembersProfiles] = useState<MemberProfile[]>([]);
     const selectedMessageForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
 
     const messagesListRef = useRef<HTMLDivElement>(null);
@@ -41,31 +44,63 @@ export default function Group() {
                 setMessages(messages);
             });
 
-            const groupMembersQuery = query(collection(db, "group_member"), where("groupId", "==", groupId));
-            const unsubGroupMembers = onSnapshot(groupMembersQuery, (snapshot) => {
-                snapshot.forEach(async (querySnapshot) => {
-                    const memberEmail = querySnapshot.data().memberEmail;
-                    const docRef = doc(db, "profile", memberEmail);
-                    const docSnap = await getDoc(docRef);
-                    const data =  docSnap.data() as Profile;
-                    setMembersProfiles((prev) => [...prev, { ...data, id: memberEmail, email: memberEmail }])
-                });
-            })
-
-            const groupDocRef = doc(db, 'group', groupId)
-            const unsubGroup = onSnapshot(groupDocRef, (snapshot) => {
-                const data = snapshot.data() as Omit<SidebarGroupData, "id">;
-                setGroupData({ ...data, id: snapshot.id });
-                setPending(false);
-            });
-
             return () => {
-                unsubGroup();
                 unsubMessages();
-                unsubGroupMembers();
             };
         }
     }, [groupId]);
+
+    useEffect(() => {
+        if (groupId) {
+            const groupMembersQuery = query(collection(db, "group_member"), where("groupId", "==", groupId))
+            const unsubGroupMembers = onSnapshot(groupMembersQuery, (snapshot) => {
+                let newMembersProfiles: MemberProfile[] = [];
+                snapshot.forEach(async (querySnapshot) => {
+                    const { removedFromGroup } = querySnapshot.data();
+                    const memberEmail = querySnapshot.data().memberEmail;
+                    const docRef = doc(db, "profile", memberEmail);
+                    const unsub = onSnapshot(docRef, (snap) => {
+                        newMembersProfiles = [...newMembersProfiles.filter((p) => p.id != memberEmail), {
+                            ...snap.data() as Profile,
+                            id: memberEmail,
+                            email: memberEmail,
+                            groupMemberDocId: querySnapshot.id,
+                            removedFromGroup
+                        }];
+                        setMembersProfiles(newMembersProfiles);
+                    });
+                    return () => unsub();
+                });
+            });
+
+            return () => {
+                unsubGroupMembers();
+            }
+        }
+    }, [groupId])
+
+    useEffect(() => {
+        if (groupId && userEmail) {
+            const groupDocRef = doc(db, 'group', groupId);
+            const unsubGroup = onSnapshot(groupDocRef, (snapshot) => {
+                const q = query(collection(db, "group_member"), and(
+                    where("groupId", "==", groupId),
+                    where("memberEmail", "==", userEmail)
+                ))
+                const unsub = onSnapshot(q, (snap) => {
+                    const data = snap.docs[0].data() as GroupMember;
+                    if (!snap.empty && !data.removedFromGroup) {
+                        setGroupData({ ...snapshot.data(), id: snapshot.id } as SidebarGroupData);
+                    }
+                });
+
+                return () => unsub();
+            });
+            return () => {
+                unsubGroup();
+            }
+        }
+    }, [groupId, userEmail])
 
     useEffect(() => {
         dispatch(changeSelectedChatOrGroupID(groupId));
@@ -80,6 +115,12 @@ export default function Group() {
     }, [messages.length]);
 
     useEffect(() => {
+        if (groupData && messages.length && membersProfiles.length) {
+            setPending(false);
+        }
+    }, [groupData, membersProfiles, messages])
+
+    useEffect(() => {
         if (!pending) scrollDownHandler();
     }, [pending])
 
@@ -89,7 +130,7 @@ export default function Group() {
         )
     }
 
-    if (groupData) {
+    if (groupData && messages.length && membersProfiles.length) {
         return (
             <div className="w-full flex flex-col h-svh">
                 <GroupHeader groupData={groupData} membersProfiles={membersProfiles} />

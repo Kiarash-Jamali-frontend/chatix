@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { and, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../utils/firebase";
 import Group from "../../types/Group";
 import GroupMember from "../../types/GroupMember";
@@ -20,7 +20,10 @@ export const getGroups = createAsyncThunk("groups/getGroups", async (userEmail: 
     let groupsList: SidebarGroupData[] = [];
     const q = query(
         collection(db, "group_member"),
-        where("memberEmail", "==", userEmail),
+        and(
+            where("memberEmail", "==", userEmail),
+            where("removedFromGroup", "==", false)
+        ),
     );
     return getDocs(q).then(async (querySnapshot) => {
         for (let i = 0; i < querySnapshot.size; i++) {

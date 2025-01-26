@@ -139,21 +139,18 @@ const Chat: React.FC = () => {
           })}
           {selectedMessageForReply ? <div className="pb-10"></div> : null}
         </div>
-        <div className="mb-5">
+        <div>
           {
-            roomData.isBlocked !== "loading" && roomData.blockedFrom === userData?.email && (
-              <div className="text-center pb-5 mt-auto">
+            roomData.isBlocked && (
+              <div className="text-center mt-auto bg-white border py-4 text-sm">
                 <span>
-                  You have blocked {profile.name}
-                </span>
-              </div>
-            )
-          }
-          {
-            roomData.isBlocked && roomData.blockedFrom === email && (
-              <div className="text-center pb-5 mt-auto">
-                <span>
-                  You have been blocked by {profile.name}
+                  {
+                    roomData.isBlocked !== "loading" && roomData.blockedFrom === userData?.email && "You have blocked"
+                  }
+                  {
+                    roomData.isBlocked && roomData.blockedFrom === email && "You have been blocked by"
+                  }
+                  {" "}<span className="font-semibold underline underline-offset-2">{profile.name}</span>
                 </span>
               </div>
             )
@@ -161,7 +158,9 @@ const Chat: React.FC = () => {
           <div className="px-5 mx-auto max-w-[810px]">
             {
               !roomData.isBlocked && email && (
-                <ChatInput mode="private" chatId={roomData.id} oppositeProfile={profile} />
+                <div className="mb-5">
+                  <ChatInput mode="private" chatId={roomData.id} oppositeProfile={profile} />
+                </div>
               )
             }
           </div>
