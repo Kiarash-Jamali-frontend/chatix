@@ -110,7 +110,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
         {
           replyedMessage && (
             <button onClick={scrollToMessageHandler}
-              className="bg-gradient-to-tr p-2 flex rounded-t-xl flex-col from-gray-600 to-gray-900 text-white">
+              className="bg-gradient-to-tr p-2 flex rounded-t-xl flex-col items-start shrink from-gray-600 to-gray-900 text-white">
               <span className="text-sm font-medium">
                 <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
                 {replyedMessage.sender.name}
