@@ -44,7 +44,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     setTextMessagePending(true);
     removeMessageSelectedForRelpy();
     setMessageText("");
-    await addDoc(collection(db, "group_message"), {
+    await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), {
       content: messageText.trim(),
       from: userEmail,
       seen: false,

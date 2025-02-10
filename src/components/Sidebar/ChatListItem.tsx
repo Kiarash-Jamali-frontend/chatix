@@ -148,9 +148,9 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                                             </div>
                                             {
                                                 lastMessage.from === userEmail && (
-                                                    <div className="flex items-center ms-1">
+                                                    <div className={`flex items-center ${lastMessage.seen ? "ms-2" : "ms-1"}`}>
                                                         {lastMessage.seen && (
-                                                            <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px] absolute" />
+                                                            <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[-5px] absolute" />
                                                         )}
                                                         <FontAwesomeIcon icon={faCheck} width={10} height={10} />
                                                     </div>
