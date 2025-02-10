@@ -42,7 +42,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
     });
 
     return () => { unsub() }
-  }, []);
+  }, [groupData]);
 
   return (
     <>

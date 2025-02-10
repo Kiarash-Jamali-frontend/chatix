@@ -49,7 +49,8 @@ export default function CreateGroup() {
                 const docRef = await addDoc(collection(db, "group"), {
                     creator: userEmail,
                     groupName: groupName,
-                    createdAt: Timestamp.now()
+                    createdAt: Timestamp.now(),
+                    groupPhotoUrl: ""
                 });
                 let members: string[] = [...selectedMembersEmails, userEmail];
                 members.forEach((e) => {
