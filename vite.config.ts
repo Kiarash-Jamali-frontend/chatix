@@ -4,6 +4,12 @@ import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 
 const manifestForPlugIn: Partial<VitePWAOptions>  = {
   registerType: 'prompt',
+  injectManifest: {
+    maximumFileSizeToCacheInBytes: 3000000
+  },
+  workbox: {
+    maximumFileSizeToCacheInBytes: 3000000
+  },
   includeAssets: ['favicon.ico', "apple-touc-icon.png", "masked-icon.svg"],
   manifest: {
     name: "Chatix",
