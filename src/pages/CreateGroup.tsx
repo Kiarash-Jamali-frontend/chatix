@@ -2,7 +2,7 @@ import { faArrowLeft, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import input from "../cva/input";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useCallback, useRef, useState } from "react";
 import button from "../cva/button";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -29,6 +29,15 @@ export default function CreateGroup() {
 
     const groupProfileInput = useRef<HTMLInputElement>(null);
 
+    const successfulCreateGroupCallback = useCallback((data: { id: string, groupPhotoUrl: string }) => {
+        toast.success(`${groupName} group created successful!`, toastConf);
+        dispatch(addGroup({ ...data, groupName, creator: userEmail!, notSeenedMessages: 0, createdAt: Timestamp.now() }));
+        removeGroupProfileHandler();
+        setGroupName("");
+        setMemberName("");
+        setSelctedMembersEmails([]);
+    }, [groupName, userEmail])
+
     const createGroupHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setPending(true);
@@ -39,7 +48,8 @@ export default function CreateGroup() {
                 // create group in db without profile
                 const docRef = await addDoc(collection(db, "group"), {
                     creator: userEmail,
-                    groupName: groupName
+                    groupName: groupName,
+                    createdAt: Timestamp.now()
                 });
                 let members: string[] = [...selectedMembersEmails, userEmail];
                 members.forEach((e) => {
@@ -47,7 +57,7 @@ export default function CreateGroup() {
                         groupId: docRef.id,
                         memberEmail: e,
                         notSeenedMessagesCount: 0,
-                        removedFromGroup: false
+                        removedFromGroup: false,
                     })
                 });
                 if (groupProfile) {
@@ -59,12 +69,9 @@ export default function CreateGroup() {
                             groupPhotoUrl: profileUrl
                         });
                     });
-                    toast.success(`${groupName} group created successful!`, toastConf);
-                    dispatch(addGroup({ creator: userEmail, groupName, groupPhotoUrl: profileUrl, id: docRef.id, notSeenedMessages: 0, createdAt: Timestamp.now() }));
-                    removeGroupProfileHandler();
-                    setGroupName("");
-                    setMemberName("");
-                    setSelctedMembersEmails([]);
+                    successfulCreateGroupCallback({ groupPhotoUrl: profileUrl, id: docRef.id })
+                } else {
+                    successfulCreateGroupCallback({ groupPhotoUrl: "", id: docRef.id })
                 }
             }
         }
