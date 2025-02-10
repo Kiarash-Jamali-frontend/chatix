@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 
 const manifestForPlugIn: Partial<VitePWAOptions>  = {
-  registerType: 'prompt',
+  registerType: 'autoUpdate',
   injectManifest: {
     maximumFileSizeToCacheInBytes: 3000000
   },
@@ -46,7 +46,7 @@ const manifestForPlugIn: Partial<VitePWAOptions>  = {
     scope: '/',
     start_url: "/",
     orientation: 'portrait'
-  }
+  },
 }
 
 // https://vitejs.dev/config/
