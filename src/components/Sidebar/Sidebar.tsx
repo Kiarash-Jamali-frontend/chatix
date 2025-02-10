@@ -73,7 +73,7 @@ const Sidebar: React.FC = () => {
             </div>
             <div className="ps-4">
               {/*user name*/}
-              <div className="font-bold flex items-center">
+              <div className="font-bold flex items-center font-Vazir">
                 {user.profile?.name}
                 <button className="ms-1 size-6 flex items-center justify-center bg-gray-100 border rounded-full" onClick={shareUserProfileHandler}>
                   <FontAwesomeIcon icon={faShareNodes} className="text-black/85" size="sm" />
