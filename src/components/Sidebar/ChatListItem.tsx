@@ -4,16 +4,16 @@ import { Link } from "react-router-dom";
 import { db } from "../../../utils/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faImage } from "@fortawesome/free-regular-svg-icons";
-import Profile from "../../types/Profile";
 import { Parser } from "html-to-react";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { faCheck, faVideo } from "@fortawesome/free-solid-svg-icons";
 import getHourAndTime from "../../helpers/getHourAndTime";
 import GradiantProfile from "../GradiantProfile";
+import { ChatData } from "../../redux/slices/chats";
 
 type PropTypes = {
-    chat: Profile & { email: string, notSeenedMessages: number };
+    chat: ChatData;
 };
 
 const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
@@ -42,6 +42,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
             where("seen", "==", false)
         );
         const unsubscribeUnreadMessagesCount = onSnapshot(unreadMessagesQuery, (querySnapshot) => {
+            setUnreadMessagesCount(querySnapshot.size);
             if (!window.navigator.userActivation.isActive) {
                 querySnapshot.docs.map((snapshot) => {
                     const data = snapshot.data();
@@ -56,7 +57,6 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     }
                 });
             }
-            setUnreadMessagesCount(querySnapshot.size);
         });
 
         return () => {
@@ -94,7 +94,9 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
     }, [userEmail])
 
     return (
-        <div className="px-2">
+        <div className="px-2" style={{
+            order: `-${lastMessage?.timestamp?.seconds || chat.createdAt?.seconds || 0}`
+        }}>
             <Link
                 to={`/chat/${chat.email}`}
                 className={`flex items-center justify-between ${chatIsSelected ? "bg-blue-500 hover:bg-blue-600" : "hover:bg-base/50 hover:border-black/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors duration-300`}

@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { collection, getDocs, or, query, where } from "firebase/firestore";
+import { collection, getDocs, or, query, Timestamp, where } from "firebase/firestore";
 import { db } from "../../../utils/firebase";
 import getNotSeenedMessagesCount from "../../helpers/chat/getNotSeenedMessagesCount";
 import Profile from "../../types/Profile";
 import getProfile from "../../helpers/usersAndProfiles/getProfile";
 
-type ChatsState = {
-    list: (Profile & { email: string, notSeenedMessages: number })[],
+export type ChatData = (Profile & { email: string, notSeenedMessages: number, createdAt: Timestamp });
+
+export type ChatsState = {
+    list: ChatData[],
     status: "loading" | "success" | "userUnauthenticated"
 }
 
@@ -16,7 +18,7 @@ const initialState: ChatsState = {
 };
 
 export const getChats = createAsyncThunk("chats/getChats", async (userEmail: string) => {
-    let chatsList: (Profile & { email: string, notSeenedMessages: number })[] = [];
+    let chatsList: (ChatsState['list']) = [];
     const q = query(
         collection(db, "chat_room"),
         or(
@@ -37,7 +39,8 @@ export const getChats = createAsyncThunk("chats/getChats", async (userEmail: str
 
             chatsList = [...chatsList, {
                 ...profile!,
-                notSeenedMessages: notSeenedMessagesCount
+                notSeenedMessages: notSeenedMessagesCount,
+                createdAt: chatData.createdAt
             }]
         }
     }).then(() => {
@@ -45,13 +48,14 @@ export const getChats = createAsyncThunk("chats/getChats", async (userEmail: str
     })
 });
 
-export const addChat = createAsyncThunk("chats/addChat", async ({ user_1, user_2 }: { user_1: string, user_2: string }) => {
+export const addChat = createAsyncThunk("chats/addChat", async ({ user_1, user_2, timestamp }: { user_1: string, user_2: string, timestamp: Timestamp }) => {
     const notSeenedMessages = await getNotSeenedMessagesCount(user_2, user_1);
     const profile = await getProfile(user_2);
 
     return {
         ...profile!,
         notSeenedMessages: notSeenedMessages,
+        createdAt: timestamp
     }
 })
 

@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import MemberListItem from "../components/MemberListItem";
 import { toast, ToastContainer } from "react-toastify";
-import { addDoc, collection, runTransaction } from "firebase/firestore";
+import { addDoc, collection, runTransaction, Timestamp } from "firebase/firestore";
 import { db, storage } from "../../utils/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
@@ -60,7 +60,7 @@ export default function CreateGroup() {
                         });
                     });
                     toast.success(`${groupName} group created successful!`, toastConf);
-                    dispatch(addGroup({ creator: userEmail, groupName, groupPhotoUrl: profileUrl, id: docRef.id, notSeenedMessages: 0 }));
+                    dispatch(addGroup({ creator: userEmail, groupName, groupPhotoUrl: profileUrl, id: docRef.id, notSeenedMessages: 0, createdAt: Timestamp.now() }));
                     removeGroupProfileHandler();
                     setGroupName("");
                     setMemberName("");

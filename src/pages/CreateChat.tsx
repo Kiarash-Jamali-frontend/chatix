@@ -1,7 +1,7 @@
 import { FormEvent, useLayoutEffect, useState } from "react"
 import input from "../cva/input";
 import button from "../cva/button";
-import { addDoc, collection, doc, getDoc, } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, Timestamp, } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
@@ -27,13 +27,15 @@ export default function CreateChat() {
         const docRef = doc(db, "profile", email);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
+            const timestamp = Timestamp.now();
             await addDoc(collection(db, "chat_room"), {
                 user_1: user.data!.email,
                 user_2: email,
                 isBlocked: false,
                 blockedFrom: "",
+                createdAt: timestamp
             });
-            dispatch(addChat({ user_1: user.data!.email, user_2: email })).then(() => {
+            dispatch(addChat({ user_1: user.data!.email, user_2: email, timestamp })).then(() => {
                 navigate(`/chat/${email}`);
             });
         } else {
