@@ -125,7 +125,7 @@ const Chat: React.FC = () => {
       <div className="w-full flex flex-col h-svh">
         <ChatHeader profile={profile} />
         <ImageModal />
-        <div className={`overflow-auto p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`} ref={messagesListRef}>
+        <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`} ref={messagesListRef}>
           {messages.map((m) => {
             const replyToMessage = messages.find((message) => m.replyTo === message.id);
             return (
@@ -155,10 +155,10 @@ const Chat: React.FC = () => {
               </div>
             )
           }
-          <div className="px-5 mx-auto max-w-[810px]">
+          <div className="px-3 md:px-5 mx-auto max-w-[810px]">
             {
               !roomData.isBlocked && email && (
-                <div className="mb-5">
+                <div className="mb-3 md:mb-5">
                   <ChatInput mode="private" chatId={roomData.id} oppositeProfile={profile} />
                 </div>
               )

@@ -134,7 +134,7 @@ export default function Group() {
         return (
             <div className="w-full flex flex-col h-svh">
                 <GroupHeader groupData={groupData} membersProfiles={membersProfiles} />
-                <div className={`overflow-auto p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}
+                <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}
                     ref={messagesListRef}>
                     {messages.map((m) => {
                         const replyToMessage = messages.find((message) => m.replyTo === message.id);
@@ -150,8 +150,8 @@ export default function Group() {
                     })}
                     {selectedMessageForReply ? <div className="pb-10"></div> : null}
                 </div>
-                <div className="mb-5">
-                    <div className="px-5 mx-auto max-w-[810px]">
+                <div className="px-3 md:px-5">
+                    <div className="mb-3 md:mb-5 mx-auto max-w-[810px]">
                         <ChatInput mode="group" groupId={groupId} />
                     </div>
                 </div>

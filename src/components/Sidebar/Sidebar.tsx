@@ -81,7 +81,7 @@ const Sidebar: React.FC = () => {
               </div>
               {/*email*/}
               <div className="text-xs mt-2 text-black/60 max-w-60 whitespace-nowrap overflow-hidden text-ellipsis">
-                Email: {user.data?.email}
+                <span className="md:inline hidden">Email: </span>{user.data?.email}
               </div>
             </div>
           </div>
