@@ -115,10 +115,10 @@ export default function Group() {
     }, [messages.length]);
 
     useEffect(() => {
-        if (groupData && messages.length && membersProfiles.length) {
+        if (groupData && membersProfiles.length) {
             setPending(false);
         }
-    }, [groupData, membersProfiles, messages])
+    }, [groupData, membersProfiles])
 
     useEffect(() => {
         if (!pending) scrollDownHandler();
@@ -130,7 +130,7 @@ export default function Group() {
         )
     }
 
-    if (groupData && messages.length && membersProfiles.length) {
+    if (groupData && membersProfiles.length) {
         return (
             <div className="w-full flex flex-col h-svh">
                 <GroupHeader groupData={groupData} membersProfiles={membersProfiles} />
