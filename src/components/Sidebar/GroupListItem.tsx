@@ -26,7 +26,8 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
             where("groupId", "==", group.id)
         ), limit(1))
         const unsub = onSnapshot(q, (querySnapshot) => {
-            setNotSeenedMessagesCount(querySnapshot.docs[0].data().notSeenedMessagesCount);
+            const data = querySnapshot.docs[0].data();
+            setNotSeenedMessagesCount(data.notSeenedMessagesCount);
         });
 
         return () => {

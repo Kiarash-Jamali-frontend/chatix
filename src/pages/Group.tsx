@@ -30,6 +30,7 @@ export default function Group() {
     const [membersProfiles, setMembersProfiles] = useState<MemberProfile[]>([]);
     const selectedMessageForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
 
+    const myMemberProfile = membersProfiles.find((mp) => mp.email == userEmail);
     const messagesListRef = useRef<HTMLDivElement>(null);
 
     const scrollDownHandler = () => {
@@ -37,9 +38,9 @@ export default function Group() {
     }
 
     const seenMessagesHandler = () => {
-        if (userEmail) {
+        if (userEmail && myMemberProfile) {
             runTransaction(db, async (transaction) => {
-                transaction.update(doc(db, "group_member", userEmail), {
+                transaction.update(doc(db, "group_member", myMemberProfile.groupMemberDocId), {
                     notSeenedMessagesCount: 0
                 })
             })
@@ -55,6 +56,7 @@ export default function Group() {
                     messages = [...messages, { ...snap.data(), id: snap.id }];
                 });
                 setMessages(messages);
+                seenMessagesHandler();
             });
 
             return () => {
