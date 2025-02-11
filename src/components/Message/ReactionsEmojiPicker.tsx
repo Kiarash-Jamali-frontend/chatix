@@ -1,8 +1,9 @@
 import EmojiPicker from "emoji-picker-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import changeReaction from "../../helpers/messages/changeReaction";
+import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 
 type PropTypes = {
     message: any;
@@ -14,6 +15,7 @@ export default function ReactionsEmojiPicker({ message, isGroupMessage }: PropTy
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessageID = useAppSelector((state: RootState) => state.selectedMessage.data?.id);
+    const dispatch = useAppDispatch();
 
     const messageIsSelected = selectedMessageID === message.id;
     const messageIsForCurrentUser = userEmail === message.from;
@@ -32,7 +34,11 @@ export default function ReactionsEmojiPicker({ message, isGroupMessage }: PropTy
                         opacity: 0,
                         transform: "scale(0.9) translateX(15px)"
                     }}>
-                        <EmojiPicker reactionsDefaultOpen={true} allowExpandReactions={false} className="!bg-white" onReactionClick={(e) => changeReaction(message.id, e.getImageUrl(), isGroupMessage)} />
+                        <EmojiPicker reactionsDefaultOpen={true} allowExpandReactions={false} className="!bg-white"
+                            onReactionClick={(e) => {
+                                changeReaction(message.id, e.getImageUrl(), isGroupMessage);
+                                dispatch(changeSelectedMessage(null))
+                            }} />
                     </motion.div>
                 )
             }

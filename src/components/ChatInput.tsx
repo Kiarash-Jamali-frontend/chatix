@@ -53,6 +53,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       type: "text",
       replyTo: messageSelectedForReply?.id || null
     });
+    setEmojiPickerIsOpen(false);
     setTextMessagePending(false);
   };
 
@@ -68,8 +69,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       let i = 0;
       while (i < fileInputRef.current.files.length) {
         const file = fileInputRef.current.files[i];
-
-        const fileStorageRef = ref(storage, `${isPrivateChat ? `chats/${chatId}` : `groups/${groupId}`}/${uuidv4()}.${getFileExt(file.name)}`);
+        const fileStorageRef = ref(storage,
+          `${isPrivateChat ? `chats/${chatId}` : `groups/${groupId}`}/${uuidv4()}.${getFileExt(file.name)}`);
         await uploadBytes(fileStorageRef, file);
         const fileUrl = await getDownloadURL(fileStorageRef);
         let fileType = "";
@@ -115,10 +116,13 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 opacity: 1,
                 transform: "scale(1) translate(0px, 0px)"
               }
-            }} initial="hide" exit="hide" animate="open" className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
+            }} initial="hide" exit="hide" animate="open"
+              className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
               <EmojiPicker open={emojiPickerIsOpen}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
-                onEmojiClick={(e) => setMessageText((prev) => prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.3em;height:1.3em" />`)} />
+                onEmojiClick={(e) => setMessageText((prev) =>
+                  prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.3em;height:1.3em" />`
+                )} />
             </motion.div>
           )
         }
@@ -127,7 +131,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         <AnimatePresence>
           {
             messageSelectedForReply && (
-              <motion.div className="py-2.5 px-3 overflow-hidden absolute w-full -top-[90%] z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800"
+              <motion.div
+                className="py-2.5 px-3 overflow-hidden absolute w-full top-[95%] md:top-[-90%] z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800"
                 variants={{
                   hide: {
                     opacity: 0
@@ -144,9 +149,14 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                     </span>
                     <div className="ms-1.5 lg:max-w-44 max-w-24 text-white overflow-hidden text-ellipsis whitespace-nowrap">
                       {
-                        messageSelectedForReply.type !== "text" ? <span className="capitalize">{messageSelectedForReply.type}</span> : (
-                          parse(messageSelectedForReply.content.split("<br>").join(""))
-                        )
+                        messageSelectedForReply.type !== "text"
+                          ?
+                          (
+                            <span className="capitalize">{messageSelectedForReply.type}</span>
+                          )
+                          : (
+                            parse(messageSelectedForReply.content.split("<br>").join(""))
+                          )
                       }
                     </div>
                   </div>
@@ -160,7 +170,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         </AnimatePresence>
         <div className="px-3 shadow-sm rounded-full border bg-white flex items-center flex-grow">
           <button className="me-2" onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
-            <FontAwesomeIcon icon={emojiPickerIsOpen ? faClose : faFaceSmile} className="text-black/50 size-5 flex items-center" />
+            <FontAwesomeIcon icon={emojiPickerIsOpen ? faClose : faFaceSmile}
+              className="text-black/50 size-5 flex items-center" />
           </button>
           <ContentEditable
             html={messageText ? messageText : ""}
@@ -195,10 +206,11 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="size-14 border shadow-sm bg-white rounded-full flex items-center justify-center" onClick={chooseFileHandler} disabled={filePending}>
+      <button className="size-14 border shadow-sm bg-white rounded-full flex items-center justify-center"
+        onClick={chooseFileHandler} disabled={filePending}>
         <FontAwesomeIcon icon={faPaperclip} className="size-5" />
       </button>
-    </div >
+    </div>
   );
 };
 

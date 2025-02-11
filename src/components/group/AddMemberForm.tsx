@@ -58,7 +58,7 @@ export default function AddMemberForm({ groupData, setModalContentType, membersE
 
     return (
         <div className="pt-4 border-t mt-4">
-            <div className="grid gap-y-1.5 max-h-60">
+            <div className="grid gap-y-1.5 max-h-60 overflow-auto scrollbar-hidden">
                 {
                     chatsNotAddedInGroup.map((c, index) => {
                         return (

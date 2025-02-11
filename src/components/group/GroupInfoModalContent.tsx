@@ -107,14 +107,16 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                 </div>
                 {
                     modalContentType == ModalContentType.DEFAULT && (
-                        <GroupInfoModalDefaultContent setModalContentType={setModalContentType}
+                        <GroupInfoModalDefaultContent
+                            setModalContentType={setModalContentType}
                             groupData={groupData}
                             membersProfiles={membersProfiles} />
                     )
                 }
                 {
                     modalContentType == ModalContentType.ADD_MEMBER_FORM && (
-                        <AddMemberForm membersEmails={membersProfiles.map((m) => m.email)}
+                        <AddMemberForm
+                            membersEmails={membersProfiles.filter((m) => !m.removedFromGroup).map((m) => m.email)}
                             setModalContentType={setModalContentType}
                             groupData={groupData} />
                     )
