@@ -56,7 +56,6 @@ export default function Group() {
                     messages = [...messages, { ...snap.data(), id: snap.id }];
                 });
                 setMessages(messages);
-                seenMessagesHandler();
             });
 
             return () => {
@@ -119,7 +118,6 @@ export default function Group() {
     }, [groupId, userEmail])
 
     useEffect(() => {
-        seenMessagesHandler();
         dispatch(changeSelectedChatOrGroupID(groupId));
 
         return () => {
@@ -136,6 +134,10 @@ export default function Group() {
             setPending(false);
         }
     }, [groupData, membersProfiles])
+
+    useEffect(() => {
+        seenMessagesHandler();
+    }, [userEmail, myMemberProfile])
 
     useEffect(() => {
         if (!pending) scrollDownHandler();
