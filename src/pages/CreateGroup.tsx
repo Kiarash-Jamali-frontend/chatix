@@ -31,7 +31,7 @@ export default function CreateGroup() {
 
     const successfulCreateGroupCallback = useCallback((data: { id: string, groupPhotoUrl: string }) => {
         toast.success(`${groupName} group created successful!`, toastConf);
-        dispatch(addGroup({ ...data, groupName, creator: userEmail!, notSeenedMessages: 0, createdAt: Timestamp.now() }));
+        dispatch(addGroup({ ...data, groupName, creator: userEmail!, createdAt: Timestamp.now() }));
         removeGroupProfileHandler();
         setGroupName("");
         setMemberName("");
