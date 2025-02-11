@@ -1,4 +1,4 @@
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
@@ -20,6 +20,11 @@ export default function ReactionsEmojiPicker({ message, isGroupMessage }: PropTy
     const messageIsSelected = selectedMessageID === message.id;
     const messageIsForCurrentUser = userEmail === message.from;
 
+    const emojiAndReactionClickHandler = (e: EmojiClickData) => {
+        changeReaction(message.id, e.getImageUrl(), isGroupMessage);
+        dispatch(changeSelectedMessage(null))
+    }
+
     return (
         <AnimatePresence>
             {
@@ -35,10 +40,7 @@ export default function ReactionsEmojiPicker({ message, isGroupMessage }: PropTy
                         transform: "scale(0.9) translateX(15px)"
                     }}>
                         <EmojiPicker reactionsDefaultOpen={true} allowExpandReactions={false} className="!bg-white"
-                            onReactionClick={(e) => {
-                                changeReaction(message.id, e.getImageUrl(), isGroupMessage);
-                                dispatch(changeSelectedMessage(null))
-                            }} />
+                            onReactionClick={emojiAndReactionClickHandler} onEmojiClick={emojiAndReactionClickHandler} />
                     </motion.div>
                 )
             }

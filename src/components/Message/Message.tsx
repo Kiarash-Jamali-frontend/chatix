@@ -106,7 +106,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
           </Link>
         )
       }
-      <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${!messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
+      <div dir="auto" className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${!messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
         {
           replyedMessage && (
             <button onClick={scrollToMessageHandler}
@@ -115,7 +115,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
                 <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
                 {replyedMessage.sender.name}
               </span>
-              <p className="text-xs mt-1">
+              <p className="text-xs mt-1 text-start">
                 {
                   replyedMessage.type !== "text" ? <span className="capitalize">{replyedMessage.type}</span> : (
                     parse(replyedMessage.content.split("<br>").join(""))

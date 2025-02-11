@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import button from "../cva/button";
 import { v4 as uuidv4 } from 'uuid';
 import { addDoc, collection, Timestamp } from "firebase/firestore";
@@ -102,6 +102,10 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     dispatch(changeMessageSelectedForReply(null));
   }
 
+  useEffect(() => {
+    removeMessageSelectedForRelpy();
+  }, [chatId, groupId])
+
   return (
     <div className={`relative flex items-stretch max-h-14`}>
       <AnimatePresence>
@@ -147,7 +151,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                       <FontAwesomeIcon icon={faReply} className="rotate-180 me-1.5" />
                       Reply {messageSelectedForReply.from === userEmail ? userProfile?.name : oppositeProfile.name}:
                     </span>
-                    <div className="ms-1.5 max-w-44 text-white overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div dir="auto" className="ms-1.5 max-w-44 lg:max-w-80 inline-flex text-white overflow-hidden text-ellipsis whitespace-nowrap">
                       {
                         messageSelectedForReply.type !== "text"
                           ?
