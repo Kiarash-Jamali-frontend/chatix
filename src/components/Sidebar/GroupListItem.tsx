@@ -7,7 +7,7 @@ import { faFile, faVideo } from "@fortawesome/free-solid-svg-icons";
 import getHourAndTime from "../../helpers/getHourAndTime";
 import { useEffect, useState } from "react";
 import { db } from "../../../utils/firebase";
-import { collection, doc, getDoc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { and, collection, doc, getDoc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { Parser } from "html-to-react";
 import GradiantProfile from "../GradiantProfile";
@@ -18,6 +18,21 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
     const selectedChatOrGroupID = useAppSelector((state: RootState) => state.selectedChatOrGroup.id);
     const groupIsSelected = selectedChatOrGroupID === group.id;
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
+    const [notSeenedMessagesCount, setNotSeenedMessagesCount] = useState<number>(0);
+
+    useEffect(() => {
+        const q = query(collection(db, "group_member"), and(
+            where("memberEmail", "==", userEmail),
+            where("groupId", "==", group.id)
+        ), limit(1))
+        const unsub = onSnapshot(q, (querySnapshot) => {
+            setNotSeenedMessagesCount(querySnapshot.docs[0].data().notSeenedMessagesCount);
+        });
+
+        return () => {
+            unsub();
+        }
+    }, [])
 
     useEffect(() => {
         const lastMessageQuery = query(
@@ -40,6 +55,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
             unsubscribeLastMessage();
         }
     }, [])
+    
     return (
         <>
             <div className="px-2" style={{
@@ -89,9 +105,9 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                                 </div>
                             </div>
                             <div className="flex flex-col">
-                                {group.notSeenedMessages ? (
+                                {notSeenedMessagesCount ? (
                                     <div className="size-4 text-[10px] rounded-full bg-red-500 text-white text-center flex items-center justify-center ms-auto mb-1">
-                                        {group.notSeenedMessages}
+                                        {notSeenedMessagesCount}
                                     </div>
                                 ) : (
                                     ""

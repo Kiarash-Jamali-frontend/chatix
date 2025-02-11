@@ -4,7 +4,7 @@ import { db } from "../../../utils/firebase";
 import Group from "../../types/Group";
 import GroupMember from "../../types/GroupMember";
 
-export type SidebarGroupData = (Group & { notSeenedMessages: number });
+export type SidebarGroupData = Group;
 
 type GroupState = {
     list: SidebarGroupData[],
@@ -29,9 +29,8 @@ export const getGroups = createAsyncThunk("groups/getGroups", async (userEmail: 
         for (let i = 0; i < querySnapshot.size; i++) {
             const groupMemberData = querySnapshot.docs[i].data() as GroupMember;
             const groupDocRef = doc(db, "group", groupMemberData.groupId);
-            const groupData = (await getDoc(groupDocRef)).data() as (SidebarGroupData & Omit<SidebarGroupData, SidebarGroupData['notSeenedMessages']>);
-            const notSeenedMessages: SidebarGroupData['notSeenedMessages'] = querySnapshot.docs.find((gm) => gm.id === groupData.id)?.data().notSeenedMessages as SidebarGroupData['notSeenedMessages'];
-            groupsList = [...groupsList, { ...groupData, id: querySnapshot.docs[i].data().groupId, notSeenedMessages }]
+            const groupData = (await getDoc(groupDocRef)).data() as SidebarGroupData;
+            groupsList = [...groupsList, { ...groupData, id: querySnapshot.docs[i].data().groupId }]
         }
     }).then(() => {
         return groupsList;

@@ -10,7 +10,7 @@ export default function MessageSeen({ message }: { message: any }) {
 
     return (
         <>
-            <div className={`ms-1 ${messageIsForCurrentUser
+            <div className={`${messageIsForCurrentUser
                 ? "text-white/50"
                 : "text-black/50"
                 }`}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import button from "../cva/button";
 import { v4 as uuidv4 } from 'uuid';
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { addDoc, collection, doc, runTransaction, Timestamp } from "firebase/firestore";
 import { db, storage } from "../../utils/firebase";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,15 +15,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { changeMessageSelectedForReply } from "../redux/slices/messageSelectedForReply";
 import { Parser } from "html-to-react";
+import { MemberProfile } from "../pages/Group";
 
 type PropTypes = {
   mode: "group" | "private";
   groupId?: string;
   oppositeProfile?: any;
   chatId?: string;
+  membersProfiles?: MemberProfile[]
 };
 
-const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId }) => {
+const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
   const userProfile = useAppSelector((state: RootState) => state.user.profile);
@@ -41,6 +43,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sendMessageHandler = async () => {
+    setEmojiPickerIsOpen(false);
     setTextMessagePending(true);
     removeMessageSelectedForRelpy();
     setMessageText("");
@@ -53,7 +56,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       type: "text",
       replyTo: messageSelectedForReply?.id || null
     });
-    setEmojiPickerIsOpen(false);
+    setNewNotSeenedMessageForAllGroupMembers();
     setTextMessagePending(false);
   };
 
@@ -95,7 +98,18 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         i++;
       }
     }
+    setNewNotSeenedMessageForAllGroupMembers();
     setFilePending(false);
+  }
+
+  const setNewNotSeenedMessageForAllGroupMembers = async () => {
+    membersProfiles?.filter((mp) => mp.email != userEmail).forEach((mp) => {
+      runTransaction(db, async (transaction) => {
+        transaction.update(doc(db, "group_member", mp.groupMemberDocId), {
+          notSeenedMessagesCount: mp.notSeenedMessagesCount+1
+        })
+      })
+    });
   }
 
   const removeMessageSelectedForRelpy = () => {
@@ -121,7 +135,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 transform: "scale(1) translate(0px, 0px)"
               }
             }} initial="hide" exit="hide" animate="open"
-              className="!absolute bottom-[4.5rem] !max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
+              className="!absolute bottom-[4.5rem] md:!max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
               <EmojiPicker open={emojiPickerIsOpen}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
                 onEmojiClick={(e) => setMessageText((prev) =>
@@ -146,12 +160,12 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                   }
                 }} initial="hide" exit="hide" animate="open">
                 <div className="flex items-center justify-between font-Vazir">
-                  <div className="flex items-center text-sm">
-                    <span className="text-white/75">
-                      <FontAwesomeIcon icon={faReply} className="rotate-180 me-1.5" />
-                      Reply {messageSelectedForReply.from === userEmail ? userProfile?.name : oppositeProfile.name}:
+                  <div className="flex items-center text-sm overflow-hidden w-full">
+                    <span className="text-white/75 me-1">
+                      <FontAwesomeIcon icon={faReply} className="rotate-180 me-1.5 hidden md:inline" />
+                      <span className="me-1 hidden md:inline">Reply</span>{messageSelectedForReply.from === userEmail ? userProfile?.name : oppositeProfile.name}:
                     </span>
-                    <div dir="auto" className="ms-1.5 max-w-44 lg:max-w-80 inline-flex text-white overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div dir="auto" className="inline-flex text-white overflow-hidden text-ellipsis whitespace-nowrap">
                       {
                         messageSelectedForReply.type !== "text"
                           ?
@@ -164,7 +178,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                       }
                     </div>
                   </div>
-                  <button onClick={removeMessageSelectedForRelpy} className="text-white flex items-center">
+                  <button onClick={removeMessageSelectedForRelpy} className="text-white flex items-center ms-2">
                     <FontAwesomeIcon icon={faClose} />
                   </button>
                 </div>

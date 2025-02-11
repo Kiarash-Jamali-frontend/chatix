@@ -29,7 +29,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage }) =>
             } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-e-none" : ""}
              w-fit flex-grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative border ${message.replyTo ? "rounded-b-xl border-t-0" : "rounded-xl"}`}
         >
-          <p className="max-w-[400px] break-words">
+          <p className="max-w-[400px] break-words" dir="auto">
             {parse(message.content)}
           </p>
           <div className="mt-1 flex justify-end">

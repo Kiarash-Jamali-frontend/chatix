@@ -3,7 +3,7 @@ import { redirect, useParams } from "react-router-dom"
 import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { SidebarGroupData } from "../redux/slices/groups";
-import { and, collection, doc, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { and, collection, doc, onSnapshot, orderBy, query, runTransaction, where } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import Loading from "../components/Loading";
 import GroupHeader from "../components/group/GroupHeader";
@@ -13,7 +13,10 @@ import { RootState } from "../redux/store";
 import Profile from "../types/Profile";
 import GroupMember from "../types/GroupMember";
 
-export type MemberProfile = (Profile & { id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean });
+export type MemberProfile = (Profile & {
+    id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
+    notSeenedMessagesCount: number
+});
 
 export default function Group() {
 
@@ -31,6 +34,16 @@ export default function Group() {
 
     const scrollDownHandler = () => {
         messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
+    }
+
+    const seenMessagesHandler = () => {
+        if (userEmail) {
+            runTransaction(db, async (transaction) => {
+                transaction.update(doc(db, "group_member", userEmail), {
+                    notSeenedMessagesCount: 0
+                })
+            })
+        }
     }
 
     useEffect(() => {
@@ -56,7 +69,7 @@ export default function Group() {
             const unsubGroupMembers = onSnapshot(groupMembersQuery, (snapshot) => {
                 let newMembersProfiles: MemberProfile[] = [];
                 snapshot.forEach(async (querySnapshot) => {
-                    const { removedFromGroup } = querySnapshot.data();
+                    const { removedFromGroup, notSeenedMessagesCount } = querySnapshot.data();
                     const memberEmail = querySnapshot.data().memberEmail;
                     const docRef = doc(db, "profile", memberEmail);
                     const unsub = onSnapshot(docRef, (snap) => {
@@ -65,7 +78,8 @@ export default function Group() {
                             id: memberEmail,
                             email: memberEmail,
                             groupMemberDocId: querySnapshot.id,
-                            removedFromGroup
+                            removedFromGroup,
+                            notSeenedMessagesCount
                         }];
                         setMembersProfiles(newMembersProfiles);
                     });
@@ -103,6 +117,7 @@ export default function Group() {
     }, [groupId, userEmail])
 
     useEffect(() => {
+        seenMessagesHandler();
         dispatch(changeSelectedChatOrGroupID(groupId));
 
         return () => {
@@ -152,7 +167,7 @@ export default function Group() {
                 </div>
                 <div className="px-3 md:px-5">
                     <div className="mb-3 md:mb-5 mx-auto max-w-[810px]">
-                        <ChatInput mode="group" groupId={groupId} />
+                        <ChatInput membersProfiles={membersProfiles} mode="group" groupId={groupId} />
                     </div>
                 </div>
             </div>

@@ -75,16 +75,16 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                 {userProfile.biography && (
                     <div className="bg-gray-50 py-2.5 px-4 border text-sm rounded-xl mt-5">
                         <span className="font-medium">Biography: </span>
-                        <p className="text-black/75">
+                        <p className="text-black/75 font-Vazir mt-2">
                             {userProfile.biography}
                         </p>
                     </div>
                 )}
-                <div className="bg-gray-50 flex items-center py-2.5 px-4 border text-sm rounded-xl mt-4">
+                <div className="bg-gray-50 flex items-center py-2.5 px-4 border text-sm rounded-xl mt-2 md:mt-4">
                     <span className="font-medium me-1">Email: </span>
                     <p className="text-black/60">{userProfile.email}</p>
                 </div>
-                <div className="grid grid-cols-2 gap-2 mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
                     <button className={button({ intent: "dark" })} onClick={shareProfileDataHandler}>
                         <FontAwesomeIcon icon={faShareNodes} className="me-1.5" />
                         Share
