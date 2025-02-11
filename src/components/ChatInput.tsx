@@ -132,7 +132,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           {
             messageSelectedForReply && (
               <motion.div
-                className="py-2.5 px-3 overflow-hidden absolute w-full top-[95%] md:top-[-90%] z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800"
+                className="py-2.5 px-3 overflow-hidden absolute w-full top-[-80%] z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800"
                 variants={{
                   hide: {
                     opacity: 0
@@ -142,12 +142,12 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                   }
                 }} initial="hide" exit="hide" animate="open">
                 <div className="flex items-center justify-between font-Vazir">
-                  <div className="flex items-center text-xs md:text-sm">
+                  <div className="flex items-center text-sm">
                     <span className="text-white/75">
                       <FontAwesomeIcon icon={faReply} className="rotate-180 me-1.5" />
                       Reply {messageSelectedForReply.from === userEmail ? userProfile?.name : oppositeProfile.name}:
                     </span>
-                    <div className="ms-1.5 lg:max-w-44 max-w-24 text-white overflow-hidden text-ellipsis whitespace-nowrap">
+                    <div className="ms-1.5 max-w-44 text-white overflow-hidden text-ellipsis whitespace-nowrap">
                       {
                         messageSelectedForReply.type !== "text"
                           ?
