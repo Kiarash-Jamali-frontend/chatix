@@ -85,7 +85,9 @@ const Sidebar: React.FC = () => {
               </div>
             </div>
           </div>
-          <button className={button({ className: "lg:hidden" })}>
+          <button className={button({ className: "lg:hidden" })}
+            disabled={logoutPending}
+            onClick={signoutFromChatix}>
             Logout
           </button>
         </div>
