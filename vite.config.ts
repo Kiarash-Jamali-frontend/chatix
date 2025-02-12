@@ -8,9 +8,10 @@ const manifestForPlugIn: Partial<VitePWAOptions>  = {
     maximumFileSizeToCacheInBytes: 3000000
   },
   workbox: {
-    maximumFileSizeToCacheInBytes: 3000000
+    maximumFileSizeToCacheInBytes: 3000000,
+    globPatterns: ["**/*"],
   },
-  includeAssets: ['favicon.ico', "apple-touc-icon.png", "masked-icon.svg"],
+  includeAssets: ["**/*",],
   manifest: {
     name: "Chatix",
     short_name: "Chatix",
