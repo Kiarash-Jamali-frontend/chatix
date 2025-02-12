@@ -10,14 +10,16 @@ import { faArrowLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { addDoc, and, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../utils/firebase";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
+import { MemberProfile } from "../../pages/Group";
 
 type PropTypes = {
     groupData: SidebarGroupData;
     membersEmails: string[];
     setModalContentType: Dispatch<SetStateAction<ModalContentType>>
+    membersProfiles: MemberProfile[]
 }
 
-export default function AddMemberForm({ groupData, setModalContentType, membersEmails }: PropTypes) {
+export default function AddMemberForm({ groupData, setModalContentType, membersEmails, membersProfiles }: PropTypes) {
 
     const chats = useAppSelector((state: RootState) => state.chats.list);
     const [pending, setPending] = useState<boolean>(false);
@@ -42,7 +44,10 @@ export default function AddMemberForm({ groupData, setModalContentType, membersE
             ));
             const snapshot = await getDocs(q);
             if (!snapshot.empty) {
-                removeAndAddUserGroup(groupData.id, "add");
+                const memberProfileDocId = membersProfiles.find((mp) => mp.email == e)?.groupMemberDocId;
+                if (memberProfileDocId) {
+                    removeAndAddUserGroup(memberProfileDocId, "add");
+                }
             } else {
                 await addDoc(collection(db, "group_member"), {
                     groupId: groupData.id,

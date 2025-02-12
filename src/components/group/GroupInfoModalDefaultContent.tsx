@@ -1,8 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import button from "../../cva/button";
 import { MemberProfile } from "../../pages/Group";
-import { useAppSelector } from "../../redux/hooks";
-import { SidebarGroupData } from "../../redux/slices/groups";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { getGroups, SidebarGroupData } from "../../redux/slices/groups";
 import { RootState } from "../../redux/store";
 import MemberListItem from "./MemberListItem"
 import { faArrowLeft, faUserPlus } from "@fortawesome/free-solid-svg-icons";
@@ -20,6 +20,7 @@ type PropTypes = {
 export default function GroupInfoModalDefaultContent({ membersProfiles, groupData, setModalContentType }: PropTypes) {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const [pending, setPending] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
 
     const navigate = useNavigate();
 
@@ -28,6 +29,7 @@ export default function GroupInfoModalDefaultContent({ membersProfiles, groupDat
         const id = membersProfiles.find((mp) => mp.email == userEmail)?.groupMemberDocId;
         if (id) {
             removeAndAddUserGroup(id, "remove");
+            if (userEmail) dispatch(getGroups(userEmail));
             navigate("/");
         }
         setPending(false);
