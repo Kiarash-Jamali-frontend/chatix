@@ -30,7 +30,8 @@ export default function AudioMessage({ message, isGroupMessage }: MessagePropTyp
     const messageIsForCurrentUser = userEmail === message.from;
     const isPlaying = message.id === currentPlayingMediaID;
 
-    const changeIsPlayingHandler = () => {
+    const changeIsPlayingHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
         dispatch(changeCurrentPlayingMedia(isPlaying ? null : message));
     }
 
@@ -113,7 +114,11 @@ export default function AudioMessage({ message, isGroupMessage }: MessagePropTyp
             <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata} onPlay={() => setIsStopped(false)} onPause={() => setIsStopped(true)}></audio>
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
-                onFocus={() => dispatch(changeSelectedMessage(message))}
+                onFocus={(e) => {
+                    e.target.dataset?.isPlayAndPauseButton != 'true' && (
+                        dispatch(changeSelectedMessage(message))
+                    )
+                }}
                 className={`${messageIsForCurrentUser
                     ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white hover:opacity-95"
                     : "bg-white hover:bg-gray-50"
@@ -121,7 +126,7 @@ export default function AudioMessage({ message, isGroupMessage }: MessagePropTyp
              w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
             >
                 <div className="flex relative">
-                    <button onClick={changeIsPlayingHandler}
+                    <button onClick={changeIsPlayingHandler} data-is-play-and-pause-button="true"
                         className={`flex items-center justify-center size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-sm"}`}>
                         <FontAwesomeIcon icon={!isStopped ? faPause : faPlay} size="lg" />
                     </button>
