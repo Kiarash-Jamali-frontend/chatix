@@ -13,11 +13,11 @@ export default function MessageSeen({ message }: { message: any }) {
             <div className={`${messageIsForCurrentUser
                 ? "text-white/50"
                 : "text-black/50"
-                }`}>
+                } relative flex items-center`}>
                 {message.seen && (
                     <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px]" />
                 )}
-                <FontAwesomeIcon icon={faCheck} width={10} height={10} />
+                <FontAwesomeIcon icon={faCheck} width={10} height={10} className={!message.seen ? "ms-[5px]" : ""} />
             </div>
         </>
     )

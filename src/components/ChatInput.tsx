@@ -106,7 +106,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     membersProfiles?.filter((mp) => mp.email != userEmail).forEach((mp) => {
       runTransaction(db, async (transaction) => {
         transaction.update(doc(db, "group_member", mp.groupMemberDocId), {
-          notSeenedMessagesCount: mp.notSeenedMessagesCount+1
+          notSeenedMessagesCount: mp.notSeenedMessagesCount + 1
         })
       })
     });
@@ -191,34 +191,38 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             <FontAwesomeIcon icon={emojiPickerIsOpen ? faClose : faFaceSmile}
               className="text-black/50 size-5 flex items-center" />
           </button>
-          <ContentEditable
-            html={messageText ? messageText : ""}
-            onChange={(e) => setMessageText(e.target.value)}
-            className="focus:outline-none w-full text-sm max-w-none placeholder:text-sm max-h-11 overflow-hidden font-Vazir"
-          />
-          {
-            filePending ? (
-              <div>
-                <div className="size-7 rounded-full border-4 border-r-transparent animate-spin">
+          <div dir="auto" className="w-full">
+            <ContentEditable
+              html={messageText ? messageText : ""}
+              onChange={(e) => setMessageText(e.target.value)}
+              className="focus:outline-none w-full text-sm max-w-none placeholder:text-sm max-h-11 overflow-hidden font-Vazir"
+            />
+          </div>
+          <div className="ms-2">
+            {
+              filePending ? (
+                <div>
+                  <div className="size-7 rounded-full border-4 border-r-transparent animate-spin">
+                  </div>
                 </div>
-              </div>
-              // <span className="text-sm text-black/60 min-w-24">
-              // Sending file ...
-              // </span>
-            ) : (
-              <button
-                className={button({
-                  intent: "primary",
-                  className: `!py-2 !rounded-full`,
-                })}
-                disabled={textMessagePending}
-                onClick={sendMessageHandler}
-              >
-                Send
-                <FontAwesomeIcon icon={faPaperPlane} className="ms-1.5" />
-              </button>
-            )
-          }
+                // <span className="text-sm text-black/60 min-w-24">
+                // Sending file ...
+                // </span>
+              ) : (
+                <button
+                  className={button({
+                    intent: "primary",
+                    className: `!py-2 !rounded-full`,
+                  })}
+                  disabled={textMessagePending}
+                  onClick={sendMessageHandler}
+                >
+                  Send
+                  <FontAwesomeIcon icon={faPaperPlane} className="ms-1.5" />
+                </button>
+              )
+            }
+          </div>
         </div>
       </div>
 
