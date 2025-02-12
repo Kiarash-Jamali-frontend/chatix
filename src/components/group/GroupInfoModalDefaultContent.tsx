@@ -20,14 +20,14 @@ type PropTypes = {
 export default function GroupInfoModalDefaultContent({ membersProfiles, groupData, setModalContentType }: PropTypes) {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const [pending, setPending] = useState<boolean>(false);
-    const userId = useAppSelector((state: RootState) => state.user.profile?.id);
 
     const navigate = useNavigate();
 
     const leaveGroupHandler = () => {
         setPending(true);
-        if (userId) {
-            removeAndAddUserGroup(userId, "remove");
+        const id = membersProfiles.find((mp) => mp.email == userEmail)?.groupMemberDocId;
+        if (id) {
+            removeAndAddUserGroup(id, "remove");
             navigate("/");
         }
         setPending(false);
