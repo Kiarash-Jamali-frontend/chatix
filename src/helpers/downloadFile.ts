@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import getFileExt from "./files/getFileExt";
 
 export default function downloadFile(link: string, callbackFn: (errorMsg: string | null) => unknown) {
@@ -13,7 +14,7 @@ export default function downloadFile(link: string, callbackFn: (errorMsg: string
             let tUrl = URL.createObjectURL(file);
             const tmp1 = document.createElement("a");
             tmp1.href = tUrl;
-            tmp1.download = `downloaded_file.${ex}`;
+            tmp1.download = `${v4()}.${ex}`;
             document.body.appendChild(tmp1);
             tmp1.click();
             URL.revokeObjectURL(tUrl);
