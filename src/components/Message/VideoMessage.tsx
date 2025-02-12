@@ -65,8 +65,12 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                         className="rounded-lg object-cover max-w-[400px] max-h-[275px] w-full" controls>
 
                     </video>
-                    <ReactionsEmojiPicker isGroupMessage={isGroupMessage}
-                        message={message} />
+                    {
+                        !isGroupMessage && (
+                            <ReactionsEmojiPicker
+                                message={message} />
+                        )
+                    }
                     <div className="flex items-center justify-end mt-2">
                         <MessageTime message={message} />
                         {message.from === userEmail && !isGroupMessage && (

@@ -7,11 +7,10 @@ import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 
 type PropTypes = {
     message: any;
-    isGroupMessage?: boolean;
 }
 
 
-export default function ReactionsEmojiPicker({ message, isGroupMessage }: PropTypes) {
+export default function ReactionsEmojiPicker({ message }: PropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessageID = useAppSelector((state: RootState) => state.selectedMessage.data?.id);
@@ -21,7 +20,7 @@ export default function ReactionsEmojiPicker({ message, isGroupMessage }: PropTy
     const messageIsForCurrentUser = userEmail === message.from;
 
     const emojiAndReactionClickHandler = (e: EmojiClickData) => {
-        changeReaction(message.id, e.getImageUrl(), isGroupMessage);
+        changeReaction(message.id, e.getImageUrl());
         dispatch(changeSelectedMessage(null))
     }
 

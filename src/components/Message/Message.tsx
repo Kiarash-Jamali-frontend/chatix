@@ -148,7 +148,11 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
           <TextMessage key={message.id} message={message} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
         }
       </div>
-      <MessageReaction message={message} isGroupMessage={isGroupMessage} />
+      {
+        !isGroupMessage && (
+          <MessageReaction message={message} />
+        )
+      }
     </div>
   );
 };

@@ -34,7 +34,11 @@ export default function FileMessage({ message, isGroupMessage }: MessagePropType
                     <a href={message.content} className={`flex items-center justify-center size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-sm"}`}>
                         <FontAwesomeIcon icon={faDownload} />
                     </a>
-                    <ReactionsEmojiPicker isGroupMessage={isGroupMessage} message={message} />
+                    {
+                        !isGroupMessage && (
+                            <ReactionsEmojiPicker message={message} />
+                        )
+                    }
                     <div className="ms-2">
                         <div className="font-light break-words max-w-48 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 mb-0.5 text-sm">{message.fileName}</div>
                         <div className={`text-xs ${messageIsForCurrentUser ? "text-white/60" : "text-black/50"}`}>{getFileSizeByMB(message.fileSize)} Mb</div>

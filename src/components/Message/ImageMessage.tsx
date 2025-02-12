@@ -30,7 +30,7 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage }: Pr
             >
                 <div className="relative">
                     <div className="relative z-30">
-                        <ReactionsEmojiPicker isGroupMessage={true} message={message} />
+                        <ReactionsEmojiPicker message={message} />
                     </div>
                     <div className="relative rounded-lg overflow-hidden cursor-pointer"
                         onClick={() => dispatch(changeImage({ ...message, isGroupMessage }))}>
