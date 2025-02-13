@@ -126,26 +126,30 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
           )
         }
         {
-          message.type === "image" && <ImageMessage key={message.id} message={message} isGroupMessage={isGroupMessage}
+          message.type === "image" && <ImageMessage key={message.id}
+            replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
             senderProfile={senderProfile}
             scrollDown={scrollDown} />
         }
         {
-          message.type === "video" && <VideoMessage key={message.id} message={message} isGroupMessage={isGroupMessage}
+          message.type === "video" && <VideoMessage key={message.id}
+            replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
             senderProfile={senderProfile}
             scrollDown={scrollDown} />
         }
         {
-          message.type === "file" && <FileMessage key={message.id} message={message} isGroupMessage={isGroupMessage}
+          message.type === "file" && <FileMessage key={message.id}
+            replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
             senderProfile={senderProfile} />
         }
         {
-          message.type === "audio" && <AudioMessage key={message.id} message={message} isGroupMessage={isGroupMessage}
+          message.type === "audio" && <AudioMessage
+            replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage}
             senderProfile={senderProfile} />
         }
         {
           message.type === "text" &&
-          <TextMessage key={message.id} message={message} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
+          <TextMessage replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
         }
       </div>
       {

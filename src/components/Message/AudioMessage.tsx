@@ -4,21 +4,18 @@ import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import { RootState } from "../../redux/store";
 import MessagePropTypes from "../../types/MessagePropTypes";
 import DeleteTextFileAudioMessageButton from "./DeleteTextFileAudioMessageButton";
-import { faDownload, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
 import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
-import downloadFile from "../../helpers/downloadFile";
-import { toast, ToastContainer } from "react-toastify";
-import toastConf from "../../../utils/toastConfig";
+import AudioDownloadButton from "./AudioDownloadButton";
 
-export default function AudioMessage({ message, isGroupMessage }: MessagePropTypes) {
+export default function AudioMessage({ message, isGroupMessage, replayMessage }: MessagePropTypes) {
 
     const [isStopped, setIsStopped] = useState<boolean>(true);
     const [duration, setDuration] = useState<number>(0);
-    const [pending, setPending] = useState<boolean>(false);
     const [progressTime, setProgressTime] = useState<number>(0);
 
     const currentPlayingMediaID = useAppSelector((state: RootState) => state.currentPlayingMedia.data?.id);
@@ -37,16 +34,6 @@ export default function AudioMessage({ message, isGroupMessage }: MessagePropTyp
     const changeIsPlayingHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         dispatch(changeCurrentPlayingMedia(isPlaying ? null : message));
-    }
-
-    const downloadFileHandler = () => {
-        setPending(true);
-        downloadFile(message.content, (errorMsg) => {
-            if (errorMsg) {
-                toast.error(errorMsg, toastConf);
-            }
-            setPending(false);
-        });
     }
 
     const setAudioCurrentTimeHandler = () => {
@@ -125,7 +112,6 @@ export default function AudioMessage({ message, isGroupMessage }: MessagePropTyp
 
     return (
         <>
-            <ToastContainer />
             <div className="flex">
                 <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata} onPlay={() => setIsStopped(false)} onPause={() => setIsStopped(true)}></audio>
                 <button
@@ -154,21 +140,8 @@ export default function AudioMessage({ message, isGroupMessage }: MessagePropTyp
                         }
                         <div className="ms-2">
                             <div className="flex items-center">
-                                <div className="font-light break-words max-w-44 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>
-                                <button onClick={downloadFileHandler}
-                                    disabled={pending}
-                                    data-is-button="true"
-                                    className={`size-6 flex items-center justify-center text-xs rounded-full ms-1 ${messageIsForCurrentUser ? "bg-white/10 text-white" : "bg-black/5 text-black"}`}>
-                                    {
-                                        pending ? (
-                                            <div className="size-3 border border-e-transparent border-white rounded-full animate-spin">
-
-                                            </div>
-                                        ) : (
-                                            <FontAwesomeIcon icon={faDownload} />
-                                        )
-                                    }
-                                </button>
+                                <div className="font-light break-words max-w-44 me-1 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>
+                                <AudioDownloadButton message={message} />
                             </div>
                             <div className={`flex items-center mt-1 ${messageIsForCurrentUser ? "text-white/60" : "text-black/60"}`}>
                                 <span className="text-xs">{formatTime(progressTime)}</span>
@@ -184,7 +157,7 @@ export default function AudioMessage({ message, isGroupMessage }: MessagePropTyp
                         )}
                     </div>
                 </button>
-                <DeleteTextFileAudioMessageButton message={message} />
+                <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
             </div>
         </>
     )

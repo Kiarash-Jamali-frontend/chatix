@@ -13,6 +13,7 @@ import CreateAccount from "./pages/CreateAccount";
 import ResetPassword from "./pages/ResetPassword";
 import CreateGroup from "./pages/CreateGroup";
 import Group from "./pages/Group";
+import "/node_modules/video-react/dist/video-react.css";
 
 const router = createBrowserRouter([
   {

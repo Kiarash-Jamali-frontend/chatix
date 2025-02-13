@@ -9,7 +9,7 @@ import MessagePropTypes from "../../types/MessagePropTypes";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 
-const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage }) => {
+const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, replayMessage }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
@@ -27,7 +27,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage }) =>
           ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white hover:opacity-95"
           : "bg-white hover:bg-gray-50"
           } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-e-none" : ""}
-             w-fit flex-grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative border ${message.replyTo ? "rounded-b-xl border-t-0" : "rounded-xl"}`}
+             w-fit flex-grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative border ${message.replyTo && replayMessage ? "rounded-b-xl border-t-0" : "rounded-xl"}`}
       >
         <p className="max-w-[400px] break-words" dir="auto">
           {parse(message.content)}
@@ -45,7 +45,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage }) =>
           )
         }
       </button>
-      <DeleteTextFileAudioMessageButton message={message} isGroupMessage={isGroupMessage} />
+      <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} isGroupMessage={isGroupMessage} />
     </div>
   );
 };

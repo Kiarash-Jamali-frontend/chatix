@@ -1,3 +1,5 @@
+// Work on it (has problem!)
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
@@ -7,9 +9,14 @@ import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
 import MessagePropTypes from "../../types/MessagePropTypes";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
+import { BigPlayButton, ControlBar, ForwardControl, PlaybackRateMenuButton, Player, PlayToggle, ReplayControl, ProgressControl, CurrentTimeDisplay, DurationDisplay, TimeDivider, VolumeMenuButton } from "video-react";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import downloadFile from "../../helpers/downloadFile";
+import { toast, ToastContainer } from "react-toastify";
+import toastConf from "../../../utils/toastConfig";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
@@ -18,6 +25,8 @@ type PropTypes = MessagePropTypes & {
 export default function VideoMessage({ message, scrollDown, isGroupMessage }: PropTypes) {
 
     const videoRef = useRef<HTMLVideoElement>(null);
+
+    const [pending, setPending] = useState<boolean>(false);
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessageID = useAppSelector((state: RootState) => state.selectedMessage.data?.id);
@@ -32,6 +41,16 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
         dispatch(changeCurrentPlayingMedia(message));
     }
 
+    const downloadVideoHandler = () => {
+        setPending(true);
+        downloadFile(message.content, (errorMsg) => {
+            if (errorMsg) {
+                toast.error(errorMsg, toastConf);
+            }
+            setPending(false);
+        })
+    }
+
     useEffect(() => {
         if (currentPlayingMediaID === message.id) {
             videoRef.current?.play();
@@ -42,6 +61,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
 
     return (
         <>
+            <ToastContainer />
             <button
                 className={`${messageIsForCurrentUser
                     ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
@@ -52,19 +72,56 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >
                 <div className="relative">
-                    {
-                        messageIsForCurrentUser && (
-                            <button
-                                onClick={() => deleteMessage(message.id, isGroupMessage)}
-                                className={`${!messageIsSelected ? "opacity-0" : ""} absolute z-50 size-8 text-sm top-3 left-3 flex items-center justify-center bg-white hover:bg-gray-50 transition-all text-black rounded-full`}>
-                                <FontAwesomeIcon icon={faTrashCan} />
-                            </button>
-                        )
-                    }
-                    <video onLoadedData={scrollDown} src={message.content} ref={videoRef} onPlay={playVideoHandler}
-                        className="rounded-lg object-cover max-w-[400px] max-h-[275px] w-full" controls>
+                    <div className={`absolute z-50 top-4 right-3 flex transition-all duration-300 ${!messageIsSelected ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100"}`}>
+                        {
+                            messageIsForCurrentUser && (
+                                <button
+                                    onClick={() => deleteMessage(message.id, isGroupMessage)}
+                                    className={`font-Inter ${!messageIsSelected ? "pointer-events-none" : ""} me-2 text-xs font-medium shadow-md border py-1.5 px-2 flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
+                                    <FontAwesomeIcon icon={faTrashCan} className="me-1" />
+                                    Delete
+                                </button>
+                            )
+                        }
+                        <button
+                            onClick={downloadVideoHandler}
+                            className={`font-Inter ${!messageIsSelected ? "pointer-events-none" : ""} text-xs font-medium shadow-md border py-1.5 px-2 flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
+                            {
+                                pending ? (
+                                    <div className="size-3 border border-e-transparent border-black rounded-full animate-spin">
 
-                    </video>
+                                    </div>
+                                ) : (
+                                    <FontAwesomeIcon icon={faDownload} />
+                                )
+                            }
+                            <span className="ms-1">
+                                {pending ? "Downloading ..." : "Download"}
+                            </span>
+                        </button>
+                    </div>
+                    <div className="rounded-lg overflow-hidden block w-[280px] sm:w-[350px] md:w-[400px]">
+                        <Player
+                            src={message.content}
+                            onLoadStart={scrollDown}
+                            preload="auto"
+                            fluid={true}
+                            onPlay={playVideoHandler}
+                        >
+                            <BigPlayButton position="center" />
+                            <ControlBar disableDefaultControls>
+                                <PlayToggle />
+                                <PlaybackRateMenuButton rates={[5, 2, 1, 0.5, 0.1]} />
+                                <CurrentTimeDisplay />
+                                <TimeDivider />
+                                <DurationDisplay />
+                                <ProgressControl />
+                                <VolumeMenuButton vertical={true} />
+                                <ReplayControl seconds={10} />
+                                <ForwardControl seconds={10} />
+                            </ControlBar>
+                        </Player>
+                    </div>
                     {
                         !isGroupMessage && (
                             <ReactionsEmojiPicker

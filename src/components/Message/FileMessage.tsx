@@ -1,23 +1,39 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import { RootState } from "../../redux/store";
 import MessagePropTypes from "../../types/MessagePropTypes";
 import DeleteTextFileAudioMessageButton from "./DeleteTextFileAudioMessageButton";
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
 import getFileSizeByMB from "../../helpers/files/getFileSizeByMB";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import downloadFile from "../../helpers/downloadFile";
+import { toast } from "react-toastify";
+import toastConf from "../../../utils/toastConfig";
 
-export default function FileMessage({ message, isGroupMessage }: MessagePropTypes) {
+export default function FileMessage({ message, isGroupMessage, replayMessage }: MessagePropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
     const dispatch = useAppDispatch();
 
+    const [pending, setPending] = useState<boolean>(false);
+
     const messageIsSelected = selectedMessage?.id === message.id;
     const messageIsForCurrentUser = userEmail === message.from;
+
+    const downloadFileHandler = () => {
+        setPending(true);
+        downloadFile(message.content, (errorMsg) => {
+            if (errorMsg) {
+                toast.error(errorMsg, toastConf);
+            }
+            setPending(false);
+        });
+    }
 
     return (
         <div className="flex">
@@ -31,9 +47,20 @@ export default function FileMessage({ message, isGroupMessage }: MessagePropType
              w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
             >
                 <div className="flex relative">
-                    <a href={message.content} className={`flex items-center justify-center size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-sm"}`}>
-                        <FontAwesomeIcon icon={faDownload} />
-                    </a>
+                    <button
+                        disabled={pending}
+                        onClick={downloadFileHandler}
+                        className={`flex items-center justify-center disabled:!opacity-100 size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-500  border-blue-500" : "bg-black/5 text-black border-black border shadow-sm"}`}>
+                        {
+                            pending ? (
+                                <div
+                                    className="size-6 border-e-transparent border-2 rounded-full animate-spin"
+                                ></div>
+                            ) : (
+                                <FontAwesomeIcon icon={faDownload} />
+                            )
+                        }
+                    </button>
                     {
                         !isGroupMessage && (
                             <ReactionsEmojiPicker message={message} />
@@ -51,7 +78,7 @@ export default function FileMessage({ message, isGroupMessage }: MessagePropType
                     )}
                 </div>
             </button>
-            <DeleteTextFileAudioMessageButton message={message} />
+            <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
         </div>
     )
 }
