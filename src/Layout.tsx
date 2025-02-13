@@ -10,13 +10,17 @@ import Loading from "./components/Loading";
 import { doc, getDoc, runTransaction, setDoc, Timestamp } from "firebase/firestore";
 import { changeChatsStatus, getChats } from "./redux/slices/chats";
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
-import { getGroups } from "./redux/slices/groups";
+import { changeGroupsStatus, getGroups } from "./redux/slices/groups";
+import useOnlineStatus from "./hooks/useOnlineStatus";
+import OfflineModal from "./components/OfflineModal";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsStatus = useAppSelector((state: RootState) => state.chats.status);
+
+  const isOnline = useOnlineStatus();
 
   const updateLastActivity = async () => {
     const newDate = Timestamp.now();
@@ -58,6 +62,9 @@ const Layout: React.FC = () => {
   }, [user]);
 
   useLayoutEffect(() => {
+    dispatch(changeUserStatus("loading"));
+    dispatch(changeChatsStatus("loading"));
+    dispatch(changeGroupsStatus("loading"));
     getGoogleSigninRedirectResult();
     const unsub = onAuthStateChanged(auth, (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));
@@ -75,7 +82,11 @@ const Layout: React.FC = () => {
     return () => {
       unsub();
     }
-  }, []);
+  }, [isOnline]);
+
+  if (!isOnline) {
+    return <OfflineModal />
+  }
 
   if (
     (user.status === "authenticated" && chatsStatus === "success")
