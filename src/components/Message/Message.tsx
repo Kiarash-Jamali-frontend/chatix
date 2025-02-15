@@ -95,7 +95,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
       {
         isGroupMessage && message.from != user.data?.email && senderProfile && (
           <Link to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
-            className={`mt-auto ms-2`}>
+            className={`mt-auto me-2`}>
             {
               senderProfile?.photoUrl ? (
                 <img src={senderProfile?.photoUrl} className="size-10 object-cover rounded-full object-center" />
