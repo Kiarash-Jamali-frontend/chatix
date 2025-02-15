@@ -74,9 +74,9 @@ export default function ProfileModal() {
                             }}>
 
                             </div>
-                            <div className="relative px-4">
-                                <div className="relative w-full h-full max-w-96 max-h-96">
-                                    <img src={openedProfileImage.profile} className="rounded-xl object-cover size-full" />
+                            <div className="relative max-w-[100svw] px-4">
+                                <div className="relative">
+                                    <img src={openedProfileImage.profile} className="rounded-xl object-cover block w-full h-full max-w-96 max-h-96" />
                                     {
                                         openedProfileImage.isCurrentUserProfile && (
                                             <div className={`bottom-3 right-3 absolute flex items-center z-50 transition-all`}>
