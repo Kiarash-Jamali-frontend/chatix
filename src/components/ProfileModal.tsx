@@ -75,7 +75,7 @@ export default function ProfileModal() {
 
                             </div>
                             <div className="relative px-4">
-                                <div className="relative w-full h-full max-size-96">
+                                <div className="relative w-full h-full max-w-96 max-h-96">
                                     <img src={openedProfileImage.profile} className="rounded-xl object-cover size-full" />
                                     {
                                         openedProfileImage.isCurrentUserProfile && (
