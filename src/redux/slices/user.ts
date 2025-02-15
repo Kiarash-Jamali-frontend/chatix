@@ -5,7 +5,7 @@ import { db, storage } from "../../../utils/firebase";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../../helpers/files/getFileExt";
 
-type UserState = {
+export type UserState = {
     data: {
         email: string,
     } | null,

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Profile from "../../types/Profile";
 import { AnimatePresence, motion } from "framer-motion";
 import UserLastActivity from "../UserLastActivity";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import button from "../../cva/button";
 import toastConf from "../../../utils/toastConfig";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
 import { RootState } from "../../redux/store";
 import { Dispatch, SetStateAction } from "react";
 import GradiantProfile from "../GradiantProfile";
+import { changeOpenedProfile } from "../../redux/slices/openedProfile";
 
 type PropTypes = {
     userProfile: Profile & { email: string },
@@ -22,6 +23,7 @@ type PropTypes = {
 
 export default function UserInfoModalContent({ userProfile, chatRoom, setIsActive }: PropTypes) {
 
+    const dispatch = useAppDispatch();
     const changeIsBlockingUser = useChangeIsBlockingUser(chatRoom);
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
 
@@ -35,6 +37,19 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
         } else {
             toast.error("Your browser does not support this feature", toastConf);
         }
+    }
+
+    const openProfileHandler = () => {
+        setIsActive(false);
+        dispatch(changeOpenedProfile({
+            data: {
+                isCurrentUserProfile: false,
+                profile: userProfile.photoUrl
+            },
+            hideCallback() {
+                setIsActive(true);
+            },
+        }))
     }
 
     return (
@@ -57,7 +72,8 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                                 <img
                                     src={userProfile.photoUrl}
                                     alt={"profile"}
-                                    className="size-14 object-cover rounded-full"
+                                    className="size-14 object-cover rounded-full cursor-pointer"
+                                    onClick={openProfileHandler}
                                 />
                             ) : (
                                 <GradiantProfile name={userProfile.name} />

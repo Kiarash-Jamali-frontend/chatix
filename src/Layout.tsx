@@ -13,6 +13,7 @@ import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { changeGroupsStatus, getGroups } from "./redux/slices/groups";
 import useOnlineStatus from "./hooks/useOnlineStatus";
 import OfflineModal from "./components/OfflineModal";
+import ProfileModal from "./components/ProfileModal";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -95,8 +96,9 @@ const Layout: React.FC = () => {
     || location.pathname === "/reset-password"
   ) {
     return (
-      <div className="lg:flex min-h-svh before:absolute before:inset-0 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-15 before:z-0">
+      <div className="lg:flex min-h-svh before:absolute before:inset-0 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0">
         <div className="relative z-10 w-full h-full flex">
+          <ProfileModal />
           {
             (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
           }

@@ -11,7 +11,7 @@ export default function GroupsAndChatsListButtons({ selectedList }: PropTypes) {
     const swiper = useSwiper();
 
     return (
-        <div className="mb-2 relative -order-1">
+        <div className="relative -order-1">
             <div className={`w-[50%] absolute top-0 bottom-0 bg-gradient-to-br from-blue-400 to-blue-600 outline-[1px_solid] ${selectedList == "groups" ? "translate-x-[100%]" : "translate-x-0"} transition-all`}>
 
             </div>

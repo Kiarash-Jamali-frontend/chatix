@@ -98,7 +98,7 @@ export default function CreateGroup() {
     return (
         <>
             <ToastContainer />
-            <div className="bg-white rounded-xl shadow-sm lg:border p-8 h-fit m-auto w-full max-w-lg max-lg:h-full max-lg:min-h-svh flex flex-col">
+            <div className="bg-white lg:rounded-xl shadow-sm lg:border px-8 pt-8 h-fit m-auto w-full lg:max-w-lg max-lg:h-svh flex flex-col">
                 <div className="flex items-center">
                     <Link to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
@@ -107,7 +107,7 @@ export default function CreateGroup() {
                         Create group
                     </h2>
                 </div>
-                <form onSubmit={createGroupHandler} className="mt-5 flex-grow flex flex-col">
+                <form onSubmit={createGroupHandler} className="pt-5 pb-8 flex-grow flex flex-col h-full">
                     <div>
                         <label htmlFor="groupName">Name:</label>
                         <input type="groupName" id="groupName" required className={input()} value={groupName} onChange={(e) => setGroupName(e.target.value)} />
@@ -145,34 +145,31 @@ export default function CreateGroup() {
                             )
                         }
                     </div>
-                    <div className="mt-4">
-                        <label htmlFor="members">Members:</label>
-                        <input
-                            value={memberName}
-                            onChange={(e) => setMemberName(e.target.value)}
-                            type="text" placeholder="Enter member name ..." className={input()}
-                        />
-                        <div className="mt-1.5 grid gap-y-1.5 overflow-auto scrollbar max-h-[200px]">
-                            {
-                                chats.map((c) => {
-                                    const isSelected = selectedMembersEmails.includes(c.email);
-                                    if (!memberName.trim() || c.name.toLowerCase().includes(memberName.trim().toLowerCase())) {
-                                        return (
-                                            <MemberListItem
-                                                callbackFn={() => memberListItemClickHandler(c.email)}
-                                                isSelected={isSelected}
-                                                member={c} />
-                                        )
-                                    }
-                                })
-                            }
-                        </div>
+                    <label htmlFor="members" className="mt-4 block">Members:</label>
+                    <input
+                        value={memberName}
+                        onChange={(e) => setMemberName(e.target.value)}
+                        type="text" placeholder="Enter member name ..." className={input()}
+                    />
+                    <div className="mt-1.5 mb-5 grid gap-y-1.5 overflow-auto h-full scrollbar lg:max-h-[200px]">
+                        {
+                            chats.map((c, i) => {
+                                const isSelected = selectedMembersEmails.includes(c.email);
+                                if (!memberName.trim() || c.name.toLowerCase().includes(memberName.trim().toLowerCase())) {
+                                    return (
+                                        <MemberListItem
+                                            key={i}
+                                            callbackFn={() => memberListItemClickHandler(c.email)}
+                                            isSelected={isSelected}
+                                            member={c} />
+                                    )
+                                }
+                            })
+                        }
                     </div>
-                    <div className="mt-auto">
-                        <button type="submit" disabled={pending}
-                            className={button({ intent: "primary", size: "large", className: "w-full mt-5" })}
-                        >Create group</button>
-                    </div>
+                    <button type="submit" disabled={pending}
+                        className={button({ intent: "primary", size: "large", className: "w-full mt-auto" })}
+                    >Create group</button>
                 </form>
             </div>
         </>

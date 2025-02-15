@@ -12,7 +12,7 @@ import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import { useEffect, useRef, useState } from "react";
 import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
-import { BigPlayButton, ControlBar, ForwardControl, PlaybackRateMenuButton, Player, PlayToggle, ReplayControl, ProgressControl, CurrentTimeDisplay, DurationDisplay, TimeDivider, VolumeMenuButton } from "video-react";
+import { BigPlayButton, ControlBar, ForwardControl, PlaybackRateMenuButton, Player, PlayToggle, ReplayControl, ProgressControl, CurrentTimeDisplay, DurationDisplay, TimeDivider, VolumeMenuButton, PlayerReference } from "video-react";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import downloadFile from "../../helpers/downloadFile";
 import { toast, ToastContainer } from "react-toastify";
@@ -24,7 +24,7 @@ type PropTypes = MessagePropTypes & {
 
 export default function VideoMessage({ message, scrollDown, isGroupMessage }: PropTypes) {
 
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const videoRef = useRef<PlayerReference>(null);
 
     const [pending, setPending] = useState<boolean>(false);
 
@@ -103,12 +103,13 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                     <div className="rounded-lg overflow-hidden block w-[280px] sm:w-[350px] md:w-[400px]">
                         <Player
                             src={message.content}
-                            onLoadStart={scrollDown}
                             preload="auto"
+                            ref={videoRef}
                             fluid={true}
+                            onLoadStart={scrollDown}
                             onPlay={playVideoHandler}
                         >
-                            <BigPlayButton position="center" />
+                            <BigPlayButton position="center" className="z-10" />
                             <ControlBar disableDefaultControls>
                                 <PlayToggle />
                                 <PlaybackRateMenuButton rates={[5, 2, 1, 0.5, 0.1]} />

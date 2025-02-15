@@ -24,16 +24,6 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
     const chatIsSelected = selectedChatOrGroupID === chat.email;
 
-    const sendNewMessageNotification = (msg: any) => {
-        const domParser = new DOMParser();
-        const parsedMsg = domParser.parseFromString(msg.content, "text/html");
-        new Notification(chat.name, {
-            icon: chat.photoUrl,
-            tag: "chatix-new-message",
-            body: msg.type !== "text" ? msg.type : parsedMsg.body.innerText ? parsedMsg.body.innerText : "Emoji",
-        });
-    }
-
     useEffect(() => {
         const unreadMessagesQuery = query(
             collection(db, "chat_message"),
@@ -43,20 +33,6 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
         );
         const unsubscribeUnreadMessagesCount = onSnapshot(unreadMessagesQuery, (querySnapshot) => {
             setUnreadMessagesCount(querySnapshot.size);
-            if (!window.navigator.userActivation.isActive) {
-                querySnapshot.docs.map((snapshot) => {
-                    const data = snapshot.data();
-                    if (Notification.permission !== "granted") {
-                        Notification.requestPermission((permission) => {
-                            if (permission === "granted") {
-                                sendNewMessageNotification(data)
-                            }
-                        })
-                    } else {
-                        sendNewMessageNotification(data);
-                    }
-                });
-            }
         });
 
         return () => {
@@ -150,7 +126,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                                             </div>
                                             {
                                                 lastMessage.from === userEmail && (
-                                                    <div className={`flex items-center ${lastMessage.seen ? "ms-2" : "ms-1"}`}>
+                                                    <div className={`flex items-center ${lastMessage.seen ? "ms-2" : "ms-1"} relative`}>
                                                         {lastMessage.seen && (
                                                             <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[-5px] absolute" />
                                                         )}

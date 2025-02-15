@@ -1,13 +1,18 @@
 export default function Loading() {
     return (
-        <div className="z-[999] fixed inset-0 w-full h-full bg-base before:absolute before:inset-0 before:bg-[url('/background.svg')] before:opacity-15 before:bg-base before:bg-contain before:bg-repeat before:z-0 backdrop-blur-sm flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center text-center bg-white rounded-xl p-6 z-10 relative border">
-                <div className="size-10 border-[5px] border-e-transparent animate-spin border-blue-500 rounded-full mb-4">
+        <div className="z-[999] fixed inset-0 w-full h-full bg-base before:absolute before:inset-0 before:bg-[url('/background.svg')] before:opacity-20 before:bg-base before:bg-contain before:bg-repeat before:z-0 flex items-center justify-center">
+            <div className="flex items-center justify-center text-center bg-white rounded-xl py-4 px-6 z-10 relative border">
+                <div className="size-9 border-[5px] animate-spin border-r-blue-500 border-l-blue-500 rounded-full">
 
                 </div>
-                <span className="text-sm text-black/75 font-medium">
-                    Please wait ...
-                </span>
+                <div className="flex flex-col ms-5 items-start">
+                    <span className="text-blue-500 font-semibold">
+                        Chatix
+                    </span>
+                    <span className="text-xs text-black/50 mt-1">
+                        Please wait ...
+                    </span>
+                </div>
             </div>
         </div>
     )

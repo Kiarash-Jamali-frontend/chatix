@@ -6,11 +6,12 @@ import GradiantProfile from "../GradiantProfile";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import getGroupMembersCount from "../../helpers/group/getGroupMembersCount";
 import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { MemberProfile } from "../../pages/Group";
 import GroupInfoModalDefaultContent from "./GroupInfoModalDefaultContent";
 import AddMemberForm from "./AddMemberForm";
+import { changeOpenedProfile } from "../../redux/slices/openedProfile";
 
 type PropTypes = {
     groupData: SidebarGroupData;
@@ -26,10 +27,24 @@ export enum ModalContentType {
 
 export default function GroupInfoModalContent({ groupData, membersProfiles, setIsActive }: PropTypes) {
 
+    const dispatch = useAppDispatch();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const [onlineMembersCount, setOnlineMembersCount] = useState<number>(0);
     const [membersCount, setMembersCount] = useState<number>(0);
     const [modalContentType, setModalContentType] = useState<ModalContentType>(ModalContentType.DEFAULT);
+
+    const openProfileHandler = () => {
+        setIsActive(false);
+        dispatch(changeOpenedProfile({
+            data: {
+                isCurrentUserProfile: false,
+                profile: groupData.groupPhotoUrl
+            },
+            hideCallback() {
+                setIsActive(true);
+            },
+        }))
+    }
 
     const getOnlineMembersCount = useCallback(() => {
         let onlineMembersCount = 0;
@@ -71,7 +86,8 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                                 <img
                                     src={groupData.groupPhotoUrl}
                                     alt={"profile"}
-                                    className="size-14 object-cover rounded-full"
+                                    className="size-14 object-cover rounded-full cursor-pointer"
+                                    onClick={openProfileHandler}
                                 />
                             ) : (
                                 <GradiantProfile name={groupData.groupName} />

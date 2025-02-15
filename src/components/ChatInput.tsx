@@ -161,7 +161,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 }} initial="hide" exit="hide" animate="open">
                 <div className="flex items-center justify-between font-Vazir">
                   <div className="flex items-center text-sm overflow-hidden w-full">
-                    <span className="text-white/75 me-1">
+                    <span className="text-white/75 me-1 flex items-center">
                       <FontAwesomeIcon icon={faReply} className="rotate-180 me-1.5 hidden md:inline" />
                       <span className="me-1 hidden md:inline">Reply</span>{messageSelectedForReply.from === userEmail ? userProfile?.name : oppositeProfile.name}:
                     </span>

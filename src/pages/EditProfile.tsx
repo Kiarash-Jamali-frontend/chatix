@@ -86,7 +86,7 @@ export default function EditProfile() {
     return (
         <>
             <ToastContainer />
-            <div className="p-8 lg:rounded-xl bg-white shadow-sm border w-full max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
+            <div className="p-8 lg:rounded-xl bg-white shadow-sm border w-full lg:max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
                 <div className="flex items-center pb-[11px] border-b">
                     <Link to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
@@ -102,7 +102,7 @@ export default function EditProfile() {
                         <input id="name" value={profileData.name}
                             onChange={(e) => setProfileData((prev) => ({ ...prev, name: e.target.value }))}
                             type="text"
-                            className={input()} />
+                            className={input()} maxLength={30} />
                     </div>
                     <div>
                         <label htmlFor="profileImage" className="text-sm inline-block mb-1">New profile image</label>
