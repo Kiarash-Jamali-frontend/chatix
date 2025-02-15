@@ -90,7 +90,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
 
   return (
     <div id={message.id}
-      className={`flex relative ${!messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/5" : ""}`}
+      className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/5" : ""}`}
       onDoubleClick={selectMessageForReply}>
       {
         isGroupMessage && message.from != user.data?.email && senderProfile && (
@@ -106,7 +106,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
           </Link>
         )
       }
-      <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${!messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
+      <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
         {
           replyedMessage && (
             <button onClick={scrollToMessageHandler}
