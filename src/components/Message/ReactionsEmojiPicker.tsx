@@ -28,7 +28,7 @@ export default function ReactionsEmojiPicker({ message }: PropTypes) {
         <AnimatePresence>
             {
                 messageIsSelected && !messageIsForCurrentUser && (
-                    <motion.div className={`absolute right-3 top-[-1.35rem] flex items-center z-50`} initial={{
+                    <motion.div className={`absolute left-3 top-[-1.35rem] flex items-center z-50`} initial={{
                         opacity: 0,
                         transform: "scale(0.9) translateX(15px)"
                     }} animate={{
