@@ -39,7 +39,12 @@ export default function FileMessage({ message, isGroupMessage, replayMessage }: 
         <div className="flex">
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
-                onFocus={() => dispatch(changeSelectedMessage(message))}
+                onFocus={({ target }) => {
+                    const { dataset } = target
+                    dataset.isButton != 'true' && (
+                        dispatch(changeSelectedMessage(message))
+                    )
+                }}
                 className={`${messageIsForCurrentUser
                     ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white hover:opacity-95"
                     : "bg-white hover:bg-gray-50"
@@ -48,6 +53,7 @@ export default function FileMessage({ message, isGroupMessage, replayMessage }: 
             >
                 <div className="flex relative">
                     <button
+                        data-is-button="true"
                         disabled={pending}
                         onClick={downloadFileHandler}
                         className={`flex items-center justify-center disabled:!opacity-100 size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-500  border-blue-500" : "bg-black/5 text-black border-black border shadow-sm"}`}>
