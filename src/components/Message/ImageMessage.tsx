@@ -24,7 +24,7 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage }: Pr
                     ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
                     : "bg-white"
                     }
-               w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
+               w-fit min-w-32 px-3 pt-3 text-[0.925em] z-30 text-start transition-all font-light relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >
@@ -38,7 +38,7 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage }: Pr
                     </div>
                 </div>
 
-                <div className="flex justify-end items-center mt-1">
+                <div className="flex justify-end items-center my-2">
                     <MessageTime message={message} />
                     {message.from === userEmail && !isGroupMessage && (
                         <MessageSeen message={message} />

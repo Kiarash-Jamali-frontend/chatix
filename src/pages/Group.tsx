@@ -12,6 +12,7 @@ import Message from "../components/Message/Message";
 import { RootState } from "../redux/store";
 import Profile from "../types/Profile";
 import GroupMember from "../types/GroupMember";
+import ImageModal from "../components/ImageModal";
 
 export type MemberProfile = (Profile & {
     id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
@@ -152,6 +153,7 @@ export default function Group() {
     if (groupData && membersProfiles.length) {
         return (
             <div className="w-full flex flex-col h-svh">
+                <ImageModal />
                 <GroupHeader groupData={groupData} membersProfiles={membersProfiles} />
                 <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}
                     ref={messagesListRef}>
