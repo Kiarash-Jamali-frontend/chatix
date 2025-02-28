@@ -4,5 +4,5 @@ import { Timestamp } from "firebase/firestore"
 export default function getHourAndTime(timestamp: Timestamp) {
     const date = Timestamp.fromMillis(timestamp.toMillis()).toDate();
 
-    return format(date, "h:m a");
+    return format(date, "hh:mm a");
 }

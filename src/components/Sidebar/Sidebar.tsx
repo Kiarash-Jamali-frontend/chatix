@@ -68,7 +68,7 @@ const Sidebar: React.FC = () => {
                   <GradiantProfile size="xl" name={user.profile?.name} />
                 )
               }
-              <Link
+              <Link unstable_viewTransition
                 to={"/edit-profile"}
                 className="absolute bottom-0 right-0 bg-black/85 text-white rounded-full flex items-center justify-center text-center w-[22px] h-[22px]"
               >
