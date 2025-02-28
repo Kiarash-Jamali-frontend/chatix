@@ -6,12 +6,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { db } from "../../../utils/firebase";
-import { and, collection, doc, getDoc, limit, onSnapshot, orderBy, query, Timestamp, where } from "firebase/firestore";
+import { and, collection, doc, getDoc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { Parser } from "html-to-react";
 import GradiantProfile from "../GradiantProfile";
-import { formatRelative, subDays } from "date-fns";
-import { customLocale } from "../../utils/formatRelativeLocale";
+import customFormatRelative from "../../helpers/customFormatRelative";
 
 export default function GroupListItem({ group }: { group: SidebarGroupData }) {
     const { parse } = Parser();
@@ -119,12 +118,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                                         <div className="flex items-center justify-between">
                                             <div className={`${groupIsSelected ? "text-white/60" : "text-black/60"} flex items-center`}>
                                                 <div className="text-xs">
-                                                    {formatRelative(subDays(
-                                                        new Date(Timestamp.fromMillis(lastMessage.timestamp.seconds * 10 ** 3)
-                                                            .toDate()), 0),
-                                                        new Date(), {
-                                                        locale: customLocale
-                                                    })}
+                                                    {customFormatRelative(lastMessage.timestamp)}
                                                 </div>
                                             </div>
                                         </div>

@@ -1,4 +1,4 @@
-import { and, collection, limit, onSnapshot, or, orderBy, query, Timestamp, where } from "firebase/firestore";
+import { and, collection, limit, onSnapshot, or, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { db } from "../../../utils/firebase";
@@ -10,8 +10,7 @@ import { RootState } from "../../redux/store";
 import { faCheck, faVideo } from "@fortawesome/free-solid-svg-icons";
 import GradiantProfile from "../GradiantProfile";
 import { ChatData } from "../../redux/slices/chats";
-import { formatRelative, subDays } from "date-fns";
-import { customLocale } from "../../utils/formatRelativeLocale";
+import customFormatRelative from "../../helpers/customFormatRelative";
 
 type PropTypes = {
     chat: ChatData;
@@ -123,12 +122,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                                     <div className="flex items-center justify-between">
                                         <div className={`${chatIsSelected ? "text-white/60" : "text-black/60"} flex items-center`}>
                                             <div className="text-xs">
-                                                {formatRelative(subDays(
-                                                    new Date(Timestamp.fromMillis(lastMessage.timestamp.seconds * 10 ** 3)
-                                                        .toDate()), 0),
-                                                    new Date(), {
-                                                        locale: customLocale
-                                                    })}
+                                                {customFormatRelative(lastMessage.timestamp)}
                                             </div>
                                             {
                                                 lastMessage.from === userEmail && (

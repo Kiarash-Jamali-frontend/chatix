@@ -150,8 +150,12 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
                         </div>
                         <div className={`flex items-center mt-1 ${messageIsForCurrentUser ? "text-white/60" : "text-black/60"}`}>
                             <span className="text-xs">{formatTime(progressTime)}</span>
-                            <input type="range" value={progressTime} onChange={setAudioCurrentTimeHandler} ref={audioProgressBarRef}
-                                className="mx-1.5 h-1.5 audio-message-timeline-range-thumb w-full" />
+                            <input
+                                data-is-button="true" type="range" value={progressTime} onChange={setAudioCurrentTimeHandler} ref={audioProgressBarRef}
+                                className="mx-1.5 h-1.5 audio-message-timeline-range-thumb w-full"
+                                onDoubleClick={(e) => {
+                                    e.stopPropagation();
+                                }} />
                             <span className="text-xs">{formatTime(duration)}</span>
                         </div>
                     </div>

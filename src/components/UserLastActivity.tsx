@@ -1,7 +1,7 @@
-import { Timestamp } from "firebase/firestore";
-import { formatRelative, subDays } from "date-fns";
 import Profile from "../types/Profile";
 import useUserIsOnline from "../hooks/useUserIsOnline";
+import { formatRelative, subDays } from "date-fns";
+import { Timestamp } from "firebase/firestore";
 
 export default function UserLastActivity({ profile }: { profile: Profile }) {
     const userIsOnline = useUserIsOnline(profile.lastActivity);
