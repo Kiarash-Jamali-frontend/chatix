@@ -31,6 +31,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   const { parse } = Parser();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsList = useAppSelector((state: RootState) => state.chats.list);
+  const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -95,7 +96,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
 
   return (
     <div id={message.id}
-      className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/5" : ""}`}
+      className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} ${(selectedMessage?.id == message.id && !isGroupMessage) ? "z-50" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/5" : ""}`}
       onDoubleClick={selectMessageForReply}>
       {
         isGroupMessage && message.from != user.data?.email && senderProfile && (
