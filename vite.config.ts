@@ -10,7 +10,8 @@ const manifestForPlugIn: Partial<VitePWAOptions>  = {
   workbox: {
     maximumFileSizeToCacheInBytes: 3000000,
     globPatterns: ["**/*"],
-    cleanupOutdatedCaches: true
+    cleanupOutdatedCaches: true,
+    sourcemap: true
   },
   includeAssets: ["**/*",],
   manifest: {
