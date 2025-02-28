@@ -38,8 +38,10 @@ export default function ReactionsEmojiPicker({ message }: PropTypes) {
                         opacity: 0,
                         transform: "scale(0.9) translateX(-1rem)"
                     }}>
-                        <EmojiPicker reactionsDefaultOpen={true} allowExpandReactions={false} className="!bg-white"
-                            onReactionClick={emojiAndReactionClickHandler} onEmojiClick={emojiAndReactionClickHandler} />
+                        <EmojiPicker searchDisabled={true} reactionsDefaultOpen={true}
+                            allowExpandReactions={false}
+                            className="!bg-white"
+                            onReactionClick={emojiAndReactionClickHandler} />
                     </motion.div>
                 )
             }
