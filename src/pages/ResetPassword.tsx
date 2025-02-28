@@ -53,13 +53,13 @@ export default function ResetPassword() {
                                         className={button({ intent: "primary", className: "w-full mt-4", size: "large" })} disabled={pending}>
                                         Send verification email  <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
                                     </button>
-                                    <Link to={"/login"} className={button({ className: "w-full mt-2", size: "large" })}>
+                                    <Link unstable_viewTransition to={"/login"} className={button({ className: "w-full mt-2", size: "large" })}>
                                         I have account
                                     </Link>
                                 </>
                             ) : (
                                 <div className="flex justify-center">
-                                    <Link to={"/login"} className="text-sm text-black/75 hover:underline">
+                                    <Link unstable_viewTransition to={"/login"} className="text-sm text-black/75 hover:underline">
                                         After change password click here
                                     </Link>
                                 </div>

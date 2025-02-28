@@ -137,7 +137,7 @@ const Chat: React.FC = () => {
               } />
             )
           })}
-          {selectedMessageForReply ? <div className="pb-10"></div> : null}
+          <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all duration-300`}></div>
         </div>
         <div>
           {

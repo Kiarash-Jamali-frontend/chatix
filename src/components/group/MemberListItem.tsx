@@ -24,7 +24,7 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
 
     return (
         <div key={profile.id} className="flex items-center">
-            <Link
+            <Link unstable_viewTransition
                 className={`flex flex-grow group items-center justify-between ${userEmail == profile.email && "pointer-events-none"}`}
                 to={userEmail == profile.email ? "#" : chatIsCreated ? `/chat/${profile.email}` : `/create-chat?email=${profile.email}`}>
                 <div className="flex items-center">

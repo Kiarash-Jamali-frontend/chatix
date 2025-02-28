@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { auth } from "../../../utils/firebase";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,6 +24,7 @@ const Sidebar: React.FC = () => {
   const [selectedList, setSelectedList] = useState<"chats" | "groups">("chats");
   const [logoutPending, setLogoutPending] = useState<boolean>(false);
   const [createMenuIsOpen, setCreateMenuIsOpen] = useState<boolean>(false);
+  const createMenuButtonRef = useRef<HTMLButtonElement>(null);
   const user: UserState = useAppSelector((state: RootState) => state.user);
   const chats = useAppSelector((state: RootState) => state.chats.list);
   const groups = useAppSelector((state: RootState) => state.groups.list);
@@ -102,16 +103,16 @@ const Sidebar: React.FC = () => {
               className="font-Vazir flex flex-col h-full">
               <GroupsAndChatsListButtons selectedList={selectedList} />
               <SwiperSlide className="flex flex-col flex-grow">
-                <div className="flex flex-col space-y-1 py-2 overflow-auto h-[calc(100%-(42px))]">
+                <div className="flex flex-col py-2 overflow-auto h-[calc(100%-(42px))]">
                   {chats.map((c, index) => {
-                    return <ChatListItem chat={c} key={index} />;
+                    return <div key={index} className="mb-1"><ChatListItem chat={c} /></div>;
                   })}
                 </div>
               </SwiperSlide>
               <SwiperSlide className="flex flex-col flex-grow">
-                <div className="flex flex-col space-y-1 py-2 overflow-auto h-[calc(100%-(42px))]">
+                <div className="flex flex-col py-2 overflow-auto h-[calc(100%-(42px))]">
                   {groups.map((g, index) => {
-                    return <GroupListItem group={g} key={index} />;
+                    return <div key={index} className="mb-1"><GroupListItem group={g} /></div>;
                   })}
                 </div>
               </SwiperSlide>
@@ -137,12 +138,12 @@ const Sidebar: React.FC = () => {
                   className="bg-whit border me-2 flex flex-col relative shadow-lg rounded-lg w-52 z-10 bg-white/75 backdrop-blur-xl"
                   onClick={() => setCreateMenuIsOpen(false)}
                 >
-                  <Link to={"/create-chat"}
+                  <Link unstable_viewTransition to={"/create-chat"}
                     className="flex items-center w-full relative rounded-t-lg z-10 px-4 py-2 text-sm hover:bg-blue-500 hover:text-white transition-colors">
                     <FontAwesomeIcon icon={faUser} className="me-2" />
                     Create chat
                   </Link>
-                  <Link to={"/create-group"}
+                  <Link unstable_viewTransition to={"/create-group"}
                     className="flex items-center w-full relative rounded-b-lg z-10 px-4 py-2 text-sm hover:bg-blue-500 hover:text-white transition-colors">
                     <FontAwesomeIcon icon={faUsers} className="me-2" />
                     Create Group
@@ -151,11 +152,22 @@ const Sidebar: React.FC = () => {
               )
             }
           </AnimatePresence>
-          <button className="size-12 z-20 relative rounded-full text-white shadow-xl shadow-blue-500/10 flex items-center justify-center bg-blue-500"
-            onClick={() => setCreateMenuIsOpen((prev) => !prev)}
-          >
-            <FontAwesomeIcon icon={faPlus} size="xl" className={`transition-transform duration-300 ${createMenuIsOpen ? "rotate-45" : "rotate-0"}`} />
-          </button>
+          <div className="relative overflow-hidden">
+            <button className="size-12 z-20 relative rounded-full text-white shadow-xl shadow-blue-500/10 flex items-center justify-center bg-blue-500"
+              onFocus={() => setCreateMenuIsOpen(true)}
+              onBlur={() => setCreateMenuIsOpen(false)}
+              ref={createMenuButtonRef}
+            >
+              <FontAwesomeIcon icon={faPlus} size="xl" className={`transition-transform duration-300 ${createMenuIsOpen ? "rotate-45" : "rotate-0"}`} />
+            </button>
+            {
+              createMenuIsOpen && (
+                <div className="absolute inset-0 w-full h-full z-30" onClick={() => setCreateMenuIsOpen(false)}>
+
+                </div>
+              )
+            }
+          </div>
         </div>
       </div>
     </>

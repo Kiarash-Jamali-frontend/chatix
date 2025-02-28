@@ -111,54 +111,58 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
     }, [isPlaying, startAnimation, updateProgress, audioRef]);
 
     return (
-        <>
-            <div className="flex">
-                <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata} onPlay={() => setIsStopped(false)} onPause={() => setIsStopped(true)}></audio>
-                <button
-                    onBlur={() => dispatch(changeSelectedMessage(null))}
-                    onFocus={({ target }) => {
-                        const { dataset } = target
-                        dataset.isButton != 'true' && (
-                            dispatch(changeSelectedMessage(message))
-                        )
-                    }}
-                    className={`${messageIsForCurrentUser
-                        ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white hover:opacity-95"
-                        : "bg-white hover:bg-gray-50"
-                        } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-e-none" : ""}
+        <div className="flex">
+            <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
+            <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata} onPlay={() => setIsStopped(false)} onPause={() => setIsStopped(true)}></audio>
+            <button
+                onBlur={() => dispatch(changeSelectedMessage(null))}
+                onFocus={({ target }) => {
+                    const { dataset } = target
+                    dataset.isButton != 'true' && (
+                        dispatch(changeSelectedMessage(message))
+                    )
+                }}
+                className={`${messageIsForCurrentUser
+                    ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
+                    : "bg-white"
+                    } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-s-none" : ""}
              w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
-                >
-                    <div className="flex relative">
-                        <button onClick={changeIsPlayingHandler} data-is-button="true"
-                            className={`flex items-center justify-center size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-sm"}`}>
-                            <FontAwesomeIcon icon={!isStopped ? faPause : faPlay} size="lg" />
-                        </button>
-                        {
-                            !isGroupMessage && (
-                                <ReactionsEmojiPicker message={message} />
-                            )
-                        }
-                        <div className="ms-2">
-                            <div className="flex items-center">
-                                <div className="font-light break-words max-w-44 me-1 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>
-                                <AudioDownloadButton message={message} />
-                            </div>
-                            <div className={`flex items-center mt-1 ${messageIsForCurrentUser ? "text-white/60" : "text-black/60"}`}>
-                                <span className="text-xs">{formatTime(progressTime)}</span>
-                                <input type="range" value={progressTime} onChange={setAudioCurrentTimeHandler} ref={audioProgressBarRef} className="mx-1.5 h-1.5 audio-message-timeline-range-thumb" />
-                                <span className="text-xs">{formatTime(duration)}</span>
-                            </div>
+            >
+                <div className="flex relative">
+                    <button onClick={changeIsPlayingHandler} onDoubleClick={(e) => {
+                        e.stopPropagation();
+                    }} data-is-button="true"
+                        className={`flex items-center overflow-hidden justify-center size-10 rounded-full relative ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-sm"}`}>
+                        <FontAwesomeIcon icon={faPause} size="lg"
+                            className={`absolute transition-all duration-300 ${isStopped ? "opacity-0 scale-0" : ""}`} />
+                        <FontAwesomeIcon icon={faPlay} size="lg"
+                            className={`absolute transition-all duration-300 ${!isStopped ? "opacity-0 scale-0" : ""}`} />
+                    </button>
+                    {
+                        !isGroupMessage && (
+                            <ReactionsEmojiPicker message={message} />
+                        )
+                    }
+                    <div className="ms-2">
+                        <div className="flex items-center">
+                            <div className="font-light break-words max-w-52 me-1 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>
+                            <AudioDownloadButton message={message} />
+                        </div>
+                        <div className={`flex items-center mt-1 ${messageIsForCurrentUser ? "text-white/60" : "text-black/60"}`}>
+                            <span className="text-xs">{formatTime(progressTime)}</span>
+                            <input type="range" value={progressTime} onChange={setAudioCurrentTimeHandler} ref={audioProgressBarRef}
+                                className="mx-1.5 h-1.5 audio-message-timeline-range-thumb w-full" />
+                            <span className="text-xs">{formatTime(duration)}</span>
                         </div>
                     </div>
-                    <div className="mt-1 flex justify-end">
-                        <MessageTime message={message} />
-                        {message.from === userEmail && !isGroupMessage && (
-                            <MessageSeen message={message} />
-                        )}
-                    </div>
-                </button>
-                <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
-            </div>
-        </>
+                </div>
+                <div className="mt-1 flex justify-end">
+                    <MessageTime message={message} />
+                    {message.from === userEmail && !isGroupMessage && (
+                        <MessageSeen message={message} />
+                    )}
+                </div>
+            </button>
+        </div>
     )
 }

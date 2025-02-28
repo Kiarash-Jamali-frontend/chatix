@@ -37,6 +37,7 @@ export default function FileMessage({ message, isGroupMessage, replayMessage }: 
 
     return (
         <div className="flex">
+            <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={({ target }) => {
@@ -46,9 +47,9 @@ export default function FileMessage({ message, isGroupMessage, replayMessage }: 
                     )
                 }}
                 className={`${messageIsForCurrentUser
-                    ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white hover:opacity-95"
-                    : "bg-white hover:bg-gray-50"
-                    } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-e-none" : ""}
+                    ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
+                    : "bg-white"
+                    } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-s-none" : ""}
              w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
             >
                 <div className="flex relative">
@@ -84,7 +85,6 @@ export default function FileMessage({ message, isGroupMessage, replayMessage }: 
                     )}
                 </div>
             </button>
-            <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
         </div>
     )
 }

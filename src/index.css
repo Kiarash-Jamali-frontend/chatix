@@ -25,3 +25,7 @@
   border-radius: 10px;
   background: #c9c9c9;
 }
+
+.message-text a {
+  @apply decoration-current underline text-blue-50 underline-offset-4
+}

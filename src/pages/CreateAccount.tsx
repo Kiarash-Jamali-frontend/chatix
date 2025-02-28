@@ -94,7 +94,7 @@ const CreateAccount: React.FC = () => {
                             className={button({ intent: "primary", className: "w-full mt-4", size: "large" })} disabled={loading}>
                             Create account <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
                         </button>
-                        <Link to={"/login"} className={button({ className: "w-full mt-2", size: "large" })}>
+                        <Link unstable_viewTransition to={"/login"} className={button({ className: "w-full mt-2", size: "large" })}>
                             I have account
                         </Link>
                     </div>

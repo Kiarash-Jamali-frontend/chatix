@@ -167,7 +167,7 @@ export default function Group() {
                             } />
                         )
                     })}
-                    {selectedMessageForReply ? <div className="pb-10"></div> : null}
+                    <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all duration-300`}></div>
                 </div>
                 <div className="px-3 md:px-5">
                     <div className="mb-3 md:mb-5 mx-auto max-w-[810px]">

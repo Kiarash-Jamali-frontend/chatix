@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import button from "../cva/button";
 import { v4 as uuidv4 } from 'uuid';
 import { addDoc, collection, doc, runTransaction, Timestamp } from "firebase/firestore";
 import { db, storage } from "../../utils/firebase";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
+import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker from "emoji-picker-react";
-import { faClose, faPaperclip, faReply } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faMicrophone, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
@@ -28,17 +27,19 @@ type PropTypes = {
 const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
-  const userProfile = useAppSelector((state: RootState) => state.user.profile);
   const messageSelectedForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
   const dispatch = useAppDispatch();
 
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
   const [filePending, setFilePending] = useState<boolean>(false);
+  const [childNodes, setChildsNodes] = useState<Element[]>([]);
   const [textMessagePending, setTextMessagePending] = useState<boolean>(false);
 
   const isPrivateChat = (mode == "private" || !mode);
   const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
+  const messageTextHtmlBody = new DOMParser().parseFromString(messageText, "text/html").body;
+  const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -120,8 +121,16 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     removeMessageSelectedForRelpy();
   }, [chatId, groupId])
 
+  useEffect(() => {
+    let newChildNodes: Element[] = [];
+    for (let i = 0; i < messageTextHtmlBody.children.length; i++) {
+      newChildNodes = [...newChildNodes, messageTextHtmlBody.children.item(i)!];
+    }
+    setChildsNodes(newChildNodes);
+  }, [messageText])
+
   return (
-    <div className={`relative flex items-stretch max-h-14`}>
+    <div className={`relative flex items-stretch max-h-12`}>
       <AnimatePresence>
         {
           emojiPickerIsOpen && (
@@ -139,66 +148,76 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
               <EmojiPicker open={emojiPickerIsOpen}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
                 onEmojiClick={(e) => setMessageText((prev) =>
-                  prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.3em;height:1.3em" />`
+                  prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`
                 )} />
             </motion.div>
           )
         }
       </AnimatePresence>
-      <div className="flex-grow flex flex-col me-2 relative">
-        <AnimatePresence>
-          {
-            messageSelectedForReply && (
-              <motion.div
-                className="py-2.5 px-3 overflow-hidden absolute w-full top-[-80%] z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800"
-                variants={{
-                  hide: {
-                    opacity: 0
-                  },
-                  open: {
-                    opacity: 1
-                  }
-                }} initial="hide" exit="hide" animate="open">
-                <div className="flex items-center justify-between font-Vazir">
-                  <div className="flex items-center text-sm overflow-hidden w-full">
-                    <span className="text-white/75 me-1 flex items-center">
-                      <FontAwesomeIcon icon={faReply} className="rotate-180 me-1.5 hidden md:inline" />
-                      <span className="me-1 hidden md:inline">Reply</span>{messageSelectedForReply.from === userEmail ? userProfile?.name : oppositeProfile.name}:
-                    </span>
-                    <div dir="auto" className="inline-flex text-white overflow-hidden text-ellipsis whitespace-nowrap">
-                      {
-                        messageSelectedForReply.type !== "text"
-                          ?
-                          (
-                            <span className="capitalize">{messageSelectedForReply.type}</span>
-                          )
-                          : (
-                            parse(messageSelectedForReply.content.split("<br>").join(""))
-                          )
-                      }
-                    </div>
+      <AnimatePresence>
+        {
+          messageSelectedForReply && (
+            <motion.div
+              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800"
+              variants={{
+                hide: {
+                  opacity: 0,
+                  top: "0",
+                },
+                open: {
+                  opacity: 1,
+                  top: "-100%",
+                }
+              }} initial="hide" exit="hide" animate="open">
+              <div className="flex items-center justify-between font-Vazir">
+                <div className="flex items-center text-sm overflow-hidden w-full">
+                  <span className="text-white/75 me-1 flex items-center">
+                    <FontAwesomeIcon icon={faReply} className="rotate-180 me-1.5" />
+                    <span className="me-1 hidden md:inline">Reply</span>{
+                      groupId ? (
+                        messageSelectedForReply.senderName
+                      ) : (
+                        messageSelectedForReply.from === userEmail ? "You" : oppositeProfile.name
+                      )
+                    }:
+                  </span>
+                  <div dir="auto" className="inline-flex text-white overflow-hidden text-ellipsis whitespace-nowrap">
+                    {
+                      messageSelectedForReply.type !== "text"
+                        ?
+                        (
+                          <span className="capitalize">{messageSelectedForReply.type}</span>
+                        )
+                        : (
+                          parse(messageSelectedForReply.content.split("<br>").join(""))
+                        )
+                    }
                   </div>
-                  <button onClick={removeMessageSelectedForRelpy} className="text-white flex items-center ms-2">
-                    <FontAwesomeIcon icon={faClose} />
-                  </button>
                 </div>
-              </motion.div>
-            )
-          }
-        </AnimatePresence>
+                <button onClick={removeMessageSelectedForRelpy} className="text-white flex items-center p-2">
+                  <FontAwesomeIcon icon={faClose} />
+                </button>
+              </div>
+            </motion.div>
+          )
+        }
+      </AnimatePresence>
+      <div className="flex-grow flex flex-col me-2 relative">
         <div className="px-3 shadow-sm rounded-full border bg-white flex items-center flex-grow">
-          <button className="me-2" onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
-            <FontAwesomeIcon icon={emojiPickerIsOpen ? faClose : faFaceSmile}
-              className="text-black/50 size-5 flex items-center" />
+          <button className="me-2 size-7 flex items-center text-black/50 relative overflow-hidden" onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
+            <FontAwesomeIcon icon={faClose}
+              className={`absolute size-5 transition-all duration-300 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`} />
+            <FontAwesomeIcon icon={faFaceSmile}
+              className={`absolute size-5 transition-all duration-300 ${emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`} />
           </button>
           <div dir="auto" className="w-full">
             <ContentEditable
               html={messageText ? messageText : ""}
               onChange={(e) => setMessageText(e.target.value)}
-              className="focus:outline-none w-full text-sm max-w-none placeholder:text-sm max-h-11 overflow-hidden font-Vazir"
+              className={`focus:outline-none relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-black/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
             />
           </div>
-          <div className="ms-2">
+          <div className="ms-2 flex items-center relative size-7">
             {
               filePending ? (
                 <div>
@@ -210,15 +229,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 // </span>
               ) : (
                 <button
-                  className={button({
-                    intent: "primary",
-                    className: `!py-2 !rounded-full`,
-                  })}
-                  disabled={textMessagePending}
-                  onClick={sendMessageHandler}
-                >
-                  Send
-                  <FontAwesomeIcon icon={faPaperPlane} className="ms-1.5" />
+                  onClick={chooseFileHandler} disabled={filePending} className="absolute text-black/50 right-2">
+                  <FontAwesomeIcon icon={faPaperclip} size="lg" />
                 </button>
               )
             }
@@ -228,11 +240,14 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="size-14 border shadow-sm bg-white rounded-full flex items-center justify-center"
-        onClick={chooseFileHandler} disabled={filePending}>
-        <FontAwesomeIcon icon={faPaperclip} className="size-5" />
+      <button className="size-12 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
+        onClick={sendMessageHandler} disabled={textMessagePending}>
+        <FontAwesomeIcon icon={faPaperPlane} size="lg"
+          className={`absolute transition-all duration-300 ${!showSendButton ? "opacity-0 scale-0" : ""}`} />
+        <FontAwesomeIcon icon={faMicrophone} size="lg"
+          className={`absolute transition-all duration-300 ${showSendButton ? "opacity-0 scale-0" : ""}`} />
       </button>
-    </div>
+    </div >
   );
 };
 

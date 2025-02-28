@@ -47,7 +47,12 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   };
 
   const selectMessageForReply = () => {
-    dispatch(changeMessageSelectedForReply(message));
+    if (isGroupMessage && senderProfile) {
+      dispatch(changeMessageSelectedForReply({ ...message, senderName: senderProfile.name }));
+    }
+    if (!isGroupMessage) {
+      dispatch(changeMessageSelectedForReply(message));
+    }
   }
 
   const scrollToMessageHandler = () => {
@@ -94,7 +99,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
       onDoubleClick={selectMessageForReply}>
       {
         isGroupMessage && message.from != user.data?.email && senderProfile && (
-          <Link to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
+          <Link unstable_viewTransition to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
             className={`mt-auto me-2`}>
             {
               senderProfile?.photoUrl ? (

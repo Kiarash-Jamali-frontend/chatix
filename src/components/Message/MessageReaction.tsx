@@ -23,13 +23,13 @@ export default function MessageReaction({ message }: PropTypes) {
                         variants={{
                             hide: {
                                 opacity: 0,
-                                transform: "translate(10px, 15px) scale(0.6)"
+                                transform: "translate(-10px, 15px) scale(0.6)"
                             },
                             open: {
                                 opacity: 1,
                                 transform: "translate(0px, 0px) scale(1)"
                             }
-                        }} animate="open" exit="hide" initial="hide" transition={{ duration: 0.15 }}
+                        }} animate="open" exit="hide" initial="hide" transition={{ duration: 0.3, ease: "circInOut" }}
                         className={`flex items-end disabled:opacity-50 top-0 bottom-0 z-20 mx-1 ${!messageIsForCurrentUser ? "" : "cursor-default"}`}
                         onClick={() => {
                             setPending(true);

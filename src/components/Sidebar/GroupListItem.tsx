@@ -62,7 +62,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
             <div className="px-2" style={{
                 order: `-${lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0}`
             }}>
-                <Link
+                <Link unstable_viewTransition
                     to={`/group/${group.id}`}
                     className={`flex items-center justify-between ${groupIsSelected ? "bg-blue-500 hover:bg-blue-600" : "hover:bg-base/50 hover:border-black/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors duration-300`}
                     key={group.id}

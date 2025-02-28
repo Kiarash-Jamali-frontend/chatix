@@ -17,15 +17,15 @@ export default function DeleteTextFileAudioMessageButton({ message, isGroupMessa
                     selectedMessageID === message.id && messageIsForCurrentUser && (
                         <motion.div initial={{
                             opacity: 0,
-                            translateX: "-1rem",
+                            translateX: "1rem",
                         }} animate={{
                             opacity: 1,
                             translateX: "0",
                         }} exit={{
                             opacity: 0,
-                            translateX: "-1rem",
+                            translateX: "1rem",
                         }}>
-                            <button className={`px-2 h-full bg-white flex items-center ${message.replyTo && replayMessage ? "rounded-br-xl" : "rounded-r-xl"} border border-s-transparent`}
+                            <button className={`px-2 h-full bg-white flex items-center ${message.replyTo && replayMessage ? "rounded-bl-xl" : "rounded-l-xl"} border border-e-transparent`}
                                 onClick={() => deleteMessage(message.id, isGroupMessage)}>
                                 <FontAwesomeIcon icon={faTrashCan} color="#000" />
                             </button>
