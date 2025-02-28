@@ -3,7 +3,7 @@ import { redirect, useParams } from "react-router-dom"
 import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { SidebarGroupData } from "../redux/slices/groups";
-import { and, collection, doc, onSnapshot, orderBy, query, runTransaction, where } from "firebase/firestore";
+import { and, collection, doc, onSnapshot, orderBy, query, runTransaction, Timestamp, where } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import Loading from "../components/Loading";
 import GroupHeader from "../components/group/GroupHeader";
@@ -13,6 +13,8 @@ import { RootState } from "../redux/store";
 import Profile from "../types/Profile";
 import GroupMember from "../types/GroupMember";
 import ImageModal from "../components/ImageModal";
+import { isSameDay } from "date-fns";
+import customFormatRelative from "../helpers/customFormatRelative";
 
 export type MemberProfile = (Profile & {
     id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
@@ -157,16 +159,29 @@ export default function Group() {
                 <GroupHeader groupData={groupData} membersProfiles={membersProfiles} />
                 <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}
                     ref={messagesListRef}>
-                    {messages.map((m) => {
+                    {messages.map((m, i) => {
                         const replyToMessage = messages.find((message) => m.replyTo === message.id);
                         const messageSender = membersProfiles.find((p) => p.email == m.from);
+                        const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
+                        const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
                         return (
-                            <Message senderProfile={messageSender} isGroupMessage={true} key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
-                                replyToMessage ? {
-                                    ...replyToMessage,
-                                    sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
-                                } : null
-                            } />
+                            <>
+                                {
+                                    (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
+                                    && (
+                                        <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} sticky top-0 text-xs font-light bg-white border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
+                                            {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
+                                        </div>
+                                    )
+                                }
+
+                                <Message senderProfile={messageSender} isGroupMessage={true} key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
+                                    replyToMessage ? {
+                                        ...replyToMessage,
+                                        sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
+                                    } : null
+                                } />
+                            </>
                         )
                     })}
                     <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all duration-300`}></div>

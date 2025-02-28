@@ -10,6 +10,7 @@ import {
   or,
   orderBy,
   query,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { db } from "../../utils/firebase";
@@ -20,6 +21,8 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import ImageModal from "../components/ImageModal";
 import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
 import ChatInput from "../components/ChatInput";
+import { isSameDay } from "date-fns";
+import customFormatRelative from "../helpers/customFormatRelative";
 
 const Chat: React.FC = () => {
   const userData = useAppSelector((state: RootState) => state.user.data);
@@ -126,15 +129,28 @@ const Chat: React.FC = () => {
         <ChatHeader profile={profile} />
         <ImageModal />
         <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`} ref={messagesListRef}>
-          {messages.map((m) => {
+          {messages.map((m, i) => {
             const replyToMessage = messages.find((message) => m.replyTo === message.id);
+            const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
+            const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
+
             return (
-              <Message key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
-                replyToMessage ? {
-                  ...replyToMessage,
-                  sender: replyToMessage.from === userData?.email ? userProfile : profile
-                } : null
-              } />
+              <>
+                {
+                  (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
+                  && (
+                    <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} sticky top-0 text-xs font-light bg-white border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
+                      {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
+                    </div>
+                  )
+                }
+                <Message key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
+                  replyToMessage ? {
+                    ...replyToMessage,
+                    sender: replyToMessage.from === userData?.email ? userProfile : profile
+                  } : null
+                } />
+              </>
             )
           })}
           <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all duration-300`}></div>

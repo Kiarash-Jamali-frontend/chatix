@@ -1,7 +1,9 @@
 import { FormatRelativeOptions } from 'date-fns';
 import { enUS } from 'date-fns/locale';
+import FormatRelativeLocale from '../types/FormatRelativeLocale';
 
-export const customFormatRelativeLocale = {
+// All keys of the object must be initialized!
+export const customFormatRelativeLocale: FormatRelativeLocale = {
     lastWeek: "PP",
     yesterday: "'Yesterday'",
     today: "hh:mm a",
@@ -10,8 +12,13 @@ export const customFormatRelativeLocale = {
     other: 'PP',
 }
 
-export const customLocale: FormatRelativeOptions['locale'] = {
-    ...enUS,
-    formatRelative: (token, _date, _baseDate, _options) =>
-        customFormatRelativeLocale[token],
-};
+export const customformatRelativeLocale = (formatRelativeLocale?: FormatRelativeLocale): FormatRelativeOptions['locale'] => {
+    let newFormatRelativeLocale = { ...customFormatRelativeLocale, ...formatRelativeLocale };
+    return (
+        {
+            ...enUS,
+            formatRelative: (token, _date, _baseDate, _options) =>
+                newFormatRelativeLocale[token]!,
+        }
+    )
+}
