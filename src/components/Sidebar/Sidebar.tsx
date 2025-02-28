@@ -153,7 +153,7 @@ const Sidebar: React.FC = () => {
             }
           </AnimatePresence>
           <div className="relative overflow-hidden">
-            <button className="size-12 z-20 relative rounded-full text-white shadow-xl shadow-blue-500/10 flex items-center justify-center bg-blue-500"
+            <button className="size-12 z-20 relative rounded-full text-white flex items-center justify-center bg-blue-500"
               onFocus={() => setCreateMenuIsOpen(true)}
               onBlur={() => setCreateMenuIsOpen(false)}
               ref={createMenuButtonRef}
