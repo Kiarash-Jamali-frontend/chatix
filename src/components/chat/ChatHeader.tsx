@@ -75,7 +75,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
                 <img
                   src={profile.photoUrl}
                   alt={"profile"}
-                  className="size-12 object-cover rounded-full"
+                  className="size-12 object-cover rounded-full border"
                 />
               ) : (
                 <GradiantProfile name={profile.name} />

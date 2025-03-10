@@ -59,7 +59,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
 
     return (
         <>
-            <div className="px-2" style={{
+            <div className="px-2 mb-1" style={{
                 order: `-${lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0}`
             }}>
                 <Link unstable_viewTransition

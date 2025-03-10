@@ -39,7 +39,7 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
                         }
                     </div>
                     <div className="ps-3">
-                        <div className="text-sm flex items-center font-medium">{profile.name} {groupData.creator == profile.email && (
+                        <div className="text-sm flex items-center font-medium font-Vazir">{profile.name} {groupData.creator == profile.email && (
                             <span className="text-xs text-gray-400 ms-1">| Owner</span>
                         )}</div>
                         <UserLastActivity profile={profile} />

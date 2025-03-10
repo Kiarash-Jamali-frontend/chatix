@@ -72,7 +72,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                                 <img
                                     src={userProfile.photoUrl}
                                     alt={"profile"}
-                                    className="size-14 object-cover rounded-full cursor-pointer"
+                                    className="size-14 object-cover rounded-full cursor-pointer border"
                                     onClick={openProfileHandler}
                                 />
                             ) : (
@@ -113,7 +113,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                                 onClick={changeIsBlockingUser}
                             >
                                 {chatRoom.isBlocked ? "Unblock" : "Block"}
-                                <span className="font-bold ms-1">{userProfile.name}</span>
+                                <span className="font-bold ms-1 font-Vazir">{userProfile.name}</span>
                             </button>
                         )
                     }

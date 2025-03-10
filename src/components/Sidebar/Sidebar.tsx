@@ -105,14 +105,14 @@ const Sidebar: React.FC = () => {
               <SwiperSlide className="flex flex-col flex-grow">
                 <div className="flex flex-col py-2 overflow-auto h-[calc(100%-(42px))]">
                   {chats.map((c, index) => {
-                    return <div key={index} className="mb-1"><ChatListItem chat={c} /></div>;
+                    return <ChatListItem chat={c} key={index} />;
                   })}
                 </div>
               </SwiperSlide>
               <SwiperSlide className="flex flex-col flex-grow">
                 <div className="flex flex-col py-2 overflow-auto h-[calc(100%-(42px))]">
                   {groups.map((g, index) => {
-                    return <div key={index} className="mb-1"><GroupListItem group={g} /></div>;
+                    return <GroupListItem group={g} key={index} />;
                   })}
                 </div>
               </SwiperSlide>

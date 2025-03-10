@@ -70,7 +70,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
     }, [userEmail])
 
     return (
-        <div className="px-2" style={{
+        <div className="px-2 mb-1" style={{
             order: `-${lastMessage?.timestamp?.seconds || chat.createdAt?.seconds || 0}`
         }}>
             <Link unstable_viewTransition
@@ -89,10 +89,10 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     ) : (
                         <GradiantProfile name={chat.name} />
                     )}
-                    <div className="ps-2 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
+                    <div className="ps-2 flex-grow flex items-end justify-between">
                         <div className="flex-grow">
                             <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>{chat.name}</div>
-                            <div className={`text-xs ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap break-words max-w-52`}>
+                            <div className={`text-xs ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-words`}>
                                 {
                                     lastMessage && (
                                         lastMessage?.type !== "text" && (

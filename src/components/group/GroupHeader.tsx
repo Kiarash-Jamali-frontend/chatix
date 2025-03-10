@@ -63,7 +63,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
                 <img
                   src={groupData.groupPhotoUrl}
                   alt={"profile"}
-                  className="size-12 object-cover rounded-full"
+                  className="size-12 object-cover rounded-full border"
                 />
               ) : (
                 <GradiantProfile name={groupData.groupName} />
