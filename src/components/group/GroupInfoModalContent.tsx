@@ -22,7 +22,8 @@ type PropTypes = {
 export enum ModalContentType {
     ADD_MEMBER_FORM,
     // DELETE_GROUP_QUESTION,
-    DEFAULT
+    DEFAULT,
+    EDIT_GROUP
 }
 
 export default function GroupInfoModalContent({ groupData, membersProfiles, setIsActive }: PropTypes) {
@@ -94,7 +95,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                             )
                         }
                         <div className="ms-3 flex flex-col">
-                            <div className="font-semibold mb-0.5 font-Vazir">{groupData.groupName}</div>
+                            <div className="font-semibold font-Vazir mb-0.5">{groupData.groupName}</div>
                             <div className="text-xs flex items-center text-black/60">
                                 {
                                     membersCount ? (

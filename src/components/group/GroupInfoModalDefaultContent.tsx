@@ -10,6 +10,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { ModalContentType } from "./GroupInfoModalContent";
 import { useNavigate } from "react-router-dom";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
+import { faEdit } from "@fortawesome/free-regular-svg-icons";
 
 type PropTypes = {
     groupData: SidebarGroupData;
@@ -54,6 +55,11 @@ export default function GroupInfoModalDefaultContent({ membersProfiles, groupDat
                                 onClick={() => setModalContentType(ModalContentType.ADD_MEMBER_FORM)}>
                                 <FontAwesomeIcon icon={faUserPlus} className="me-2" />
                                 Add member
+                            </button>
+                            <button className={button({ intent: "default" })}
+                                onClick={() => setModalContentType(ModalContentType.EDIT_GROUP)}>
+                                <FontAwesomeIcon icon={faEdit} className="me-2" />
+                                Edit
                             </button>
                             {/* <button className={button({ intent: "danger" })}
                                 onClick={() => setModalContentType(ModalContentType.DELETE_GROUP_QUESTION)}>

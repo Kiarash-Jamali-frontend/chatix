@@ -92,7 +92,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     <div className="ps-2 flex-grow flex items-end justify-between">
                         <div className="flex-grow">
                             <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>{chat.name}</div>
-                            <div className={`text-xs max-w-56 ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-words`}>
+                            <div className={`text-xs w-full ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-words`}>
                                 {
                                     lastMessage && (
                                         lastMessage?.type !== "text" && (
@@ -119,9 +119,9 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                             )}
                             {
                                 lastMessage && (
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between w-fit">
                                         <div className={`${chatIsSelected ? "text-white/60" : "text-black/60"} flex items-center`}>
-                                            <div className="text-xs">
+                                            <div className="text-xs text-nowrap">
                                                 {customFormatRelative(lastMessage.timestamp)}
                                             </div>
                                             {

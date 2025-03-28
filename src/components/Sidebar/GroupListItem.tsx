@@ -81,7 +81,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                         <div className="ps-2 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
                             <div className="flex-grow">
                                 <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>{group.groupName}</div>
-                                <div className={`text-xs max-w-56 font-Vazir flex ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap break-words max-w-52`}>
+                                <div className={`text-xs w-full font-Vazir flex ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap break-words max-w-52`}>
                                     {
                                         lastMessage && (
                                             <span className={`${groupIsSelected ? "text-white" : "text-black"} font-medium me-1`}>
@@ -115,9 +115,9 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                                 )}
                                 {
                                     lastMessage && (
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex items-center justify-between w-fit">
                                             <div className={`${groupIsSelected ? "text-white/60" : "text-black/60"} flex items-center`}>
-                                                <div className="text-xs">
+                                                <div className="text-xs text-nowrap">
                                                     {customFormatRelative(lastMessage.timestamp)}
                                                 </div>
                                             </div>
