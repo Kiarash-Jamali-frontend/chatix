@@ -67,7 +67,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                 unsubscribeLastMessage();
             }
         }
-    }, [userEmail])
+    }, [])
 
     return (
         <div className="px-2 mb-1" style={{
@@ -84,7 +84,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                         <img
                             src={chat.photoUrl}
                             alt={"profile"}
-                            className="size-12 min-w-12 object-cover rounded-full"
+                            className="size-12 border min-w-12 object-cover rounded-full"
                         />
                     ) : (
                         <GradiantProfile name={chat.name} />
@@ -92,7 +92,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     <div className="ps-2 flex-grow flex items-end justify-between">
                         <div className="flex-grow">
                             <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>{chat.name}</div>
-                            <div className={`text-xs ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-words`}>
+                            <div className={`text-xs max-w-56 ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-words`}>
                                 {
                                     lastMessage && (
                                         lastMessage?.type !== "text" && (
