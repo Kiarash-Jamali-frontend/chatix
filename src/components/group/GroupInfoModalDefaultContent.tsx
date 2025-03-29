@@ -47,10 +47,10 @@ export default function GroupInfoModalDefaultContent({ membersProfiles, groupDat
                     })
                 }
             </div>
-            <div className={`mt-4 grid grid-cols-1 gap-3`}>
+            <div className={`mt-4`}>
                 {
                     groupData.creator == userEmail ? (
-                        <>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-3 gap-y-2">
                             <button className={button({ intent: "primary" })}
                                 onClick={() => setModalContentType(ModalContentType.ADD_MEMBER_FORM)}>
                                 <FontAwesomeIcon icon={faUserPlus} className="me-2" />
@@ -66,7 +66,7 @@ export default function GroupInfoModalDefaultContent({ membersProfiles, groupDat
                                 <FontAwesomeIcon icon={faTrashCan} className="me-2" />
                                 Delete group
                             </button> */}
-                        </>
+                        </div>
                     ) : (
                         <button disabled={pending} className={button({ intent: "danger" })} onClick={leaveGroupHandler}>
                             <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
