@@ -94,7 +94,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                                     {
                                         lastMessage && (
                                             lastMessage?.type !== "text" && (
-                                                <span className="flex capitalize">
+                                                <span className="capitalize">
                                                     <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
                                                         className="me-1" />
                                                     {lastMessage?.type}
