@@ -144,7 +144,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 transform: "scale(1) translate(0px, 0px)"
               }
             }} initial="hide" exit="hide" animate="open"
-              className="!absolute bottom-[4.5rem] md:!max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
+              className="!absolute bottom-[3.5rem] md:!max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
               <EmojiPicker open={emojiPickerIsOpen}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
                 onEmojiClick={(e) => setMessageText((prev) =>

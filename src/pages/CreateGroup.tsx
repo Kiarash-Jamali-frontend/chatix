@@ -62,7 +62,7 @@ export default function CreateGroup() {
                     })
                 });
                 if (groupProfile) {
-                    const profileRef = ref(storage, `group_profiles/${userEmail}.${getFileExt(groupProfile.name)}`);
+                    const profileRef = ref(storage, `group_profiles/${docRef.id}.${getFileExt(groupProfile.name)}`);
                     await uploadBytes(profileRef, groupProfile);
                     const profileUrl = await getDownloadURL(profileRef);
                     runTransaction(db, async (transaction) => {

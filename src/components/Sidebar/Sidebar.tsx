@@ -70,7 +70,7 @@ const Sidebar: React.FC = () => {
               }
               <Link unstable_viewTransition
                 to={"/edit-profile"}
-                className="absolute bottom-0 right-0 bg-black/85 text-white rounded-full flex items-center justify-center text-center w-[22px] h-[22px]"
+                className="absolute bottom-0 right-0 bg-black/85 text-white rounded-full flex items-center justify-center text-center size-[22px]"
               >
                 <FontAwesomeIcon icon={faPencil} size="2xs" />
               </Link>

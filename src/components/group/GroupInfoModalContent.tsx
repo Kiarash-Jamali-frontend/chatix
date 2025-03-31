@@ -12,6 +12,7 @@ import { MemberProfile } from "../../pages/Group";
 import GroupInfoModalDefaultContent from "./GroupInfoModalDefaultContent";
 import AddMemberForm from "./AddMemberForm";
 import { changeOpenedProfile } from "../../redux/slices/openedProfile";
+import GroupInfoModalEditContent from "./GroupInfoModalEditContent";
 
 type PropTypes = {
     groupData: SidebarGroupData;
@@ -128,6 +129,14 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                             setModalContentType={setModalContentType}
                             groupData={groupData}
                             membersProfiles={membersProfiles} />
+                    )
+                }
+                {
+                    modalContentType == ModalContentType.EDIT_GROUP && (
+                        <GroupInfoModalEditContent
+                            groupData={groupData}
+                            setModalContentType={setModalContentType}
+                        />
                     )
                 }
                 {
