@@ -69,22 +69,24 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                 >
                     <div className="flex items-center w-full flex-grow">
                         {/*Profile image*/}
-                        {group.groupPhotoUrl ? (
-                            <img
-                                src={group.groupPhotoUrl}
-                                alt={"profile"}
-                                className="size-12 min-w-12 object-cover rounded-full"
-                            />
-                        ) : (
-                            <GradiantProfile name={group.groupName} />
-                        )}
-                        <div className="ps-2 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
-                            <div className="flex-grow">
+                        <div className="basis-12">
+                            {group.groupPhotoUrl ? (
+                                <img
+                                    src={group.groupPhotoUrl}
+                                    alt={"profile"}
+                                    className="size-12 min-w-12 object-cover rounded-full"
+                                />
+                            ) : (
+                                <GradiantProfile name={group.groupName} />
+                            )}
+                        </div>
+                        <div className="ps-2 min-w-0 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
+                            <div className="flex-grow min-w-0">
                                 <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>{group.groupName}</div>
-                                <div className={`text-xs w-full font-Vazir flex ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 w-[calc(100%-1.5rem)] overflow-hidden text-ellipsis whitespace-nowrap break-words max-w-52`}>
+                                <div className={`text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                     {
                                         lastMessage && (
-                                            <span className={`${groupIsSelected ? "text-white" : "text-black"} font-medium me-1`}>
+                                            <span className={`${groupIsSelected ? "text-white" : "text-black"} font-medium`}>
                                                 {lastMessage?.senderProfile.email == userEmail ? "You: " : `${lastMessage?.senderProfile.name}: `}
                                             </span>
                                         )
@@ -92,11 +94,11 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                                     {
                                         lastMessage && (
                                             lastMessage?.type !== "text" && (
-                                                <div className="flex capitalize">
+                                                <span className="flex capitalize">
                                                     <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
                                                         className="me-1" />
                                                     {lastMessage?.type}
-                                                </div>
+                                                </span>
                                             )
                                         )
                                     }
