@@ -16,6 +16,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Parser } from "html-to-react";
 import Profile from "../../types/Profile";
 import GradiantProfile from "../GradiantProfile";
+import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 
 type PropTypes = {
   message: any;
@@ -114,49 +115,58 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
       }
       <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
         {
-          replyedMessage && (
-            <button onClick={scrollToMessageHandler}
-              className="bg-gradient-to-tr p-2 flex rounded-t-xl flex-col items-start shrink from-gray-600 to-gray-900 text-white">
-              <span className="text-sm font-medium">
-                <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
-                {replyedMessage.sender.name}
-              </span>
-              <p className="text-xs mt-1 text-start" dir="auto">
-                {
-                  replyedMessage.type !== "text" ? <span className="capitalize">{replyedMessage.type}</span> : (
-                    parse(replyedMessage.content.split("<br>").join(""))
-                  )
-                }
-              </p>
-            </button>
+          !isGroupMessage && (
+            <div className="relative z-40">
+              <ReactionsEmojiPicker message={message} />
+            </div>
           )
         }
-        {
-          message.type === "image" && <ImageMessage key={message.id}
-            replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
-            senderProfile={senderProfile}
-            scrollDown={scrollDown} />
-        }
-        {
-          message.type === "video" && <VideoMessage key={message.id}
-            replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
-            senderProfile={senderProfile}
-            scrollDown={scrollDown} />
-        }
-        {
-          message.type === "file" && <FileMessage key={message.id}
-            replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
-            senderProfile={senderProfile} />
-        }
-        {
-          message.type === "audio" && <AudioMessage
-            replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage}
-            senderProfile={senderProfile} />
-        }
-        {
-          message.type === "text" &&
-          <TextMessage replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
-        }
+        <div className="border rounded-xl overflow-hidden flex flex-col">
+          {
+            replyedMessage && (
+              <button onClick={scrollToMessageHandler}
+                className="bg-gradient-to-tr p-2 flex rounded-t-xl flex-col items-start shrink from-gray-600 to-gray-900 text-white">
+                <span className="text-sm font-medium">
+                  <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
+                  {replyedMessage.sender.name}
+                </span>
+                <p className="text-xs mt-1 text-start" dir="auto">
+                  {
+                    replyedMessage.type !== "text" ? <span className="capitalize">{replyedMessage.type}</span> : (
+                      parse(replyedMessage.content.split("<br>").join(""))
+                    )
+                  }
+                </p>
+              </button>
+            )
+          }
+          {
+            message.type === "image" && <ImageMessage key={message.id}
+              replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+              senderProfile={senderProfile}
+              scrollDown={scrollDown} />
+          }
+          {
+            message.type === "video" && <VideoMessage key={message.id}
+              replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+              senderProfile={senderProfile}
+              scrollDown={scrollDown} />
+          }
+          {
+            message.type === "file" && <FileMessage key={message.id}
+              replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+              senderProfile={senderProfile} />
+          }
+          {
+            message.type === "audio" && <AudioMessage
+              replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage}
+              senderProfile={senderProfile} />
+          }
+          {
+            message.type === "text" &&
+            <TextMessage replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
+          }
+        </div>
       </div>
       {
         !isGroupMessage && (

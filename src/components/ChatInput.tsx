@@ -240,7 +240,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="size-12 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
+      <button className="size-12 min-w-12 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
         onClick={showSendButton ? sendMessageHandler : sendFileHandler} disabled={textMessagePending || filePending}>
         <FontAwesomeIcon icon={faPaperPlane} size="lg"
           className={`absolute transition-all duration-300 ${!showSendButton ? "opacity-0 scale-0" : ""}`} />

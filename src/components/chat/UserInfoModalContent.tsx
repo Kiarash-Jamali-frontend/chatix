@@ -91,7 +91,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                 {userProfile.biography && (
                     <div className="bg-gray-50 py-2.5 px-4 border text-sm rounded-xl mt-5">
                         <span className="font-medium">Biography: </span>
-                        <p className="text-black/75 font-Vazir mt-2">
+                        <p className="text-black/75 font-Vazir mt-2" dir="auto">
                             {userProfile.biography}
                         </p>
                     </div>
@@ -101,7 +101,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                     <p className="text-black/60">{userProfile.email}</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
-                    <button className={button({ intent: "dark" })} onClick={shareProfileDataHandler}>
+                    <button className={button({ intent: "primary" })} onClick={shareProfileDataHandler}>
                         <FontAwesomeIcon icon={faShareNodes} className="me-1.5" />
                         Share
                     </button>

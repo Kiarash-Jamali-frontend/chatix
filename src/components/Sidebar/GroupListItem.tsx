@@ -74,7 +74,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                                 <img
                                     src={group.groupPhotoUrl}
                                     alt={"profile"}
-                                    className="size-12 min-w-12 object-cover rounded-full"
+                                    className="size-12 border border-black/10 min-w-12 object-cover rounded-full"
                                 />
                             ) : (
                                 <GradiantProfile name={group.groupName} />

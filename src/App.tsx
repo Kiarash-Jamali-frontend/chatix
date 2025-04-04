@@ -62,7 +62,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="min-h-svh select-none">
+    <div className="min-h-svh select-none overflow-hidden">
       <Helmet>
         <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#fff" />

@@ -85,7 +85,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                             <img
                                 src={chat.photoUrl}
                                 alt={"profile"}
-                                className="size-12 border min-w-12 object-cover rounded-full"
+                                className="size-12 border border-black/10 min-w-12 object-cover rounded-full"
                             />
                         ) : (
                             <GradiantProfile name={chat.name} />

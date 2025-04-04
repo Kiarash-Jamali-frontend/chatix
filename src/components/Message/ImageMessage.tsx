@@ -4,7 +4,6 @@ import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
 import MessagePropTypes from "../../types/MessagePropTypes";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
-import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import { changeImage } from "../../redux/slices/openedImage";
 
 type PropTypes = MessagePropTypes & {
@@ -24,14 +23,11 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage }: Pr
                     ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
                     : "bg-white"
                     }
-               w-fit min-w-32 px-3 pt-3 text-[0.925em] z-30 text-start transition-all font-light relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
+               w-fit min-w-32 px-3 pt-3 text-[0.925em] z-30 text-start transition-all font-light relative cursor-default`}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >
                 <div className="relative">
-                    <div className="relative z-30">
-                        <ReactionsEmojiPicker message={message} />
-                    </div>
                     <div className="relative rounded-lg overflow-hidden cursor-pointer"
                         onClick={() => dispatch(changeImage({ ...message, isGroupMessage }))}>
                         <img onLoad={scrollDown} src={message.content} className="object-cover max-w-[400px] max-h-[275px] w-full" />

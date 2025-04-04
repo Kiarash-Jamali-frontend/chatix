@@ -9,7 +9,6 @@ import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
-import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import AudioDownloadButton from "./AudioDownloadButton";
 
 export default function AudioMessage({ message, isGroupMessage, replayMessage }: MessagePropTypes) {
@@ -113,7 +112,9 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
     return (
         <div className="flex">
             <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
-            <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata} onPlay={() => setIsStopped(false)} onPause={() => setIsStopped(true)}></audio>
+            <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata}
+                onPlay={() => setIsStopped(false)}
+                onPause={() => setIsStopped(true)}></audio>
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={({ target }) => {
@@ -126,7 +127,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
                     ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
                     : "bg-white"
                     } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-s-none" : ""}
-             w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
+             w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default`}
             >
                 <div className="flex relative">
                     <button onClick={changeIsPlayingHandler} onDoubleClick={(e) => {
@@ -138,11 +139,6 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
                         <FontAwesomeIcon icon={faPlay} size="lg"
                             className={`absolute transition-all duration-300 ${!isStopped ? "opacity-0 scale-0" : ""}`} />
                     </button>
-                    {
-                        !isGroupMessage && (
-                            <ReactionsEmojiPicker message={message} />
-                        )
-                    }
                     <div className="ms-2">
                         <div className="flex items-center">
                             <div className="font-light break-words max-w-52 me-1 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>

@@ -46,6 +46,9 @@ const groups = createSlice({
         },
         addGroup(state, action: PayloadAction<SidebarGroupData>) {
             state.list = [...state.list, action.payload];
+        },
+        removeGroup(state, action: PayloadAction<string>) {
+            state.list = [...state.list.filter(g => g.id != action.payload)];
         }
     },
     extraReducers(builder) {
@@ -58,4 +61,4 @@ const groups = createSlice({
 
 export default groups.reducer;
 
-export const { changeGroupsStatus, addGroup } = groups.actions;
+export const { changeGroupsStatus, addGroup, removeGroup } = groups.actions;

@@ -25,7 +25,7 @@ export default function DeleteTextFileAudioMessageButton({ message, isGroupMessa
                             opacity: 0,
                             translateX: "1rem",
                         }}>
-                            <button className={`px-2 h-full bg-white flex items-center ${message.replyTo && replayMessage ? "rounded-bl-xl" : "rounded-l-xl"} border border-e-transparent`}
+                            <button className={`px-2 h-full bg-white flex items-center ${message.replyTo && replayMessage ? "rounded-bl-xl" : "rounded-l-xl"}`}
                                 onClick={() => deleteMessage(message.id, isGroupMessage)}>
                                 <FontAwesomeIcon icon={faTrashCan} color="#000" />
                             </button>

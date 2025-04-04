@@ -11,7 +11,6 @@ import MessagePropTypes from "../../types/MessagePropTypes";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import { useEffect, useRef, useState } from "react";
 import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
-import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import { BigPlayButton, ControlBar, ForwardControl, PlaybackRateMenuButton, Player, PlayToggle, ReplayControl, ProgressControl, CurrentTimeDisplay, DurationDisplay, TimeDivider, VolumeMenuButton, PlayerReference } from "video-react";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import downloadFile from "../../helpers/downloadFile";
@@ -67,7 +66,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                     ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
                     : "bg-white"
                     }
-               w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light ${message.replyTo ? "rounded-b-xl" : "rounded-xl border"}`}
+               w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light`}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >
@@ -123,12 +122,6 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                             </ControlBar>
                         </Player>
                     </div>
-                    {
-                        !isGroupMessage && (
-                            <ReactionsEmojiPicker
-                                message={message} />
-                        )
-                    }
                     <div className="flex items-center justify-end mt-2">
                         <MessageTime message={message} />
                         {message.from === userEmail && !isGroupMessage && (

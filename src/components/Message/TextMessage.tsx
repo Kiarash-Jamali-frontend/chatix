@@ -1,7 +1,6 @@
 import React from "react";
 import { RootState } from "../../redux/store";
 import { Parser } from "html-to-react";
-import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import DeleteTextFileAudioMessageButton from "./DeleteTextFileAudioMessageButton";
 import MessageTime from "./MessageTime";
 import MessageSeen from "./MessageSeen";
@@ -33,7 +32,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, repl
           ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
           : "bg-white"
           } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-s-none" : ""}
-             w-fit flex-grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative border ${message.replyTo && replayMessage ? "rounded-b-xl border-t-0" : "rounded-xl"}`}
+             w-fit flex-grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative`}
       >
         <p className="max-w-[400px] break-all message-text" dir="auto">
           {parse(urlify(message.content))}
@@ -44,12 +43,6 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, repl
             <MessageSeen message={message} />
           )}
         </div>
-        {
-          !isGroupMessage && (
-            <ReactionsEmojiPicker
-              message={message} />
-          )
-        }
       </button>
     </div>
   );
