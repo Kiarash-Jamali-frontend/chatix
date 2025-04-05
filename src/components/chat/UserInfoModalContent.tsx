@@ -113,14 +113,14 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                                 onClick={changeIsBlockingUser}
                             >
                                 {chatRoom.isBlocked ? "Unblock" : "Block"}
-                                <span className="font-bold ms-1 font-Vazir">{userProfile.name}</span>
+                                <span className="font-bold ms-1">{userProfile.name}</span>
                             </button>
                         )
                     }
 
                     {
                         (chatRoom.blockedFrom === userProfile.email && chatRoom.isBlocked) && (
-                            <p className="text-sm text-center my-auto text-black/75">MR.X has blocked you.</p>
+                            <p className="text-sm text-center my-auto text-black/75">{userProfile.name} has blocked you.</p>
                         )
                     }
                 </div>
