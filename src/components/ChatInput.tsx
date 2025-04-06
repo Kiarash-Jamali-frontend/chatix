@@ -6,7 +6,7 @@ import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker from "emoji-picker-react";
-import { faClose, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faMicrophone, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
@@ -268,16 +268,13 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="transition-all duration-300 size-12 min-w-12 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 disabled:opacity-60 disabled:pointer-events-none text-white rounded-full flex items-center justify-center"
-        // onClick={showSendButton ? sendMessageHandler : sendFileHandler} disabled={textMessagePending || filePending}>
-        onClick={sendMessageHandler} disabled={textMessagePending || !showSendButton}>
-        {/* <FontAwesomeIcon icon={faPaperPlane} size="lg"
+      <button className="size-12 min-w-12 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
+        onClick={showSendButton ? sendMessageHandler : sendFileHandler} disabled={textMessagePending || filePending}>
+        <FontAwesomeIcon icon={faPaperPlane} size="lg"
           className={`absolute transition-all duration-300 ${!showSendButton ? "opacity-0 scale-0" : ""}`} />
         <FontAwesomeIcon icon={faMicrophone} size="lg"
-          className={`absolute transition-all duration-300 ${showSendButton ? "opacity-0 scale-0" : ""}`} /> */}
+          className={`absolute transition-all duration-300 ${showSendButton ? "opacity-0 scale-0" : ""}`} />
 
-        <FontAwesomeIcon icon={faPaperPlane} size="lg"
-          className={`absolute transition-all duration-300`} />
       </button>
     </div >
   );
