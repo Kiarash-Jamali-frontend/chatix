@@ -109,7 +109,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                             </div>
                             <div className="flex flex-col">
                                 {notSeenedMessagesCount ? (
-                                    <div className="size-4 text-[10px] rounded-full bg-red-500 text-white text-center flex items-center justify-center ms-auto mb-1">
+                                    <div className="size-4 text-[11px] rounded-full bg-red-500 text-white text-center font-Inter flex items-center justify-center ms-auto mb-1">
                                         {notSeenedMessagesCount}
                                     </div>
                                 ) : (
