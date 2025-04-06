@@ -121,7 +121,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
             </div>
           )
         }
-        <div className="border rounded-xl overflow-hidden flex flex-col">
+        <div className={`rounded-xl overflow-hidden flex flex-col ${messageIsForCurrentUser ? "" : "border"}`}>
           {
             replyedMessage && (
               <button onClick={scrollToMessageHandler}
