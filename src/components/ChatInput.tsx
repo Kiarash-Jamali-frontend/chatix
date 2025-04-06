@@ -6,7 +6,7 @@ import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker from "emoji-picker-react";
-import { faClose, faMicrophone, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { changeMessageSelectedForReply } from "../redux/slices/messageSelectedForReply";
 import { Parser } from "html-to-react";
 import { MemberProfile } from "../pages/Group";
+import userIsOnline from "../helpers/usersAndProfiles/userIsOnline";
 
 type PropTypes = {
   mode: "group" | "private";
@@ -27,6 +28,7 @@ type PropTypes = {
 const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
+  const userLastActivity = useAppSelector((state: RootState) => state.user.profile?.lastActivity);
   const messageSelectedForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
   const dispatch = useAppDispatch();
 
@@ -58,6 +60,9 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       replyTo: messageSelectedForReply?.id || null
     });
     setNewNotSeenedMessageForAllGroupMembers();
+    if (mode == "private" && oppositeProfile.najvaUserToken) {
+      sendPvNotificationHandler();
+    }
     setTextMessagePending(false);
   };
 
@@ -111,6 +116,29 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         })
       })
     });
+  }
+
+  const sendPvNotificationHandler = async () => {
+    if (!userIsOnline(userLastActivity) && mode !== "group") {
+      await fetch("https://app.najva.com/api/v2/notification/management/send-direct/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Token 0d22e7de2917049a42cfddb9ecd3ec83e4efd3e8",
+          "X-api-key": "094a0fea-4408-4eb2-94d5-8bf1b105ec7d"
+        },
+        body: JSON.stringify({
+          title: oppositeProfile.name,
+          body: messageText,
+          onclick_action: 0,
+          url: `${process.env.APP_URL}/chat/${chatId}`,
+          image: oppositeProfile.photoUrl,
+          utm: {},
+          light_up_screen: true,
+          subscribers: [oppositeProfile.najvaUserToken]
+        })
+      })
+    }
   }
 
   const removeMessageSelectedForRelpy = () => {
@@ -240,12 +268,16 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="size-12 min-w-12 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
-        onClick={showSendButton ? sendMessageHandler : sendFileHandler} disabled={textMessagePending || filePending}>
-        <FontAwesomeIcon icon={faPaperPlane} size="lg"
+      <button className="transition-all duration-300 size-12 min-w-12 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 disabled:opacity-60 disabled:pointer-events-none text-white rounded-full flex items-center justify-center"
+        // onClick={showSendButton ? sendMessageHandler : sendFileHandler} disabled={textMessagePending || filePending}>
+        onClick={sendMessageHandler} disabled={textMessagePending || !showSendButton}>
+        {/* <FontAwesomeIcon icon={faPaperPlane} size="lg"
           className={`absolute transition-all duration-300 ${!showSendButton ? "opacity-0 scale-0" : ""}`} />
         <FontAwesomeIcon icon={faMicrophone} size="lg"
-          className={`absolute transition-all duration-300 ${showSendButton ? "opacity-0 scale-0" : ""}`} />
+          className={`absolute transition-all duration-300 ${showSendButton ? "opacity-0 scale-0" : ""}`} /> */}
+
+        <FontAwesomeIcon icon={faPaperPlane} size="lg"
+          className={`absolute transition-all duration-300`} />
       </button>
     </div >
   );
