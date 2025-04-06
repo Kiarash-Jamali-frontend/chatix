@@ -60,7 +60,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       replyTo: messageSelectedForReply?.id || null
     });
     setNewNotSeenedMessageForAllGroupMembers();
-    if (mode == "private" && oppositeProfile.najvaUserToken) {
+    if (mode == "private" && oppositeProfile.najvaUserToken && !userIsOnline(userLastActivity)) {
       sendPvNotificationHandler();
     }
     setTextMessagePending(false);
@@ -119,26 +119,24 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   }
 
   const sendPvNotificationHandler = async () => {
-    if (!userIsOnline(userLastActivity) && mode !== "group") {
-      await fetch("https://app.najva.com/api/v2/notification/management/send-direct/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Token 0d22e7de2917049a42cfddb9ecd3ec83e4efd3e8",
-          "X-api-key": "094a0fea-4408-4eb2-94d5-8bf1b105ec7d"
-        },
-        body: JSON.stringify({
-          title: oppositeProfile.name,
-          body: messageText,
-          onclick_action: 0,
-          url: `${process.env.APP_URL}/chat/${chatId}`,
-          image: oppositeProfile.photoUrl,
-          utm: {},
-          light_up_screen: true,
-          subscribers: [oppositeProfile.najvaUserToken]
-        })
+    await fetch("https://app.najva.com/api/v2/notification/management/send-direct/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Token 0d22e7de2917049a42cfddb9ecd3ec83e4efd3e8",
+        "X-api-key": "094a0fea-4408-4eb2-94d5-8bf1b105ec7d"
+      },
+      body: JSON.stringify({
+        title: oppositeProfile.name,
+        body: messageText,
+        onclick_action: 0,
+        url: `${process.env.APP_URL}/chat/${chatId}`,
+        image: oppositeProfile.photoUrl,
+        utm: {},
+        light_up_screen: true,
+        subscribers: [oppositeProfile.najvaUserToken]
       })
-    }
+    })
   }
 
   const removeMessageSelectedForRelpy = () => {
