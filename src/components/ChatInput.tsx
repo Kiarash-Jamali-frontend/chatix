@@ -124,7 +124,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Token 0d22e7de2917049a42cfddb9ecd3ec83e4efd3e8",
-        "X-api-key": "094a0fea-4408-4eb2-94d5-8bf1b105ec7d"
+        "x-api-key": "094a0fea-4408-4eb2-94d5-8bf1b105ec7d"
       },
       body: JSON.stringify({
         title: oppositeProfile.name,
