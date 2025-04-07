@@ -130,7 +130,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         title: oppositeProfile.name,
         body: messageText,
         onclick_action: 0,
-        url: `${process.env.VITE_APP_URL}/chat/${chatId}`,
+        url: `${import.meta.env.VITE_APP_URL}/chat/${chatId}`,
         image: oppositeProfile.photoUrl,
         utm: {},
         light_up_screen: true,
