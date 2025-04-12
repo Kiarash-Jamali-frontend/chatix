@@ -32,7 +32,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, repl
           ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
           : "bg-white"
           } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-s-none" : ""}
-             w-fit flex-grow rounded-xl min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative`}
+             w-fit flex-grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative`}
       >
         <p className="max-w-[400px] break-all message-text" dir="auto">
           {parse(urlify(message.content))}

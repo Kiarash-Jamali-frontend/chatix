@@ -74,6 +74,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
   const sendFileHandler = async () => {
     setFilePending(true);
+    removeMessageSelectedForRelpy();
     if (fileInputRef.current?.files) {
       let i = 0;
       while (i < fileInputRef.current.files.length) {
@@ -94,7 +95,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           seen: false,
           timestamp: Timestamp.now(),
           to: messageTo,
-          type: fileType
+          type: fileType,
+          replyTo: messageSelectedForReply?.id || null
         };
         if (fileType === "file" || fileType === "audio") {
           data.fileName = file.name;
@@ -124,7 +126,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Token 0d22e7de2917049a42cfddb9ecd3ec83e4efd3e8",
-        "x-api-key": "094a0fea-4408-4eb2-94d5-8bf1b105ec7d"
+        "X-api-key": "094a0fea-4408-4eb2-94d5-8bf1b105ec7d"
       },
       body: JSON.stringify({
         title: oppositeProfile.name,
@@ -267,7 +269,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="size-12 min-w-12 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
+      <button className="size-12 min-w-12 disabled:opacity-75 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
         onClick={showSendButton ? sendMessageHandler : sendFileHandler} disabled={textMessagePending || filePending}>
         <FontAwesomeIcon icon={faPaperPlane} size="lg"
           className={`absolute transition-all duration-300 ${!showSendButton ? "opacity-0 scale-0" : ""}`} />
