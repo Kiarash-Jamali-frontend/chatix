@@ -68,8 +68,8 @@ function App() {
         <meta name="theme-color" content="#fff" />
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <script type="text/javascript" src="/najva-script.js">
-        </script>
+        <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+        <script type="text/javascript" src="/onesignal.js"></script>        
       </Helmet>
       <Provider store={store}>
         <RouterProvider router={router} />
