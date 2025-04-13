@@ -56,9 +56,9 @@ const Sidebar: React.FC = () => {
     <>
       <ToastContainer />
       <div className={`w-full relative lg:max-w-[435px] h-svh bg-white border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
-        <div className="p-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="relative">
+        <div className="p-6 flex items-center justify-between w-full min-w-0">
+          <div className="flex items-center w-full flex-grow min-w-0">
+            <div className="relative basis-16 min-w-16">
               {/*Profile image*/}
               {user.profile?.photoUrl && (
                 <SidebarProfileImage />
@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => {
                 <FontAwesomeIcon icon={faPencil} size="2xs" />
               </Link>
             </div>
-            <div className="ps-4">
+            <div className="ps-4 min-w-0">
               {/*user name*/}
               <div className="flex items-center">
                 <span className="font-bold font-Vazir">
@@ -86,7 +86,7 @@ const Sidebar: React.FC = () => {
                 </button>
               </div>
               {/*email*/}
-              <div className="text-xs mt-2 text-black/60 max-w-60 whitespace-nowrap overflow-hidden text-ellipsis">
+              <div className="text-xs w-full min-w-0 mt-2 text-black/60 whitespace-nowrap overflow-hidden text-ellipsis break-all">
                 {user.data?.email}
               </div>
             </div>

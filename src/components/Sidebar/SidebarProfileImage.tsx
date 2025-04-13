@@ -7,22 +7,18 @@ export default function SidebarProfileImage() {
     const user = useAppSelector((state: RootState) => state.user);
 
     return (
-        <>
-            <div className="relative rounded-full overflow-hidden group border">
-                <img
-                    src={user.profile!.photoUrl}
-                    alt={"profile"}
-                    className="size-16 object-cover object-center cursor-pointer"
-                    onClick={() => {
-                        dispatch(changeOpenedProfile({
-                            data: {
-                                isCurrentUserProfile: true,
-                                profile: user.profile!.photoUrl
-                            }
-                        }))
-                    }}
-                />
-            </div>
-        </>
+        <img
+            src={user.profile!.photoUrl}
+            alt={"profile"}
+            className="object-cover object-center cursor-pointer size-16 block rounded-full border"
+            onClick={() => {
+                dispatch(changeOpenedProfile({
+                    data: {
+                        isCurrentUserProfile: true,
+                        profile: user.profile!.photoUrl
+                    }
+                }))
+            }}
+        />
     )
 }
