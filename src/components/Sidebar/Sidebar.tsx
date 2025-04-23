@@ -15,13 +15,10 @@ import shareData from "../../helpers/shareWebAPI/shareData";
 import toastConf from "../../../utils/toastConfig";
 import GroupListItem from "./GroupListItem";
 import GradiantProfile from "../GradiantProfile";
-import { Swiper, SwiperSlide } from "swiper/react";
-import GroupsAndChatsListButtons from "./GroupsAndChatsListButtons";
 import { UserState } from "../../redux/slices/user";
 import { AnimatePresence, motion } from "framer-motion";
 
 const Sidebar: React.FC = () => {
-  const [selectedList, setSelectedList] = useState<"chats" | "groups">("chats");
   const [logoutPending, setLogoutPending] = useState<boolean>(false);
   const [createMenuIsOpen, setCreateMenuIsOpen] = useState<boolean>(false);
   const createMenuButtonRef = useRef<HTMLButtonElement>(null);
@@ -56,7 +53,7 @@ const Sidebar: React.FC = () => {
     <>
       <ToastContainer />
       <div className={`w-full relative lg:max-w-[435px] h-svh bg-white border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
-        <div className="p-6 flex items-center justify-between w-full min-w-0">
+        <div className="p-6 flex items-center justify-between w-full min-w-0 border-b">
           <div className="flex items-center w-full flex-grow min-w-0">
             <div className="relative basis-16 min-w-16">
               {/*Profile image*/}
@@ -99,24 +96,14 @@ const Sidebar: React.FC = () => {
         </div>
         <div className="flex flex-col flex-grow h-[calc(100%-(114px))]">
           <div className="flex-grow h-[calc(100%-(114px))]">
-            <Swiper onSlideChange={() => setSelectedList((prev) => prev == "chats" ? "groups" : "chats")}
-              className="font-Vazir flex flex-col h-full">
-              <GroupsAndChatsListButtons selectedList={selectedList} />
-              <SwiperSlide className="flex flex-col flex-grow">
-                <div className="flex flex-col py-2 overflow-auto h-[calc(100%-(42px))]">
-                  {chats.map((c, index) => {
-                    return <ChatListItem chat={c} key={index} />;
-                  })}
-                </div>
-              </SwiperSlide>
-              <SwiperSlide className="flex flex-col flex-grow">
-                <div className="flex flex-col py-2 overflow-auto h-[calc(100%-(42px))]">
-                  {groups.map((g, index) => {
-                    return <GroupListItem group={g} key={index} />;
-                  })}
-                </div>
-              </SwiperSlide>
-            </Swiper>
+            <div className="flex flex-col py-2 overflow-auto h-full font-Vazir">
+              {chats.map((c, index) => {
+                return <ChatListItem chat={c} key={index} />;
+              })}
+              {groups.map((g, index) => {
+                return <GroupListItem group={g} key={index} />;
+              })}
+            </div>
           </div>
         </div>
         <div className="absolute bottom-6 right-6 flex items-end">

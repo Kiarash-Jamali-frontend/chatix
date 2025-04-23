@@ -6,7 +6,7 @@ import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker from "emoji-picker-react";
-import { faClose, faMicrophone, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faMicrophone, faPaperclip, faPaperPlane, faReply, faSquare } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { changeMessageSelectedForReply } from "../redux/slices/messageSelectedForReply";
 import { Parser } from "html-to-react";
 import { MemberProfile } from "../pages/Group";
-import userIsOnline from "../helpers/usersAndProfiles/userIsOnline";
+import { useReactMediaRecorder } from "react-media-recorder";
 
 type PropTypes = {
   mode: "group" | "private";
@@ -28,10 +28,11 @@ type PropTypes = {
 const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
-  const userLastActivity = useAppSelector((state: RootState) => state.user.profile?.lastActivity);
   const messageSelectedForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
   const dispatch = useAppDispatch();
 
+  const { status } =
+    useReactMediaRecorder({ audio: true });
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
   const [filePending, setFilePending] = useState<boolean>(false);
@@ -41,7 +42,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const isPrivateChat = (mode == "private" || !mode);
   const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
   const messageTextHtmlBody = new DOMParser().parseFromString(messageText, "text/html").body;
-  const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false);
+  const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false) && status !== "recording";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -60,9 +61,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       replyTo: messageSelectedForReply?.id || null
     });
     setNewNotSeenedMessageForAllGroupMembers();
-    if (mode == "private" && oppositeProfile.najvaUserToken && !userIsOnline(userLastActivity)) {
-      sendPvNotificationHandler();
-    }
     setTextMessagePending(false);
   };
 
@@ -70,6 +68,9 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     const dt = new DataTransfer();
     if (fileInputRef.current?.files) fileInputRef.current.files = dt.files;
     fileInputRef.current?.click();
+  }
+
+  const voiceButtonClickHandler = () => {
   }
 
   const sendFileHandler = async () => {
@@ -118,28 +119,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         })
       })
     });
-  }
-
-  const sendPvNotificationHandler = async () => {
-    await fetch("https://app.najva.com/api/v2/notification/management/send-direct/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Token 0d22e7de2917049a42cfddb9ecd3ec83e4efd3e8",
-        "X-api-key": "094a0fea-4408-4eb2-94d5-8bf1b105ec7d"
-      },
-      body: JSON.stringify({
-        title: oppositeProfile.name,
-        body: messageText,
-        onclick_action: 0,
-        url: `${import.meta.env.VITE_APP_URL}/chat/${chatId}`,
-        image: oppositeProfile.photoUrl,
-        utm: {},
-        buttons: [],
-        light_up_screen: true,
-        subscribers: [oppositeProfile.najvaUserToken]
-      })
-    })
   }
 
   const removeMessageSelectedForRelpy = () => {
@@ -270,12 +249,13 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
       <button className="size-12 min-w-12 disabled:opacity-75 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
-        onClick={showSendButton ? sendMessageHandler : sendFileHandler} disabled={textMessagePending || filePending}>
+        onClick={showSendButton ? sendMessageHandler : voiceButtonClickHandler} disabled={textMessagePending || filePending}>
         <FontAwesomeIcon icon={faPaperPlane} size="lg"
-          className={`absolute transition-all duration-300 ${!showSendButton ? "opacity-0 scale-0" : ""}`} />
+          className={`absolute transition-all duration-300 ${(!showSendButton) ? "opacity-0 scale-0" : ""}`} />
         <FontAwesomeIcon icon={faMicrophone} size="lg"
           className={`absolute transition-all duration-300 ${showSendButton ? "opacity-0 scale-0" : ""}`} />
-
+          <FontAwesomeIcon icon={faSquare} size="lg"
+            className={`absolute transition-all duration-300 ${(status != "recording") ? "opacity-0 scale-0" : ""}`} />
       </button>
     </div >
   );

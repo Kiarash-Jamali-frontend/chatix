@@ -87,14 +87,6 @@ const Layout: React.FC = () => {
 
   useEffect(() => {
     if (user.status == "authenticated") {
-      // @ts-ignore
-      window.najvaUserSubscribed = function (najvaUserToken) {
-        runTransaction(db, async (transaction) => {
-          transaction.update(doc(db, "profile", user.data!.email), {
-             najvaUserToken
-          })
-        })
-      }
     }
   }, [user])
 
