@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import button from "../../cva/button";
 import { MemberProfile } from "../../pages/Group";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { getGroups, removeGroup, SidebarGroupData } from "../../redux/slices/groups";
+import { getGroups, SidebarGroupData } from "../../redux/slices/groups";
 import { RootState } from "../../redux/store";
 import MemberListItem from "./MemberListItem"
 import { faArrowLeft, faUserPlus } from "@fortawesome/free-solid-svg-icons";
@@ -31,7 +31,6 @@ export default function GroupInfoModalDefaultContent({ membersProfiles, groupDat
         if (id) {
             removeAndAddUserGroup(id, "remove");
             if (userEmail) dispatch(getGroups(userEmail));
-            dispatch(removeGroup(id));
             navigate("/");
         }
         setPending(false);

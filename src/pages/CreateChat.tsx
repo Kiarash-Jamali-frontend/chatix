@@ -3,18 +3,16 @@ import input from "../cva/input";
 import button from "../cva/button";
 import { addDoc, collection, doc, getDoc, Timestamp, } from "firebase/firestore";
 import { db } from "../../utils/firebase";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { addChat } from "../redux/slices/chats";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 export default function CreateChat() {
 
     const [searchParams] = useSearchParams();
-    const dispatch = useAppDispatch();
     const user = useAppSelector((state: RootState) => state.user);
     const navigate = useNavigate();
     const [email, setEmail] = useState<string>("");
@@ -35,9 +33,7 @@ export default function CreateChat() {
                 blockedFrom: "",
                 createdAt: timestamp
             });
-            dispatch(addChat({ user_1: user.data!.email, user_2: email, timestamp })).then(() => {
-                navigate(`/chat/${email}`);
-            });
+            navigate(`/chat/${email}`);
         } else {
             setError("There is no user with this email");
             setTimeout(() => {

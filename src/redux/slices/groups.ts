@@ -44,11 +44,8 @@ const groups = createSlice({
         changeGroupsStatus(state, action: PayloadAction<GroupState['status']>) {
             state.status = action.payload;
         },
-        addGroup(state, action: PayloadAction<SidebarGroupData>) {
-            state.list = [...state.list, action.payload];
-        },
-        removeGroup(state, action: PayloadAction<string>) {
-            state.list = [...state.list.filter(g => g.id != action.payload)];
+        changeGroupsList(state, action: PayloadAction<GroupState['list']>) {
+            state.list = action.payload;
         }
     },
     extraReducers(builder) {
@@ -61,4 +58,4 @@ const groups = createSlice({
 
 export default groups.reducer;
 
-export const { changeGroupsStatus, addGroup, removeGroup } = groups.actions;
+export const { changeGroupsStatus, changeGroupsList } = groups.actions;

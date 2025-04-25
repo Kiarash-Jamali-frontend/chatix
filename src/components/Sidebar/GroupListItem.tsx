@@ -83,7 +83,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                         <div className="ps-2 min-w-0 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
                             <div className="flex-grow min-w-0">
                                 <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>{group.groupName}</div>
-                                <div className={`text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
+                                <div className={`last-message text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                     {
                                         lastMessage && (
                                             <span className={`${groupIsSelected ? "text-white" : "text-black"} font-medium`}>
@@ -103,7 +103,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                                         )
                                     }
                                     {
-                                        lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(""))
+                                        lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
                                     }
                                 </div>
                             </div>

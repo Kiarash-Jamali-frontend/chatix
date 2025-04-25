@@ -5,7 +5,7 @@ import input from "../cva/input";
 import { FormEvent, useCallback, useRef, useState } from "react";
 import button from "../cva/button";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import MemberListItem from "../components/MemberListItem";
 import { toast, ToastContainer } from "react-toastify";
@@ -14,11 +14,9 @@ import { db, storage } from "../../utils/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
 import toastConf from "../../utils/toastConfig";
-import { addGroup } from "../redux/slices/groups";
 
 export default function CreateGroup() {
 
-    const dispatch = useAppDispatch();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const chats = useAppSelector((state: RootState) => state.chats.list);
     const [selectedMembersEmails, setSelctedMembersEmails] = useState<string[]>([]);
@@ -29,9 +27,8 @@ export default function CreateGroup() {
 
     const groupProfileInput = useRef<HTMLInputElement>(null);
 
-    const successfulCreateGroupCallback = useCallback((data: { id: string, groupPhotoUrl: string }) => {
+    const successfulCreateGroupCallback = useCallback(() => {
         toast.success(`${groupName} group created successful!`, toastConf);
-        dispatch(addGroup({ ...data, groupName, creator: userEmail!, createdAt: Timestamp.now() }));
         removeGroupProfileHandler();
         setGroupName("");
         setMemberName("");
@@ -70,10 +67,8 @@ export default function CreateGroup() {
                             groupPhotoUrl: profileUrl
                         });
                     });
-                    successfulCreateGroupCallback({ groupPhotoUrl: profileUrl, id: docRef.id })
-                } else {
-                    successfulCreateGroupCallback({ groupPhotoUrl: "", id: docRef.id })
                 }
+                successfulCreateGroupCallback();
             }
         }
         setPending(false);

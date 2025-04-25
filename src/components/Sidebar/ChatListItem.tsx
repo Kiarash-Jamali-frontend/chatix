@@ -94,7 +94,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                     <div className="ps-2 min-w-0 flex-grow flex items-end justify-between">
                         <div className="flex-grow min-w-0">
                             <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>{chat.name}</div>
-                            <div className={`text-xs min-w-0 w-full ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
+                            <div dir="auto" className={`text-left last-message text-xs min-w-0 w-full ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                 {
                                     lastMessage && (
                                         lastMessage?.type !== "text" && (
@@ -107,7 +107,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                                     )
                                 }
                                 {
-                                    lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(""))
+                                    lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
                                 }
                             </div>
                         </div>

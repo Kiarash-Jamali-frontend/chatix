@@ -128,7 +128,7 @@ const Sidebar: React.FC = () => {
                   <Link unstable_viewTransition to={"/create-chat"}
                     className="flex items-center w-full relative rounded-t-lg z-10 px-4 py-2 text-sm hover:bg-blue-500 hover:text-white transition-colors">
                     <FontAwesomeIcon icon={faUser} className="me-2" />
-                    Create chat
+                    Create Chat
                   </Link>
                   <Link unstable_viewTransition to={"/create-group"}
                     className="flex items-center w-full relative rounded-b-lg z-10 px-4 py-2 text-sm hover:bg-blue-500 hover:text-white transition-colors">

@@ -29,3 +29,7 @@
 .message-text a {
   @apply decoration-current underline text-blue-50 underline-offset-4
 }
+
+.last-message > * {
+  @apply inline;
+}

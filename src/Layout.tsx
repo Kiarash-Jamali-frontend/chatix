@@ -7,19 +7,23 @@ import { RootState } from "./redux/store";
 import { auth, db } from "../utils/firebase";
 import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
 import Loading from "./components/Loading";
-import { doc, getDoc, runTransaction, setDoc, Timestamp } from "firebase/firestore";
-import { changeChatsStatus, getChats } from "./redux/slices/chats";
+import { and, collection, doc, getDoc, onSnapshot, or, query, runTransaction, setDoc, Timestamp, where } from "firebase/firestore";
+import { changeChatsList, changeChatsStatus, ChatsState } from "./redux/slices/chats";
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
-import { changeGroupsStatus, getGroups } from "./redux/slices/groups";
+import { changeGroupsList, changeGroupsStatus, SidebarGroupData } from "./redux/slices/groups";
 import useOnlineStatus from "./hooks/useOnlineStatus";
 import OfflineModal from "./components/OfflineModal";
 import ProfileModal from "./components/ProfileModal";
+import getProfile from "./helpers/usersAndProfiles/getProfile";
+import getNotSeenedMessagesCount from "./helpers/chat/getNotSeenedMessagesCount";
+import GroupMember from "./types/GroupMember";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsStatus = useAppSelector((state: RootState) => state.chats.status);
+  const groupsStatus = useAppSelector((state: RootState) => state.groups.status);
 
   const isOnline = useOnlineStatus();
 
@@ -62,6 +66,60 @@ const Layout: React.FC = () => {
     }
   }, [user]);
 
+  const getChats = async () => {
+    let chatsList: (ChatsState['list']) = [];
+    const q = query(
+      collection(db, "chat_room"),
+      or(
+        where("user_1", "==", user.data?.email),
+        where("user_2", "==", user.data?.email)
+      )
+    );
+    onSnapshot(q, async (querySnapshot) => {
+      for (let i = 0; i < querySnapshot.size; i++) {
+        const chatData = querySnapshot.docs[i].data();
+        const oppositeUserEmail =
+          user.data?.email === chatData.user_1
+            ? chatData.user_2
+            : chatData.user_1;
+
+        const notSeenedMessagesCount = await getNotSeenedMessagesCount(oppositeUserEmail, user.data!.email);
+        const profile = await getProfile(oppositeUserEmail);
+
+        chatsList = [...chatsList, {
+          ...profile!,
+          notSeenedMessages: notSeenedMessagesCount,
+          createdAt: chatData.createdAt
+        }]
+      }
+      dispatch(changeChatsList(chatsList));
+      if (chatsStatus == "loading") {
+        dispatch(changeChatsStatus("success"));
+      }
+    })
+  }
+
+  const getGroups = async () => {
+    let groupsList: SidebarGroupData[] = [];
+    const q = query(
+      collection(db, "group_member"),
+      and(
+        where("memberEmail", "==", user.data?.email),
+        where("removedFromGroup", "==", false)
+      ),
+    );
+    onSnapshot(q, async (querySnapshot) => {
+      for (let i = 0; i < querySnapshot.size; i++) {
+        const groupMemberData = querySnapshot.docs[i].data() as GroupMember;
+        const groupDocRef = doc(db, "group", groupMemberData.groupId);
+        const groupData = (await getDoc(groupDocRef)).data() as SidebarGroupData;
+        groupsList = [...groupsList, { ...groupData, id: querySnapshot.docs[i].data().groupId }]
+      }
+      dispatch(changeGroupsList(groupsList));
+      dispatch(changeGroupsStatus("success"));
+    })
+  }
+
   useLayoutEffect(() => {
     dispatch(changeUserStatus("loading"));
     dispatch(changeChatsStatus("loading"));
@@ -72,11 +130,10 @@ const Layout: React.FC = () => {
       if (!user) {
         dispatch(changeUserStatus("unauthenticated"));
         dispatch(changeChatsStatus("userUnauthenticated"));
+        dispatch(changeGroupsStatus("userUnauthenticated"));
       }
       user && dispatch(getUserProfile(user.email!)).then(() => {
         dispatch(changeUserStatus("authenticated"));
-        dispatch(getChats(user.email!));
-        dispatch(getGroups(user.email!));
       });
     });
 
@@ -86,7 +143,9 @@ const Layout: React.FC = () => {
   }, [isOnline]);
 
   useEffect(() => {
-    if (user.status == "authenticated") {
+    if (user.data?.email && user.status == "authenticated") {
+      getChats();
+      getGroups();
     }
   }, [user])
 
@@ -95,7 +154,7 @@ const Layout: React.FC = () => {
   }
 
   if (
-    (user.status === "authenticated" && chatsStatus === "success")
+    (user.status === "authenticated" && chatsStatus === "success" && groupsStatus == "success")
     || location.pathname === "/login"
     || location.pathname === "/create-account"
     || location.pathname === "/reset-password"
