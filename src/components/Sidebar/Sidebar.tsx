@@ -17,14 +17,16 @@ import GroupListItem from "./GroupListItem";
 import GradiantProfile from "../GradiantProfile";
 import { UserState } from "../../redux/slices/user";
 import { AnimatePresence, motion } from "framer-motion";
+import useOnlineStatus from "../../hooks/useOnlineStatus";
 
 const Sidebar: React.FC = () => {
+  const isOnline = useOnlineStatus();
   const [logoutPending, setLogoutPending] = useState<boolean>(false);
   const [createMenuIsOpen, setCreateMenuIsOpen] = useState<boolean>(false);
   const createMenuButtonRef = useRef<HTMLButtonElement>(null);
   const user: UserState = useAppSelector((state: RootState) => state.user);
-  const chats = useAppSelector((state: RootState) => state.chats.list);
-  const groups = useAppSelector((state: RootState) => state.groups.list);
+  const { list: chats, status: chatsStatus } = useAppSelector((state: RootState) => state.chats);
+  const { list: groups, status: groupsStatus } = useAppSelector((state: RootState) => state.groups);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -53,6 +55,16 @@ const Sidebar: React.FC = () => {
     <>
       <ToastContainer />
       <div className={`w-full relative lg:max-w-[435px] h-svh bg-white border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
+        {
+          ([chatsStatus, groupsStatus, user.status].some((v) => v == "cacheLoaded" || v == "loading") || !isOnline) && (
+            <div className="bg-blue-500 p-3 text-center flex items-center justify-center text-white text-sm">
+              <div className="size-4 bg-transparent border rounded-full border-e-transparent animate-spin me-2">
+
+              </div>
+              Connecting ...
+            </div>
+          )
+        }
         <div className="p-6 flex items-center justify-between w-full min-w-0 border-b">
           <div className="flex items-center w-full flex-grow min-w-0">
             <div className="relative basis-16 min-w-16">
@@ -97,12 +109,18 @@ const Sidebar: React.FC = () => {
         <div className="flex flex-col flex-grow h-[calc(100%-(114px))]">
           <div className="flex-grow h-[calc(100%-(114px))]">
             <div className="flex flex-col py-2 overflow-auto h-full font-Vazir">
-              {chats.map((c, index) => {
-                return <ChatListItem chat={c} key={index} />;
-              })}
-              {groups.map((g, index) => {
-                return <GroupListItem group={g} key={index} />;
-              })}
+              {
+                [chatsStatus, groupsStatus].every((v) => v == "success" || v == "cacheLoaded") && (
+                  <>
+                    {chats.map((c, index) => {
+                      return <ChatListItem chat={c} key={index} />;
+                    })}
+                    {groups.map((g, index) => {
+                      return <GroupListItem group={g} key={index} />;
+                    })}
+                  </>
+                )
+              }
             </div>
           </div>
         </div>

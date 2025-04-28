@@ -5,7 +5,7 @@ import { Navigate, Outlet, redirect, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
 import { auth, db } from "../utils/firebase";
-import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
+import { changeUserData, changeUserStatus, getUserProfile, setUserDataAndProfileFromLocalStorage } from "./redux/slices/user";
 import Loading from "./components/Loading";
 import { and, collection, doc, getDoc, onSnapshot, or, query, runTransaction, setDoc, Timestamp, where } from "firebase/firestore";
 import { changeChatsList, changeChatsStatus, ChatsState } from "./redux/slices/chats";
@@ -66,7 +66,16 @@ const Layout: React.FC = () => {
     }
   }, [user]);
 
+  const getChatsFromLocalStorage = () => {
+    const chatsInLocalStorage = JSON.parse(localStorage.getItem("chatix_chats") || "");
+    if (Array.isArray(JSON.parse(localStorage.getItem("chatix_chats") || ""))) {
+      dispatch(changeChatsList(chatsInLocalStorage));
+      dispatch(changeChatsStatus("cacheLoaded"));
+    }
+  }
+
   const getChats = async () => {
+    let chatsList: (ChatsState['list']) = [];
     const q = query(
       collection(db, "chat_room"),
       or(
@@ -75,7 +84,7 @@ const Layout: React.FC = () => {
       )
     );
     onSnapshot(q, async (querySnapshot) => {
-      let chatsList: (ChatsState['list']) = [];
+      chatsList = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const chatData = querySnapshot.docs[i].data();
         const oppositeUserEmail =
@@ -93,13 +102,20 @@ const Layout: React.FC = () => {
         }]
       }
       dispatch(changeChatsList(chatsList));
-      if (chatsStatus == "loading") {
-        dispatch(changeChatsStatus("success"));
-      }
+      dispatch(changeChatsStatus("success"));
     })
   }
 
+  const getGroupsFromLocalStorage = () => {
+    const chatsInLocalStorage = JSON.parse(localStorage.getItem("chatix_groups") || "");
+    if (Array.isArray(JSON.parse(localStorage.getItem("chatix_groups") || ""))) {
+      dispatch(changeGroupsList(chatsInLocalStorage));
+      dispatch(changeGroupsStatus("cacheLoaded"));
+    }
+  }
+
   const getGroups = async () => {
+    let groupsList: SidebarGroupData[] = [];
     const q = query(
       collection(db, "group_member"),
       and(
@@ -108,7 +124,7 @@ const Layout: React.FC = () => {
       ),
     );
     onSnapshot(q, async (querySnapshot) => {
-      let groupsList: SidebarGroupData[] = [];
+      groupsList = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const groupMemberData = querySnapshot.docs[i].data() as GroupMember;
         const groupDocRef = doc(db, "group", groupMemberData.groupId);
@@ -121,9 +137,10 @@ const Layout: React.FC = () => {
   }
 
   useLayoutEffect(() => {
-    dispatch(changeUserStatus("loading"));
-    dispatch(changeChatsStatus("loading"));
-    dispatch(changeGroupsStatus("loading"));
+    dispatch(setUserDataAndProfileFromLocalStorage());
+    // dispatch(changeUserStatus("loading"));
+    // dispatch(changeChatsStatus("loading"));
+    // dispatch(changeGroupsStatus("loading"));
     getGoogleSigninRedirectResult();
     const unsub = onAuthStateChanged(auth, (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));
@@ -143,21 +160,24 @@ const Layout: React.FC = () => {
   }, [isOnline]);
 
   useEffect(() => {
-    if (user.data?.email && user.status == "authenticated") {
+    if (user.data?.email && user.status == "authenticated" && isOnline) {
       getChats();
       getGroups();
     }
-  }, [user])
+  }, [user, isOnline])
 
-  if (!isOnline) {
+  useEffect(() => {
+    getChatsFromLocalStorage();
+    getGroupsFromLocalStorage();
+  }, []);
+
+  if (!isOnline && user.status == "unauthenticated") {
     return <OfflineModal />
   }
 
   if (
-    (user.status === "authenticated" && chatsStatus === "success" && groupsStatus == "success")
-    || location.pathname === "/login"
-    || location.pathname === "/create-account"
-    || location.pathname === "/reset-password"
+    ([user.status, chatsStatus, groupsStatus].every((v) => v == "cacheLoaded" || v == "success" || v == "authenticated"))
+    || ["/login", "/create-account", "/reset-password"].includes(location.pathname)
   ) {
     return (
       <div className="lg:flex min-h-svh before:absolute before:inset-0 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0">

@@ -10,7 +10,7 @@ export type UserState = {
         email: string,
     } | null,
     profile: (Profile & { id: string }) | null;
-    status: "loading" | "authenticated" | "unauthenticated"
+    status: "loading" | "authenticated" | "unauthenticated" | "cacheLoaded"
 }
 
 const initialState: UserState = {
@@ -70,18 +70,34 @@ const user = createSlice({
     initialState,
     reducers: {
         changeUserData: (state, action: PayloadAction<UserState['data']>) => {
+            localStorage.setItem("chatix_user_data", JSON.stringify(action.payload));
             state.data = action.payload;
         },
         changeUserStatus: (state, action: PayloadAction<UserState['status']>) => {
             state.status = action.payload;
         },
+        setUserDataAndProfileFromLocalStorage: (state) => {
+            const userProfileInLocalStorage = localStorage.getItem("chatix_user_profile");
+            const userDataInLocalStorage = localStorage.getItem("chatix_user_data");
+            if (userProfileInLocalStorage && userDataInLocalStorage) {
+                const parsedUserProfile = JSON.parse(localStorage.getItem("chatix_user_profile") || "");
+                const parsedUserData = JSON.parse(localStorage.getItem("chatix_user_data") || "");
+                if ([parsedUserData, parsedUserProfile].every((v) => typeof v == "object")) {
+                    state.profile = parsedUserProfile;
+                    state.data = parsedUserData;
+                    state.status = "cacheLoaded";
+                }
+            }
+        }
     },
     extraReducers(builder) {
         builder.addCase(getUserProfile.fulfilled, (state, action) => {
+            localStorage.setItem("chatix_user_profile", JSON.stringify(action.payload));
             state.profile = action.payload;
         });
         builder.addCase(changeUserProfile.fulfilled, (state, action) => {
             if (state.profile) {
+                localStorage.setItem("chatix_user_profile", JSON.stringify(action.payload));
                 state.profile = {
                     ...state.profile,
                     ...action.payload
@@ -89,6 +105,7 @@ const user = createSlice({
             }
         });
         builder.addCase(deleteProfileImage.fulfilled, ({ profile }) => {
+            localStorage.setItem("chatix_user_profile", JSON.stringify(profile));
             if (profile) profile.photoUrl = "";
         })
     },
@@ -96,5 +113,4 @@ const user = createSlice({
 
 export default user.reducer;
 
-export const changeUserData = user.actions.changeUserData;
-export const changeUserStatus = user.actions.changeUserStatus;
+export const { changeUserData, changeUserStatus, setUserDataAndProfileFromLocalStorage } = user.actions;

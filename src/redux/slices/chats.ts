@@ -6,7 +6,7 @@ export type ChatData = (Profile & { email: string, notSeenedMessages: number, cr
 
 export type ChatsState = {
     list: ChatData[],
-    status: "loading" | "success" | "userUnauthenticated"
+    status: "loading" | "success" | "userUnauthenticated" | "cacheLoaded"
 }
 
 const initialState: ChatsState = {
@@ -22,6 +22,7 @@ const chats = createSlice({
             state.status = action.payload;
         },
         changeChatsList(state, action: PayloadAction<ChatsState['list']>) {
+            localStorage.setItem("chatix_chats", JSON.stringify(action.payload));
             state.list = action.payload;
         }
     },

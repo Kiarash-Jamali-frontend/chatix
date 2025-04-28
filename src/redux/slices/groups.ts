@@ -8,7 +8,7 @@ export type SidebarGroupData = Group;
 
 type GroupState = {
     list: SidebarGroupData[],
-    status: "loading" | "success" | "userUnauthenticated"
+    status: "loading" | "success" | "userUnauthenticated" | "cacheLoaded"
 }
 
 const initialState: GroupState = {
@@ -45,6 +45,7 @@ const groups = createSlice({
             state.status = action.payload;
         },
         changeGroupsList(state, action: PayloadAction<GroupState['list']>) {
+            localStorage.setItem("chatix_groups", JSON.stringify(action.payload));
             state.list = action.payload;
         }
     },
