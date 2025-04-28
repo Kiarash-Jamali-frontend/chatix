@@ -146,7 +146,7 @@ export default function CreateGroup() {
                         onChange={(e) => setMemberName(e.target.value)}
                         type="text" placeholder="Enter member name ..." className={input()}
                     />
-                    <div className="mt-1.5 mb-5 grid gap-y-1.5 overflow-auto h-full scrollbar lg:max-h-[200px]">
+                    <div className="mt-1.5 mb-5 grid gap-y-1.5 overflow-auto scrollbar lg:max-h-[200px]">
                         {
                             chats.map((c, i) => {
                                 const isSelected = selectedMembersEmails.includes(c.email);

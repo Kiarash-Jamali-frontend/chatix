@@ -60,6 +60,8 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
             const unsubscribeLastMessage = onSnapshot(lastMessageQuery, (querySnapshot) => {
                 if (querySnapshot.size) {
                     setLastMessage(querySnapshot.docs[0].data());
+                } else {
+                    setLastMessage(null);
                 }
             });
 
@@ -121,7 +123,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat }) => {
                             )}
                             {
                                 lastMessage && (
-                                    <div className="flex items-center justify-between w-fit">
+                                    <div className="flex items-center justify-between w-fit ps-2">
                                         <div className={`${chatIsSelected ? "text-white/60" : "text-black/60"} flex items-center`}>
                                             <div className="text-xs text-nowrap">
                                                 {customFormatRelative(lastMessage.timestamp)}

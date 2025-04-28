@@ -67,7 +67,6 @@ const Layout: React.FC = () => {
   }, [user]);
 
   const getChats = async () => {
-    let chatsList: (ChatsState['list']) = [];
     const q = query(
       collection(db, "chat_room"),
       or(
@@ -76,6 +75,7 @@ const Layout: React.FC = () => {
       )
     );
     onSnapshot(q, async (querySnapshot) => {
+      let chatsList: (ChatsState['list']) = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const chatData = querySnapshot.docs[i].data();
         const oppositeUserEmail =
@@ -100,7 +100,6 @@ const Layout: React.FC = () => {
   }
 
   const getGroups = async () => {
-    let groupsList: SidebarGroupData[] = [];
     const q = query(
       collection(db, "group_member"),
       and(
@@ -109,6 +108,7 @@ const Layout: React.FC = () => {
       ),
     );
     onSnapshot(q, async (querySnapshot) => {
+      let groupsList: SidebarGroupData[] = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const groupMemberData = querySnapshot.docs[i].data() as GroupMember;
         const groupDocRef = doc(db, "group", groupMemberData.groupId);

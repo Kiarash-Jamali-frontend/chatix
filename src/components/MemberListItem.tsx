@@ -14,7 +14,7 @@ export default function MemberListItem({ member, isSelected, callbackFn }: PropT
     return (
         <div
             onClick={() => callbackFn(member.email)}
-            className="border py-2.5 px-3 cursor-pointer bg-white hover:bg-gray-50 transition-colors rounded-xl flex items-center justify-between" key={member.email}>
+            className="h-fit border py-2.5 px-3 cursor-pointer bg-white hover:bg-gray-50 transition-colors rounded-xl flex items-center justify-between" key={member.email}>
             <div className="flex items-center">
                 {member.photoUrl ? (
                     <img
@@ -26,7 +26,7 @@ export default function MemberListItem({ member, isSelected, callbackFn }: PropT
                     <GradiantProfile name={member.name} size="sm" />
                 )}
                 <div className="flex flex-col ms-2.5">
-                    <span className="text-sm font-medium">{member.name}</span>
+                    <span className="text-sm font-medium font-Vazir">{member.name}</span>
                     <span className="text-xs mt-1 text-black/50">{member.email}</span>
                 </div>
             </div>

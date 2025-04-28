@@ -49,6 +49,8 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                 const senderProfileSnapshot = await getDoc(senderProfileDocRef);
                 const senderProfile = senderProfileSnapshot.data();
                 setLastMessage({ ...lastMsgData, senderProfile: { ...senderProfile, email: lastMsgData.from } });
+            } else {
+                setLastMessage(null);
             }
         });
 
