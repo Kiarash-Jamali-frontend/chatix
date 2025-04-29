@@ -80,8 +80,8 @@ const user = createSlice({
             const userProfileInLocalStorage = localStorage.getItem("chatix_user_profile");
             const userDataInLocalStorage = localStorage.getItem("chatix_user_data");
             if (userProfileInLocalStorage && userDataInLocalStorage) {
-                const parsedUserProfile = JSON.parse(localStorage.getItem("chatix_user_profile") || "");
-                const parsedUserData = JSON.parse(localStorage.getItem("chatix_user_data") || "");
+                const parsedUserProfile = JSON.parse(userProfileInLocalStorage);
+                const parsedUserData = JSON.parse(userDataInLocalStorage);
                 if ([parsedUserData, parsedUserProfile].every((v) => typeof v == "object")) {
                     state.profile = parsedUserProfile;
                     state.data = parsedUserData;

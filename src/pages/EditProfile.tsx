@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { changeUserProfile } from "../redux/slices/user";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import toastConf from "../../utils/toastConfig";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, validatePassword } from "firebase/auth";
@@ -25,6 +25,7 @@ export default function EditProfile() {
     const [newPassword, setNewPassword] = useState<string>("");
     const [newPasswordConfirm, setNewPasswordConfirm] = useState<string>("");
     const profileImageInput = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate();
 
     const removeProfileImageHandler = () => {
         if (profileImageInput.current) {
@@ -47,6 +48,7 @@ export default function EditProfile() {
             .then(() => {
                 setPending(false);
                 removeProfileImageHandler();
+                navigate("/", { unstable_viewTransition: true });
             });
     }
 

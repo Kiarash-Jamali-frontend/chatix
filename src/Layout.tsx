@@ -67,15 +67,15 @@ const Layout: React.FC = () => {
   }, [user]);
 
   const getChatsFromLocalStorage = () => {
-    const chatsInLocalStorage = JSON.parse(localStorage.getItem("chatix_chats") || "");
-    if (Array.isArray(JSON.parse(localStorage.getItem("chatix_chats") || ""))) {
-      dispatch(changeChatsList(chatsInLocalStorage));
+    const chatsInLocalStorage = localStorage.getItem("chatix_chats");
+    if (chatsInLocalStorage) {
+      const parsedChats = JSON.parse(chatsInLocalStorage);
+      dispatch(changeChatsList(parsedChats));
       dispatch(changeChatsStatus("cacheLoaded"));
     }
   }
 
   const getChats = async () => {
-    let chatsList: (ChatsState['list']) = [];
     const q = query(
       collection(db, "chat_room"),
       or(
@@ -84,7 +84,7 @@ const Layout: React.FC = () => {
       )
     );
     onSnapshot(q, async (querySnapshot) => {
-      chatsList = [];
+      let chatsList: (ChatsState['list']) = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const chatData = querySnapshot.docs[i].data();
         const oppositeUserEmail =
@@ -107,15 +107,15 @@ const Layout: React.FC = () => {
   }
 
   const getGroupsFromLocalStorage = () => {
-    const chatsInLocalStorage = JSON.parse(localStorage.getItem("chatix_groups") || "");
-    if (Array.isArray(JSON.parse(localStorage.getItem("chatix_groups") || ""))) {
-      dispatch(changeGroupsList(chatsInLocalStorage));
+    const groupsInLocalStorage = localStorage.getItem("chatix_groups");
+    if (groupsInLocalStorage) {
+      const parsedGroups = JSON.parse(groupsInLocalStorage);
+      dispatch(changeGroupsList(parsedGroups));
       dispatch(changeGroupsStatus("cacheLoaded"));
     }
   }
 
   const getGroups = async () => {
-    let groupsList: SidebarGroupData[] = [];
     const q = query(
       collection(db, "group_member"),
       and(
@@ -124,7 +124,7 @@ const Layout: React.FC = () => {
       ),
     );
     onSnapshot(q, async (querySnapshot) => {
-      groupsList = [];
+      let groupsList: SidebarGroupData[] = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const groupMemberData = querySnapshot.docs[i].data() as GroupMember;
         const groupDocRef = doc(db, "group", groupMemberData.groupId);

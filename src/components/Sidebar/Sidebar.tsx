@@ -27,6 +27,7 @@ const Sidebar: React.FC = () => {
   const user: UserState = useAppSelector((state: RootState) => state.user);
   const { list: chats, status: chatsStatus } = useAppSelector((state: RootState) => state.chats);
   const { list: groups, status: groupsStatus } = useAppSelector((state: RootState) => state.groups);
+  const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "cacheLoaded" || v == "loading") || !isOnline);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ const Sidebar: React.FC = () => {
       <ToastContainer />
       <div className={`w-full relative lg:max-w-[435px] h-svh bg-white border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
         {
-          ([chatsStatus, groupsStatus, user.status].some((v) => v == "cacheLoaded" || v == "loading") || !isOnline) && (
+          isConnecting && (
             <div className="bg-blue-500 p-3 text-center flex items-center justify-center text-white text-sm">
               <div className="size-4 bg-transparent border rounded-full border-e-transparent animate-spin me-2">
 
@@ -106,21 +107,15 @@ const Sidebar: React.FC = () => {
             Logout
           </button>
         </div>
-        <div className="flex flex-col flex-grow h-[calc(100%-(114px))]">
-          <div className="flex-grow h-[calc(100%-(114px))]">
+        <div className={`flex flex-col flex-grow ${isConnecting ? "h-[calc(100%-(114px+44px))]" : "h-[calc(100%-(114px))]"}`}>
+          <div className={`flex-grow ${isConnecting ? "h-[calc(100%-(114px+44px))]" : "h-[calc(100%-(114px))]"}`}>
             <div className="flex flex-col py-2 overflow-auto h-full font-Vazir">
-              {
-                [chatsStatus, groupsStatus].every((v) => v == "success" || v == "cacheLoaded") && (
-                  <>
-                    {chats.map((c, index) => {
-                      return <ChatListItem chat={c} key={index} />;
-                    })}
-                    {groups.map((g, index) => {
-                      return <GroupListItem group={g} key={index} />;
-                    })}
-                  </>
-                )
-              }
+              {chats.map((c, index) => {
+                return <ChatListItem chat={c} key={index} />;
+              })}
+              {groups.map((g, index) => {
+                return <GroupListItem group={g} key={index} />;
+              })}
             </div>
           </div>
         </div>
