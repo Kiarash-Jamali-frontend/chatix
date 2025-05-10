@@ -6,7 +6,7 @@ import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker from "emoji-picker-react";
-import { faClose, faMicrophone, faPaperclip, faPaperPlane, faReply, faSquare } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
@@ -68,9 +68,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     const dt = new DataTransfer();
     if (fileInputRef.current?.files) fileInputRef.current.files = dt.files;
     fileInputRef.current?.click();
-  }
-
-  const voiceButtonClickHandler = () => {
   }
 
   const sendFileHandler = async () => {
@@ -248,14 +245,10 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="size-12 min-w-12 disabled:opacity-75 border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
-        onClick={showSendButton ? sendMessageHandler : voiceButtonClickHandler} disabled={textMessagePending || filePending}>
+      <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
+        onClick={sendMessageHandler} disabled={textMessagePending || filePending || !showSendButton}>
         <FontAwesomeIcon icon={faPaperPlane} size="lg"
-          className={`absolute transition-all duration-300 ${(!showSendButton) ? "opacity-0 scale-0" : ""}`} />
-        <FontAwesomeIcon icon={faMicrophone} size="lg"
-          className={`absolute transition-all duration-300 ${showSendButton ? "opacity-0 scale-0" : ""}`} />
-          <FontAwesomeIcon icon={faSquare} size="lg"
-            className={`absolute transition-all duration-300 ${(status != "recording") ? "opacity-0 scale-0" : ""}`} />
+          className={`absolute transition-all duration-300`}/>
       </button>
     </div >
   );
