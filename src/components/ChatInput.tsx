@@ -137,7 +137,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   return (
     <div className={`relative flex items-stretch max-h-12`}
       onKeyDown={(e) => {
-        if (e.key == "Enter" && !e.shiftKey) {
+        if (e.key == "Enter" && !e.shiftKey && showSendButton) {
           e.preventDefault();
           sendMessageHandler();
         }
