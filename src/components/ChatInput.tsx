@@ -135,7 +135,13 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   }, [messageText])
 
   return (
-    <div className={`relative flex items-stretch max-h-12`}>
+    <div className={`relative flex items-stretch max-h-12`}
+      onKeyDown={(e) => {
+        if (e.key == "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessageHandler();
+        }
+      }}>
       <AnimatePresence>
         {
           emojiPickerIsOpen && (
@@ -248,7 +254,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
         onClick={sendMessageHandler} disabled={textMessagePending || filePending || !showSendButton}>
         <FontAwesomeIcon icon={faPaperPlane} size="lg"
-          className={`absolute transition-all duration-300`}/>
+          className={`absolute transition-all duration-300`} />
       </button>
     </div >
   );
