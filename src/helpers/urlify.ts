@@ -1,6 +1,7 @@
+import urlRegex from "url-regex";
+
 export default function urlify(string: string) {
-    let urlRegex = /(?<!src=")(https?:\/\/[^\s]+)/g;
-    return string.replace(urlRegex, function (url) {
+    return string.replace(urlRegex({exact: true, strict: false}), function (url) {
         return `<a target="_blank" href="${url}">${url}</a>`
     });
 }

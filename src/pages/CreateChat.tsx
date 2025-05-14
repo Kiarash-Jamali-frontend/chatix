@@ -75,7 +75,7 @@ export default function CreateChat() {
                     <label htmlFor="email">Email:</label>
                     <input type="email" id="email" required className={input()} value={email} onChange={(e) => setEmail(e.target.value)} />
                     <div className="mt-auto">
-                        <button type="submit" disabled={pending} className={button({ intent: "primary", size: "large", className: "w-full mt-5" })}>Create</button>
+                        <button type="submit" disabled={pending} className={button({ intent: "primary", size: "large", className: "w-full mt-5" })}>Create chat</button>
                     </div>
                 </form>
             </div>
