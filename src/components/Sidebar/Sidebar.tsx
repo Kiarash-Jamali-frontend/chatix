@@ -25,6 +25,7 @@ const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
   const [logoutPending, setLogoutPending] = useState<boolean>(false);
   const [createMenuIsOpen, setCreateMenuIsOpen] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
   const createMenuButtonRef = useRef<HTMLButtonElement>(null);
   const user: UserState = useAppSelector((state: RootState) => state.user);
   const { list: chats, status: chatsStatus } = useAppSelector((state: RootState) => state.chats);
@@ -110,15 +111,15 @@ const Sidebar: React.FC = () => {
             Logout
           </button>
         </div>
-        <div className={`flex flex-col grow ${isConnecting ? "h-[calc(100%-(114px+44px))]" : "h-[calc(100%-(114px))]"}`}>
-          <div className={`grow ${isConnecting ? "h-[calc(100%-(114px+44px))]" : "h-[calc(100%-(114px))]"}`}>
-            <SearchBox />
+        <SearchBox search={search} setSearch={setSearch} />
+        <div className={`flex flex-col grow overflow-auto`}>
+          <div className={`grow overflow-auto`}>
             <div className="flex flex-col pb-3 overflow-auto h-full font-Vazir">
               {chats.map((c, index) => {
-                return <ChatListItem chat={c} key={index} />;
+                return <ChatListItem chat={c} key={index} search={search} />;
               })}
               {groups.map((g, index) => {
-                return <GroupListItem group={g} key={index} />;
+                return <GroupListItem group={g} key={index} search={search} />;
               })}
             </div>
           </div>

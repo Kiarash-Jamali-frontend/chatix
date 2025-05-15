@@ -58,11 +58,16 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   }
 
   const scrollToMessageHandler = () => {
-    document.getElementById(replyedMessage.id)?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "center"
-    });
+    // document.getElementById(replyedMessage.id)?.scrollIntoView({
+    //   behavior: "smooth",
+    //   block: "center",
+    //   inline: "center"
+    // });
+    const replayedMessageOffsetTop = document.getElementById(replyedMessage.id)?.offsetTop;
+    const messagesList = document.getElementById("messagesList");
+    if (replayedMessageOffsetTop && messagesList) {
+      messagesList.scroll(0, replayedMessageOffsetTop - document.documentElement.offsetHeight/2);
+    }
     const params = new URLSearchParams();
     params.set("message", replyedMessage.id);
     navigate(`?${params.toString()}`);

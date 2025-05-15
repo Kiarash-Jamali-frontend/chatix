@@ -128,7 +128,9 @@ const Chat: React.FC = () => {
       <div className="w-full flex flex-col h-svh">
         <ChatHeader profile={profile} />
         <ImageModal />
-        <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`} ref={messagesListRef}>
+        <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}
+          id="messagesList"
+          ref={messagesListRef}>
           {messages.map((m, i) => {
             const replyToMessage = messages.find((message) => m.replyTo === message.id);
             const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);

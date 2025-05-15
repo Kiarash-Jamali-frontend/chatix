@@ -158,7 +158,9 @@ export default function Group() {
                 <ImageModal />
                 <GroupHeader groupData={groupData} membersProfiles={membersProfiles} />
                 <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}
-                    ref={messagesListRef}>
+                    ref={messagesListRef}
+                    id="messagesList"
+                >
                     {messages.map((m, i) => {
                         const replyToMessage = messages.find((message) => m.replyTo === message.id);
                         const messageSender = membersProfiles.find((p) => p.email == m.from);

@@ -12,7 +12,7 @@ import { Parser } from "html-to-react";
 import GradiantProfile from "../GradiantProfile";
 import customFormatRelative from "../../helpers/customFormatRelative";
 
-export default function GroupListItem({ group }: { group: SidebarGroupData }) {
+export default function GroupListItem({ group, search }: { group: SidebarGroupData, search: string }) {
     const { parse } = Parser();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedChatOrGroupID = useAppSelector((state: RootState) => state.selectedChatOrGroup.id);
@@ -61,7 +61,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
 
     return (
         <>
-            <div className="px-2 mb-1" style={{
+            <div className={`px-2 mb-1 ${(!group.groupName.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`} style={{
                 order: `-${lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0}`
             }}>
                 <Link unstable_viewTransition
@@ -84,7 +84,17 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                         </div>
                         <div className="ps-2 min-w-0 grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
                             <div className="grow min-w-0">
-                                <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>{group.groupName}</div>
+                                <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>
+                                    {!search ? group.groupName : group.groupName.split("").map((letter) => {
+                                        return (
+                                            <span className={`${search.toLocaleLowerCase().includes(letter.toLocaleLowerCase()) ?
+                                                `font-extrabold underline underline-offset-3
+                                              ${!groupIsSelected ? "text-primary" : ""}` : ""}`}>
+                                                {letter}
+                                            </span>
+                                        )
+                                    })}
+                                </div>
                                 <div className={`last-message text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                     {
                                         lastMessage && (
