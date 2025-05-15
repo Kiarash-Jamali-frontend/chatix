@@ -4,7 +4,6 @@ export default function AppUpdateMessage() {
 
     const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW({
         onNeedRefresh: () => {
-            console.log("x");
         }
     });
 
