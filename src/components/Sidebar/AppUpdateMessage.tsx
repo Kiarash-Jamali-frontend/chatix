@@ -2,7 +2,11 @@ import { useRegisterSW } from "virtual:pwa-register/react"
 
 export default function AppUpdateMessage() {
 
-    const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW();
+    const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW({
+        onNeedRefresh: () => {
+            console.log("x");
+        }
+    });
 
     if (needRefresh) {
         return (
