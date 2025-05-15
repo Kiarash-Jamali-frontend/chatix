@@ -15,7 +15,7 @@ export default function AppUpdateMessage() {
                     Chatix has a new update!
                 </span>
                 <button className="text-purple-500 underline underline-offset-6 cursor-pointer" onClick={() => updateServiceWorker(true)}>
-                    Update now!
+                    Update Now!
                 </button>
             </div>
         )
