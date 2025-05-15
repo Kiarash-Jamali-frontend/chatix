@@ -29,8 +29,8 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, repl
           )
         }}
         className={`${messageIsForCurrentUser
-          ? "bg-linear-to-br from-blue-400 to-blue-600 text-white"
-          : "bg-white"
+          ? "bg-linear-to-br from-primary-400 to-primary-600 text-white"
+          : "bg-secondary"
           } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-s-none!" : ""}
              w-fit grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative`}
       >

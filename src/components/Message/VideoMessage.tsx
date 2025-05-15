@@ -63,8 +63,8 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
             <ToastContainer />
             <button
                 className={`${messageIsForCurrentUser
-                    ? "bg-linear-to-br from-blue-400 to-blue-600 text-white"
-                    : "bg-white"
+                    ? "bg-linear-to-br from-primary-400 to-primary-600 text-white"
+                    : "bg-secondary"
                     }
                w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light`}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
@@ -76,7 +76,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                             messageIsForCurrentUser && (
                                 <button
                                     onClick={() => deleteMessage(message.id, isGroupMessage)}
-                                    className={`font-Inter ${!messageIsSelected ? "pointer-events-none" : ""} me-2 text-xs font-medium shadow-md border py-1.5 px-2 flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
+                                    className={`font-Inter ${!messageIsSelected ? "pointer-events-none" : ""} me-2 text-xs font-medium shadow-md border py-1.5 px-2 flex items-center justify-center bg-secondary hover:bg-zinc-50 text-natural rounded-full`}>
                                     <FontAwesomeIcon icon={faTrashCan} className="me-1" />
                                     Delete
                                 </button>
@@ -84,7 +84,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                         }
                         <button
                             onClick={downloadVideoHandler}
-                            className={`font-Inter ${!messageIsSelected ? "pointer-events-none" : ""} text-xs font-medium shadow-md border py-1.5 px-2 flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
+                            className={`font-Inter ${!messageIsSelected ? "pointer-events-none" : ""} text-xs font-medium shadow-md border py-1.5 px-2 flex items-center justify-center bg-secondary hover:bg-zinc-50 text-natural rounded-full`}>
                             {
                                 pending ? (
                                     <div className="size-3 border border-e-transparent border-black rounded-full animate-spin">

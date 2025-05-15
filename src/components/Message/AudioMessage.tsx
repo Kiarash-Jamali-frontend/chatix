@@ -124,8 +124,8 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
                     )
                 }}
                 className={`${messageIsForCurrentUser
-                    ? "bg-linear-to-br from-blue-400 to-blue-600 text-white"
-                    : "bg-white"
+                    ? "bg-linear-to-br from-primary-400 to-primary-600 text-white"
+                    : "bg-secondary"
                     } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-s-none!" : ""}
              w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default`}
             >
@@ -133,7 +133,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
                     <button onClick={changeIsPlayingHandler} onDoubleClick={(e) => {
                         e.stopPropagation();
                     }} data-is-button="true"
-                        className={`flex items-center overflow-hidden justify-center size-10 rounded-full relative ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-xs"}`}>
+                        className={`flex items-center overflow-hidden justify-center size-10 rounded-full relative ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-natural/5 text-natural border shadow-xs"}`}>
                         <FontAwesomeIcon icon={faPause} size="lg"
                             className={`absolute transition-all duration-300 ${isStopped ? "opacity-0 scale-0" : ""}`} />
                         <FontAwesomeIcon icon={faPlay} size="lg"
@@ -144,7 +144,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
                             <div className="font-light break-words max-w-52 me-1 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>
                             <AudioDownloadButton message={message} />
                         </div>
-                        <div className={`flex items-center mt-1 ${messageIsForCurrentUser ? "text-white/60" : "text-black/60"}`}>
+                        <div className={`flex items-center mt-1 ${messageIsForCurrentUser ? "text-white/60" : "text-natural/60"}`}>
                             <span className="text-xs">{formatTime(progressTime)}</span>
                             <input
                                 data-is-button="true" type="range" value={progressTime} onChange={setAudioCurrentTimeHandler} ref={audioProgressBarRef}

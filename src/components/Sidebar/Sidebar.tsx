@@ -58,11 +58,11 @@ const Sidebar: React.FC = () => {
   return (
     <>
       <ToastContainer />
-      <div className={`w-full relative lg:max-w-[435px] h-svh bg-white border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
+      <div className={`w-full relative lg:max-w-[435px] h-svh bg-secondary border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
         <AppUpdateMessage />
         {
           isConnecting && (
-            <div className="bg-blue-500 p-3 text-center flex items-center justify-center text-white text-sm">
+            <div className="bg-primary-500 p-3 text-center flex items-center justify-center text-white text-sm">
               <div className="size-4 bg-transparent border rounded-full border-e-transparent animate-spin me-2">
 
               </div>
@@ -84,7 +84,7 @@ const Sidebar: React.FC = () => {
               }
               <Link unstable_viewTransition
                 to={"/edit-profile"}
-                className="absolute bottom-0 right-0 bg-black/85 text-white rounded-full flex items-center justify-center text-center size-[22px]"
+                className="absolute bottom-0 right-0 bg-natural/85 text-secondary rounded-full flex items-center justify-center text-center size-[22px]"
               >
                 <FontAwesomeIcon icon={faPencil} size="2xs" />
               </Link>
@@ -95,12 +95,13 @@ const Sidebar: React.FC = () => {
                 <span className="font-bold font-Vazir">
                   {user.profile?.name}
                 </span>
-                <button className="ms-1 cursor-pointer size-6 flex items-center justify-center bg-gray-100 border rounded-full" onClick={shareUserProfileHandler}>
-                  <FontAwesomeIcon icon={faShareNodes} className="text-black/85" size="sm" />
+                <button className="ms-1 cursor-pointer size-6 flex items-center justify-center bg-zinc-100 border rounded-full"
+                  onClick={shareUserProfileHandler}>
+                  <FontAwesomeIcon icon={faShareNodes} className="text-natural/85" size="sm" />
                 </button>
               </div>
               {/*email*/}
-              <div className="text-xs w-full min-w-0 mt-2 text-black/60 whitespace-nowrap overflow-hidden text-ellipsis break-all">
+              <div className="text-xs w-full min-w-0 mt-2 text-natural/60 whitespace-nowrap overflow-hidden text-ellipsis break-all">
                 {user.data?.email}
               </div>
             </div>
@@ -140,16 +141,16 @@ const Sidebar: React.FC = () => {
                     }
                   }}
                   animate="open" exit="hide" initial="hide"
-                  className="bg-whit border me-2 flex flex-col relative shadow-lg rounded-lg w-52 z-10 bg-white/75 backdrop-blur-xl"
+                  className="bg-whit border me-2 flex flex-col relative shadow-lg rounded-lg w-52 z-10 bg-secondary/75 backdrop-blur-xl"
                   onClick={() => setCreateMenuIsOpen(false)}
                 >
                   <Link unstable_viewTransition to={"/create-chat"}
-                    className="flex items-center w-full relative rounded-t-lg z-10 px-4 py-2 text-sm hover:bg-blue-500 hover:text-white transition-colors">
+                    className="flex items-center w-full relative rounded-t-lg z-10 px-4 py-2 text-sm hover:bg-primary-500 hover:text-white transition-colors">
                     <FontAwesomeIcon icon={faUser} className="me-2" />
                     Create Chat
                   </Link>
                   <Link unstable_viewTransition to={"/create-group"}
-                    className="flex items-center w-full relative rounded-b-lg z-10 px-4 py-2 text-sm hover:bg-blue-500 hover:text-white transition-colors">
+                    className="flex items-center w-full relative rounded-b-lg z-10 px-4 py-2 text-sm hover:bg-primary-500 hover:text-white transition-colors">
                     <FontAwesomeIcon icon={faUsers} className="me-2" />
                     Create Group
                   </Link>
@@ -158,7 +159,7 @@ const Sidebar: React.FC = () => {
             }
           </AnimatePresence>
           <div className="relative overflow-hidden">
-            <button className="size-12 z-20 relative rounded-full text-white flex items-center justify-center bg-blue-500"
+            <button className="size-12 z-20 relative rounded-full text-white flex items-center justify-center bg-primary-500"
               onFocus={() => setCreateMenuIsOpen(true)}
               onBlur={() => setCreateMenuIsOpen(false)}
               ref={createMenuButtonRef}

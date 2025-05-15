@@ -56,7 +56,7 @@ export default function ProfileModal() {
             <AnimatePresence>
                 {
                     openedProfileImage.profile && (
-                        <motion.div className="fixed inset-[-25%] bg-black/60 z-999 grid place-items-center"
+                        <motion.div className="fixed inset-[-25%] bg-natural/60 z-999 grid place-items-center"
                             variants={{
                                 hide: {
                                     opacity: 0,
@@ -83,11 +83,11 @@ export default function ProfileModal() {
                                                 <button
                                                     disabled={deleteProfileImagePending}
                                                     onClick={deleteProfileImageHandler}
-                                                    className={`h-8 px-3 me-2 text-sm flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
+                                                    className={`h-8 px-3 me-2 text-sm flex items-center justify-center bg-secondary hover:bg-zinc-50 text-natural rounded-full`}>
                                                     {
                                                         deleteProfileImagePending ? (
                                                             <div
-                                                                className="size-4 border border-e-transparent border-black rounded-full animate-spin">
+                                                                className="size-4 border border-e-transparent border-natural rounded-full animate-spin">
                                                             </div>
                                                         ) : (
                                                             <FontAwesomeIcon icon={faTrashCan} />
@@ -102,11 +102,11 @@ export default function ProfileModal() {
                                                 <button
                                                     disabled={pending}
                                                     onClick={downloadImageFileHandler}
-                                                    className={`h-8 px-3 text-sm flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
+                                                    className={`h-8 px-3 text-sm flex items-center justify-center bg-secondary hover:bg-zinc-50 text-natural rounded-full`}>
                                                     {
                                                         pending ? (
                                                             <div
-                                                                className="size-4 border border-e-transparent border-black rounded-full animate-spin">
+                                                                className="size-4 border border-e-transparent border-natural rounded-full animate-spin">
                                                             </div>
                                                         ) : (
                                                             <FontAwesomeIcon icon={faDownload} />

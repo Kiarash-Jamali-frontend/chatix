@@ -54,7 +54,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
 
     return (
         <AnimatePresence>
-            <motion.div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl"
+            <motion.div className="w-full max-w-lg rounded-xl bg-secondary p-6 shadow-xl"
                 variants={{
                     hide: {
                         opacity: 0,
@@ -84,21 +84,21 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                             <UserLastActivity profile={userProfile} />
                         </div>
                     </div>
-                    <button className="size-8 bg-gray-100 border rounded-full flex items-center justify-center" onClick={() => setIsActive(false)}>
+                    <button className="size-8 bg-zinc-100 border rounded-full flex items-center justify-center" onClick={() => setIsActive(false)}>
                         <FontAwesomeIcon icon={faClose} />
                     </button>
                 </div>
                 {userProfile.biography && (
-                    <div className="bg-gray-50 py-2.5 px-4 border text-sm rounded-xl mt-5">
+                    <div className="bg-zinc-50 py-2.5 px-4 border text-sm rounded-xl mt-5">
                         <span className="font-medium">Biography: </span>
                         <p className="text-black/75 font-Vazir mt-2" dir="auto">
                             {userProfile.biography}
                         </p>
                     </div>
                 )}
-                <div className="bg-gray-50 flex items-center py-2.5 px-4 border text-sm rounded-xl mt-2 md:mt-4">
+                <div className="bg-zinc-50 flex items-center py-2.5 px-4 border text-sm rounded-xl mt-2 md:mt-4">
                     <span className="font-medium me-1">Email: </span>
-                    <p className="text-black/60">{userProfile.email}</p>
+                    <p className="text-natural/60">{userProfile.email}</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
                     <button className={button({ intent: "primary" })} onClick={shareProfileDataHandler}>
@@ -120,7 +120,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
 
                     {
                         (chatRoom.blockedFrom === userProfile.email && chatRoom.isBlocked) && (
-                            <p className="text-sm text-center my-auto text-black/75">{userProfile.name} has blocked you.</p>
+                            <p className="text-sm text-center my-auto text-natural/75">{userProfile.name} has blocked you.</p>
                         )
                     }
                 </div>

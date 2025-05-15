@@ -33,9 +33,9 @@ export default function ResetPassword() {
         <>
             <div className="flex min-h-svh w-full justify-center items-center">
                 <ToastContainer />
-                <div className="bg-white rounded-2xl px-10 py-9 w-full max-w-[450px] shadow-sm">
+                <div className="bg-secondary rounded-2xl px-10 py-9 w-full max-w-[450px] shadow-sm">
                     <h1 className="text-2xl font-bold mb-2">Reset password</h1>
-                    <span className="text-sm text-black/60">
+                    <span className="text-sm text-natural/60">
                         {
                             !emailIsSended ? "Enter your email to send verification email to reset your password" : `Verification email sent to ${email}`
                         }
@@ -59,7 +59,7 @@ export default function ResetPassword() {
                                 </>
                             ) : (
                                 <div className="flex justify-center">
-                                    <Link unstable_viewTransition to={"/login"} className="text-sm text-black/75 hover:underline">
+                                    <Link unstable_viewTransition to={"/login"} className="text-sm text-natural/75 hover:underline">
                                         After change password click here
                                     </Link>
                                 </div>

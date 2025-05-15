@@ -79,7 +79,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
             }}>
             <Link unstable_viewTransition
                 to={`/chat/${chat.email}`}
-                className={`flex items-center justify-between ${chatIsSelected ? "bg-blue-500 hover:bg-blue-600" : "hover:bg-base/50 hover:border-black/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors duration-300`}
+                className={`flex items-center justify-between ${chatIsSelected ? "bg-primary-500 hover:bg-primary-600" : "hover:bg-base/50 hover:border-natural/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors duration-300`}
                 key={chat.email}
             >
                 <div className="flex items-center w-full grow">
@@ -89,7 +89,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                             <img
                                 src={chat.photoUrl}
                                 alt={"profile"}
-                                className="size-12 border border-black/10 min-w-12 object-cover rounded-full"
+                                className="size-12 border border-natural/10 min-w-12 object-cover rounded-full"
                             />
                         ) : (
                             <GradiantProfile name={chat.name} />
@@ -108,7 +108,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                                     )
                                 })}
                             </div>
-                            <div dir="auto" className={`text-left last-message text-xs min-w-0 w-full ${chatIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
+                            <div dir="auto" className={`text-left last-message text-xs min-w-0 w-full ${chatIsSelected ? "text-white/80" : "text-natural/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                 {
                                     lastMessage && (
                                         lastMessage?.type !== "text" && (
@@ -136,7 +136,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                             {
                                 lastMessage && (
                                     <div className="flex items-center justify-between w-fit ps-2">
-                                        <div className={`${chatIsSelected ? "text-white/60" : "text-black/60"} flex items-center`}>
+                                        <div className={`${chatIsSelected ? "text-white/60" : "text-natural/60"} flex items-center`}>
                                             <div className="text-xs text-nowrap">
                                                 {customFormatRelative(lastMessage.timestamp)}
                                             </div>

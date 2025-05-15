@@ -11,7 +11,7 @@ export default function MessageTime({ message }: { message: any }) {
         <div
             className={`text-[10px] ${messageIsForCurrentUser
                 ? "text-white/50"
-                : "text-black/50"
+                : "text-natural/50"
                 }`}
 
         >

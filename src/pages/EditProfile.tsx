@@ -88,7 +88,7 @@ export default function EditProfile() {
     return (
         <>
             <ToastContainer />
-            <div className="p-8 lg:rounded-xl bg-white shadow-xs border w-full lg:max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
+            <div className="p-8 lg:rounded-xl bg-secondary shadow-xs border w-full lg:max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
                 <div className="flex items-center pb-[11px] border-b">
                     <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />

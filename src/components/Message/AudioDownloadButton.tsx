@@ -29,7 +29,7 @@ export default function AudioDownloadButton({ message }: { message: any }) {
             <button onClick={downloadFileHandler}
                 disabled={pending}
                 data-is-button="true"
-                className={`size-6 flex items-center justify-center text-xs rounded-full ${messageIsForCurrentUser ? "bg-white/10 text-white" : "bg-black/5 text-black"}`}>
+                className={`size-6 flex items-center justify-center text-xs rounded-full ${messageIsForCurrentUser ? "bg-white/10 text-white" : "bg-natural/5 text-natural"}`}>
                 {
                     pending ? (
                         <div className="size-3 border border-e-transparent border-white rounded-full animate-spin">

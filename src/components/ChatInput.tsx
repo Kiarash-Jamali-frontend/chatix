@@ -15,7 +15,6 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { changeMessageSelectedForReply } from "../redux/slices/messageSelectedForReply";
 import { Parser } from "html-to-react";
 import { MemberProfile } from "../pages/Group";
-import { useReactMediaRecorder } from "react-media-recorder";
 
 type PropTypes = {
   mode: "group" | "private";
@@ -31,8 +30,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const messageSelectedForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
   const dispatch = useAppDispatch();
 
-  const { status } =
-    useReactMediaRecorder({ audio: true });
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
   const [filePending, setFilePending] = useState<boolean>(false);
@@ -42,7 +39,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const isPrivateChat = (mode == "private" || !mode);
   const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
   const messageTextHtmlBody = new DOMParser().parseFromString(messageText, "text/html").body;
-  const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false) && status !== "recording";
+  const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -169,7 +166,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         {
           messageSelectedForReply && (
             <motion.div
-              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-49 shadow-lg rounded-full bg-linear-to-br from-gray-600 to-gray-800"
+              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-49 shadow-lg rounded-full bg-linear-to-br from-zinc-600 to-zinc-800"
               variants={{
                 hide: {
                   opacity: 0,
@@ -214,8 +211,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         }
       </AnimatePresence>
       <div className="grow flex flex-col me-2 relative">
-        <div className="px-3 shadow-xs rounded-full border bg-white flex items-center grow">
-          <button className="me-2 size-7 flex items-center text-black/50 relative overflow-hidden"
+        <div className="px-3 shadow-xs rounded-full border bg-secondary flex items-center grow">
+          <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
             onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
             <span className={`absolute transition-all duration-300 size-5 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
               <FontAwesomeIcon icon={faClose} className="!size-5" />
@@ -243,7 +240,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 // </span>
               ) : (
                 <button
-                  onClick={chooseFileHandler} disabled={filePending} className="absolute text-black/50 right-2">
+                  onClick={chooseFileHandler} disabled={filePending} className="absolute text-natural/50 right-2">
                   <FontAwesomeIcon icon={faPaperclip} size="lg" />
                 </button>
               )
@@ -254,7 +251,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
+      <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
         onClick={sendMessageHandler} disabled={textMessagePending || filePending || !showSendButton}>
         <FontAwesomeIcon icon={faPaperPlane} size="lg"
           className={`absolute transition-all duration-300`} />

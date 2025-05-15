@@ -14,9 +14,9 @@ export default function SearchBox({ search, setSearch }: PropTypes) {
 
     return (
         <div className="pb-3">
-            <div className={`rounded-full py-2 px-3 flex items-center justify-between mx-4 border-2 ${isFocused ? "border-primary bg-white" : "bg-black/5 hover:border-black/15 border-black/5"} transition-all flex items-center`}>
+            <div className={`rounded-full py-2 px-3 flex items-center justify-between mx-4 border-2 ${isFocused ? "border-primary bg-secondary" : "bg-natural/5 hover:border-natural/15 border-natural/5"} transition-all flex items-center`}>
                 <div className="flex items-center">
-                    <FontAwesomeIcon icon={faSearch} className={isFocused ? "text-primary" : "text-black/50"} />
+                    <FontAwesomeIcon icon={faSearch} className={isFocused ? "text-primary" : "text-natural/50"} />
                 </div>
                 <input
                     value={search}
@@ -24,7 +24,7 @@ export default function SearchBox({ search, setSearch }: PropTypes) {
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                     type="text" placeholder="Search" dir="auto"
-                    className="bg-transparent mx-2 grow placeholder:text-black/50 font-Vazir placeholder:translate-y-0.5 focus:outline-hidden text-sm" />
+                    className="bg-transparent mx-2 grow placeholder:text-natural/50 font-Vazir placeholder:translate-y-0.5 focus:outline-hidden text-sm" />
 
                 <AnimatePresence>
                     {
@@ -45,7 +45,7 @@ export default function SearchBox({ search, setSearch }: PropTypes) {
                                     duration: 0.15
                                 }}
                                 className="flex items-center justify-center cursor-pointer">
-                                <FontAwesomeIcon icon={faClose} className="text-black/50" />
+                                <FontAwesomeIcon icon={faClose} className="text-natural/50" />
                             </motion.button>
                         )
                     }

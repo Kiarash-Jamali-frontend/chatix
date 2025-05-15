@@ -70,7 +70,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
 
     return (
         <AnimatePresence>
-            <motion.div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl"
+            <motion.div className="w-full max-w-lg rounded-xl bg-secondary p-6 shadow-xl"
                 variants={{
                     hide: {
                         opacity: 0,
@@ -109,7 +109,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                                     onlineMembersCount ? (
                                         <>
                                             <span className="mx-1">|</span>
-                                            <span className="text-blue-600">
+                                            <span className="text-primary-600">
                                                 {onlineMembersCount} online
                                             </span>
                                         </>
@@ -118,7 +118,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                             </div>
                         </div>
                     </div>
-                    <button className="size-8 bg-gray-100 border rounded-full flex items-center justify-center"
+                    <button className="size-8 bg-zinc-100 border rounded-full flex items-center justify-center"
                         onClick={() => setIsActive(false)}>
                         <FontAwesomeIcon icon={faClose} />
                     </button>

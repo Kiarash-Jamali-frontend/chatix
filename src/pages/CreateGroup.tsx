@@ -93,12 +93,12 @@ export default function CreateGroup() {
     return (
         <>
             <ToastContainer />
-            <div className="bg-white lg:rounded-xl shadow-xs lg:border p-8 h-fit m-auto w-full lg:max-w-lg max-lg:h-svh flex flex-col">
+            <div className="bg-secondary lg:rounded-xl shadow-xs lg:border p-8 h-fit m-auto w-full lg:max-w-lg max-lg:h-svh flex flex-col">
                 <div className="flex items-center">
                     <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
                     </Link>
-                    <h2 className="font-bold text-2xl text-neutral-800">
+                    <h2 className="font-bold text-2xl text-natural/90">
                         Create group
                     </h2>
                 </div>

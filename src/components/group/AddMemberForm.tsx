@@ -75,7 +75,7 @@ export default function AddMemberForm({ groupData, setModalContentType, membersE
             </div>
             {
                 !chatsNotAddedInGroup.length && (
-                    <div className="text-sm text-black/60 text-center">
+                    <div className="text-sm text-natural/60 text-center">
                         All chats added in this group!
                     </div>
                 )

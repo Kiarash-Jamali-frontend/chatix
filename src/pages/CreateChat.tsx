@@ -56,7 +56,7 @@ export default function CreateChat() {
                     <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
                     </Link>
-                    <h2 className="font-bold text-2xl text-neutral-800">
+                    <h2 className="font-bold text-2xl text-neutral/90">
                         Create chat
                     </h2>
                 </div>

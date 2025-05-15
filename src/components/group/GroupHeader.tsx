@@ -53,7 +53,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
           setIsActive={setGroupInfoModalIsActive} />
       </Modal>
       <div className="flex items-center">
-        <div className="bg-white shadow-xs border-b px-4 py-3 w-full flex items-center">
+        <div className="bg-secondary shadow-xs border-b px-4 py-3 w-full flex items-center">
           <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </Link>
@@ -84,7 +84,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
                     onlineMembersCount ? (
                       <>
                         <span className="mx-1">|</span>
-                        <span className="text-blue-600">
+                        <span className="text-primary-600">
                           {onlineMembersCount} online
                         </span>
                       </>

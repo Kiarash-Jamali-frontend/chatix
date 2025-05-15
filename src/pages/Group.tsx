@@ -171,7 +171,7 @@ export default function Group() {
                                 {
                                     (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
                                     && (
-                                        <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} z-40 sticky top-0 text-xs text-black/60 bg-white border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
+                                        <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} z-40 sticky top-0 text-xs text-natural/60 bg-secondary border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
                                             {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
                                         </div>
                                     )

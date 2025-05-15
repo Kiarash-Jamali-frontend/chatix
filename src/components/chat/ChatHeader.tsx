@@ -64,7 +64,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
         <UserInfoModalContent chatRoom={chatRoom} setIsActive={setUserInfoModalIsActive} userProfile={profile} />
       </Modal>
       <div className="flex items-center">
-        <div className="bg-white shadow-xs border-b px-4 py-3 w-full flex items-center">
+        <div className="bg-secondary shadow-xs border-b px-4 py-3 w-full flex items-center">
           <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </Link>

@@ -50,7 +50,7 @@ const Login: React.FC = () => {
         <div className="px-10 py-8 lg:py-9 lg:border-e mt-auto lg:mt-0 max-lg:border-t">
           <h1 className="text-2xl font-bold mb-2">Login</h1>
           <span className="text-sm text-black/60">
-            Welcome to <span className="font-bold text-blue-500">Chatix</span>
+            Welcome to <span className="font-bold text-primary-500">Chatix</span>
           </span>
           <div className="mt-4">
             <div>

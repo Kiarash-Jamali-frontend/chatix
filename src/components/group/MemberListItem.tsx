@@ -40,7 +40,7 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
                     </div>
                     <div className="ps-3">
                         <div className="text-sm flex items-center font-medium font-Vazir">{profile.name} {groupData.creator == profile.email && (
-                            <span className="text-xs text-gray-400 ms-1">| Owner</span>
+                            <span className="text-xs text-zinc-400 ms-1">| Owner</span>
                         )}</div>
                         <UserLastActivity profile={profile} />
                     </div>
@@ -52,7 +52,7 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
                     <button
                         disabled={pending}
                         onClick={() => removeUserFromGroupHandler(profile.groupMemberDocId)}
-                        className="border rounded-lg disabled:opacity-50 size-9 hover:bg-red-50 active:bg-red-100 transition-colors border-red-500 text-red-500">
+                        className="border rounded-lg disabled:opacity-50 size-8 cursor-pointer hover:bg-red-50 active:bg-red-100 transition-colors border-red-500 text-red-500">
                         <FontAwesomeIcon icon={faTrashCan} />
                     </button>
                 )

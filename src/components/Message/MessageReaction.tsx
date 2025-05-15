@@ -35,7 +35,7 @@ export default function MessageReaction({ message }: PropTypes) {
                             setPending(true);
                             !messageIsForCurrentUser && changeReaction(message.id, "", () => setPending(false))
                         }} disabled={pending}>
-                        <div className="size-8 border flex items-center justify-center bg-white rounded-full">
+                        <div className="size-8 border flex items-center justify-center bg-secondary rounded-full">
                             {parse(message.reaction)}
                         </div>
                     </motion.button>

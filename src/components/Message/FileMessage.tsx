@@ -46,8 +46,8 @@ export default function FileMessage({ message, isGroupMessage, replayMessage }: 
                     )
                 }}
                 className={`${messageIsForCurrentUser
-                    ? "bg-linear-to-br from-blue-400 to-blue-600 text-white"
-                    : "bg-white"
+                    ? "bg-linear-to-br from-primary-400 to-primary-600 text-white"
+                    : "bg-secondary"
                     } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-s-none!" : ""}
              w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default`}
             >
@@ -56,7 +56,7 @@ export default function FileMessage({ message, isGroupMessage, replayMessage }: 
                         data-is-button="true"
                         disabled={pending}
                         onClick={downloadFileHandler}
-                        className={`flex items-center justify-center disabled:opacity-100! size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-blue-500  border-blue-500" : "bg-black/5 text-black border-black border shadow-xs"}`}>
+                        className={`flex items-center justify-center disabled:opacity-100! size-10 rounded-full ${messageIsForCurrentUser ? "bg-white text-primary-500  border-primary-500" : "bg-natural/5 text-natural border-natural border shadow-xs"}`}>
                         {
                             pending ? (
                                 <div
