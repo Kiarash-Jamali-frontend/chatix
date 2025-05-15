@@ -33,7 +33,7 @@ export default function ResetPassword() {
         <>
             <div className="flex min-h-svh w-full justify-center items-center">
                 <ToastContainer />
-                <div className="bg-white rounded-2xl px-10 py-9 w-full max-w-[450px] shadow">
+                <div className="bg-white rounded-2xl px-10 py-9 w-full max-w-[450px] shadow-sm">
                     <h1 className="text-2xl font-bold mb-2">Reset password</h1>
                     <span className="text-sm text-black/60">
                         {

@@ -69,7 +69,7 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                     className={`flex items-center justify-between ${groupIsSelected ? "bg-blue-500 hover:bg-blue-600" : "hover:bg-base/50 hover:border-black/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors duration-300`}
                     key={group.id}
                 >
-                    <div className="flex items-center w-full flex-grow">
+                    <div className="flex items-center w-full grow">
                         {/*Profile image*/}
                         <div className="basis-12">
                             {group.groupPhotoUrl ? (
@@ -82,8 +82,8 @@ export default function GroupListItem({ group }: { group: SidebarGroupData }) {
                                 <GradiantProfile name={group.groupName} />
                             )}
                         </div>
-                        <div className="ps-2 min-w-0 flex-grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
-                            <div className="flex-grow min-w-0">
+                        <div className="ps-2 min-w-0 grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
+                            <div className="grow min-w-0">
                                 <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>{group.groupName}</div>
                                 <div className={`last-message text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-black/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                     {

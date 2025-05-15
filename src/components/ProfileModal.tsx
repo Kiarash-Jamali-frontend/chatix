@@ -56,7 +56,7 @@ export default function ProfileModal() {
             <AnimatePresence>
                 {
                     openedProfileImage.profile && (
-                        <motion.div className="fixed inset-[-25%] bg-black/60 z-[999] grid place-items-center"
+                        <motion.div className="fixed inset-[-25%] bg-black/60 z-999 grid place-items-center"
                             variants={{
                                 hide: {
                                     opacity: 0,
@@ -74,7 +74,7 @@ export default function ProfileModal() {
                             }}>
 
                             </div>
-                            <div className="relative max-w-[100svw] px-4">
+                            <div className="relative max-w-svw px-4">
                                 <div className="relative">
                                     <img src={openedProfileImage.profile} className="rounded-xl object-center object-cover block aspect-square size-full max-w-96 max-h-96" />
                                     {

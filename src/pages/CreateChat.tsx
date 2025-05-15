@@ -51,7 +51,7 @@ export default function CreateChat() {
 
     return (
         <>
-            <div className="bg-white lg:rounded-xl shadow-sm lg:border p-8 h-fit m-auto w-full lg:max-w-lg max-lg:h-full max-lg:min-h-svh flex flex-col">
+            <div className="bg-white lg:rounded-xl shadow-xs lg:border p-8 h-fit m-auto w-full lg:max-w-lg max-lg:h-full max-lg:min-h-svh flex flex-col">
                 <div className="flex items-center">
                     <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
@@ -71,7 +71,7 @@ export default function CreateChat() {
                         </div>
                     )
                 }
-                <form onSubmit={createChatHandler} className="mt-5 flex-grow flex flex-col">
+                <form onSubmit={createChatHandler} className="mt-5 grow flex flex-col">
                     <label htmlFor="email">Email:</label>
                     <input type="email" id="email" required className={input()} value={email} onChange={(e) => setEmail(e.target.value)} />
                     <div className="mt-auto">

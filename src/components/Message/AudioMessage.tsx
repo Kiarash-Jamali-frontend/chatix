@@ -124,16 +124,16 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
                     )
                 }}
                 className={`${messageIsForCurrentUser
-                    ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
+                    ? "bg-linear-to-br from-blue-400 to-blue-600 text-white"
                     : "bg-white"
-                    } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "!rounded-s-none" : ""}
+                    } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-s-none!" : ""}
              w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default`}
             >
                 <div className="flex relative">
                     <button onClick={changeIsPlayingHandler} onDoubleClick={(e) => {
                         e.stopPropagation();
                     }} data-is-button="true"
-                        className={`flex items-center overflow-hidden justify-center size-10 rounded-full relative ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-sm"}`}>
+                        className={`flex items-center overflow-hidden justify-center size-10 rounded-full relative ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-black/5 text-black border shadow-xs"}`}>
                         <FontAwesomeIcon icon={faPause} size="lg"
                             className={`absolute transition-all duration-300 ${isStopped ? "opacity-0 scale-0" : ""}`} />
                         <FontAwesomeIcon icon={faPlay} size="lg"

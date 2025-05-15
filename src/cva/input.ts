@@ -1,6 +1,6 @@
 import { cva } from "class-variance-authority";
 
-const input = cva("block w-full max-w-none outline-none font-Vazir", {
+const input = cva("block w-full max-w-none outline-hidden font-Vazir", {
     variants: {
         intent: {
             default: "border bg-white focus:border-black/15"

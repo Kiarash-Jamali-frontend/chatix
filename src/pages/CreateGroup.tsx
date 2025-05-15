@@ -93,7 +93,7 @@ export default function CreateGroup() {
     return (
         <>
             <ToastContainer />
-            <div className="bg-white lg:rounded-xl shadow-sm lg:border p-8 h-fit m-auto w-full lg:max-w-lg max-lg:h-svh flex flex-col">
+            <div className="bg-white lg:rounded-xl shadow-xs lg:border p-8 h-fit m-auto w-full lg:max-w-lg max-lg:h-svh flex flex-col">
                 <div className="flex items-center">
                     <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
@@ -102,7 +102,7 @@ export default function CreateGroup() {
                         Create group
                     </h2>
                 </div>
-                <form onSubmit={createGroupHandler} className="pt-5 flex-grow flex flex-col h-[calc(100%-2rem)]">
+                <form onSubmit={createGroupHandler} className="pt-5 grow flex flex-col h-[calc(100%-2rem)]">
                     <div>
                         <label htmlFor="groupName">Name:</label>
                         <input type="groupName" id="groupName" required className={input()} value={groupName} onChange={(e) => setGroupName(e.target.value)} />

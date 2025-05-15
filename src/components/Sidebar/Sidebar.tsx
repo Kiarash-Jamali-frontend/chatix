@@ -3,7 +3,7 @@ import { auth } from "../../../utils/firebase";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { faPencil, faPlus, faSearch, faShareNodes, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faPlus, faShareNodes, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { RootState } from "../../redux/store";
 import ChatListItem from "./ChatListItem";
 import { useAppSelector } from "../../redux/hooks";
@@ -18,6 +18,7 @@ import GradiantProfile from "../GradiantProfile";
 import { UserState } from "../../redux/slices/user";
 import { AnimatePresence, motion } from "framer-motion";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
+import SearchBox from "./SearchBox";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -67,7 +68,7 @@ const Sidebar: React.FC = () => {
           )
         }
         <div className="px-6 pt-6 pb-4 flex items-center justify-between w-full min-w-0">
-          <div className="flex items-center w-full flex-grow min-w-0">
+          <div className="flex items-center w-full grow min-w-0">
             <div className="relative basis-16 min-w-16">
               {/*Profile image*/}
               {user.profile?.photoUrl && (
@@ -91,7 +92,7 @@ const Sidebar: React.FC = () => {
                 <span className="font-bold font-Vazir">
                   {user.profile?.name}
                 </span>
-                <button className="ms-1 size-6 flex items-center justify-center bg-gray-100 border rounded-full" onClick={shareUserProfileHandler}>
+                <button className="ms-1 cursor-pointer size-6 flex items-center justify-center bg-gray-100 border rounded-full" onClick={shareUserProfileHandler}>
                   <FontAwesomeIcon icon={faShareNodes} className="text-black/85" size="sm" />
                 </button>
               </div>
@@ -107,16 +108,10 @@ const Sidebar: React.FC = () => {
             Logout
           </button>
         </div>
-        <div className={`flex flex-col flex-grow ${isConnecting ? "h-[calc(100%-(114px+44px))]" : "h-[calc(100%-(114px))]"}`}>
-          <div className={`flex-grow ${isConnecting ? "h-[calc(100%-(114px+44px))]" : "h-[calc(100%-(114px))]"}`}>
-            <div className="bg-black/5 rounded-full py-2.5 px-4 mx-4 border border-black/5 hover:border-black/10 hover:bg-black/6 flex items-center">
-              <div className="flex items-center">
-                <FontAwesomeIcon icon={faSearch} className="text-black/50 me-2" />
-              </div>
-              <input type="text" placeholder="Search" dir="auto"
-                className="bg-transparent flex-grow placeholder:text-black/50 font-Vazir placeholder:translate-y-0.5 focus:outline-none text-sm" />
-            </div>
-            <div className="flex flex-col py-3 overflow-auto h-full font-Vazir">
+        <div className={`flex flex-col grow ${isConnecting ? "h-[calc(100%-(114px+44px))]" : "h-[calc(100%-(114px))]"}`}>
+          <div className={`grow ${isConnecting ? "h-[calc(100%-(114px+44px))]" : "h-[calc(100%-(114px))]"}`}>
+            <SearchBox />
+            <div className="flex flex-col pb-3 overflow-auto h-full font-Vazir">
               {chats.map((c, index) => {
                 return <ChatListItem chat={c} key={index} />;
               })}

@@ -30,7 +30,7 @@ export default function MemberListItem({ member, isSelected, callbackFn }: PropT
                     <span className="text-xs mt-1 text-black/50">{member.email}</span>
                 </div>
             </div>
-            <div className={`size-6 rounded-full border relative flex items-center justify-center transition-all ${isSelected ? "bg-gradient-to-br from-blue-400 to-blue-600 before:scale-100" : "bg-white before:scale-0"} before:bg-white before:size-2.5 before:transition-all before:absolute before:rounded-full`}>
+            <div className={`size-6 rounded-full border relative flex items-center justify-center transition-all ${isSelected ? "bg-linear-to-br from-blue-400 to-blue-600 before:scale-100" : "bg-white before:scale-0"} before:bg-white before:size-2.5 before:transition-all before:absolute before:rounded-full`}>
 
             </div>
         </div>

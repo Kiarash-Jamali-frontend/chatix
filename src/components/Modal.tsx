@@ -13,7 +13,7 @@ export default function Modal({ isActive, setIsActive, children }: PropTypes) {
         <AnimatePresence>
             {
                 isActive && (
-                    <motion.div className="fixed inset-0 bg-black/60 px-5 z-[999] grid place-items-center"
+                    <motion.div className="fixed inset-0 bg-black/60 px-5 z-999 grid place-items-center"
                         variants={{
                             hide: {
                                 opacity: 0

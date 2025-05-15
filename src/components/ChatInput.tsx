@@ -155,7 +155,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 transform: "scale(1) translate(0px, 0px)"
               }
             }} initial="hide" exit="hide" animate="open"
-              className="!absolute bottom-[3.5rem] md:!max-w-[calc(100%-1.25rem*2)] !overflow-hidden shadow-xl !rounded-xl z-50">
+              className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50">
               <EmojiPicker open={emojiPickerIsOpen}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
                 onEmojiClick={(e) => setMessageText((prev) =>
@@ -169,7 +169,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         {
           messageSelectedForReply && (
             <motion.div
-              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-[49] shadow-lg rounded-full bg-gradient-to-br from-gray-600 to-gray-800"
+              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-49 shadow-lg rounded-full bg-linear-to-br from-gray-600 to-gray-800"
               variants={{
                 hide: {
                   opacity: 0,
@@ -213,19 +213,22 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           )
         }
       </AnimatePresence>
-      <div className="flex-grow flex flex-col me-2 relative">
-        <div className="px-3 shadow-sm rounded-full border bg-white flex items-center flex-grow">
-          <button className="me-2 size-7 flex items-center text-black/50 relative overflow-hidden" onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
-            <FontAwesomeIcon icon={faClose}
-              className={`absolute size-5 transition-all duration-300 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`} />
-            <FontAwesomeIcon icon={faFaceSmile}
-              className={`absolute size-5 transition-all duration-300 ${emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`} />
+      <div className="grow flex flex-col me-2 relative">
+        <div className="px-3 shadow-xs rounded-full border bg-white flex items-center grow">
+          <button className="me-2 size-7 flex items-center text-black/50 relative overflow-hidden"
+            onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
+            <span className={`absolute transition-all duration-300 size-5 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
+              <FontAwesomeIcon icon={faClose} className="!size-5" />
+            </span>
+            <span className={`absolute transition-all duration-300 size-5 ${emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
+              <FontAwesomeIcon icon={faFaceSmile} className="!size-5" />
+            </span>
           </button>
           <div dir="auto" className="w-full">
             <ContentEditable
               html={messageText ? messageText : ""}
               onChange={(e) => setMessageText(e.target.value)}
-              className={`focus:outline-none relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-black/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
+              className={`focus:outline-hidden relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-black/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
             />
           </div>
           <div className="ms-2 flex items-center relative size-7">
@@ -251,7 +254,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
 
-      <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-sm bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
+      <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-blue-400 to-blue-600 text-white rounded-full flex items-center justify-center"
         onClick={sendMessageHandler} disabled={textMessagePending || filePending || !showSendButton}>
         <FontAwesomeIcon icon={faPaperPlane} size="lg"
           className={`absolute transition-all duration-300`} />

@@ -10,7 +10,7 @@ export default function OfflineModal() {
     const navigate = useNavigate();
 
     return (
-        <div className="fixed inset-0 z-[9999] bg-base flex flex-col justify-center items-center">
+        <div className="fixed inset-0 z-9999 bg-base flex flex-col justify-center items-center">
             <div className="flex flex-col items-center text-center">
                 <Lottie unselectable="on" animationData={ConnectionFailed} loop={false} play
                     className="lg:max-w-96 lg:max-h-96 max-w-72 max-h-7max-w-72" />

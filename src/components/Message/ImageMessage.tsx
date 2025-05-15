@@ -20,7 +20,7 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage }: Pr
         <>
             <button
                 className={`${userEmail === message.from
-                    ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
+                    ? "bg-linear-to-br from-blue-400 to-blue-600 text-white"
                     : "bg-white"
                     }
                w-fit min-w-32 px-3 pt-3 text-[0.925em] z-30 text-start transition-all font-light relative cursor-default`}

@@ -64,12 +64,12 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
         <UserInfoModalContent chatRoom={chatRoom} setIsActive={setUserInfoModalIsActive} userProfile={profile} />
       </Modal>
       <div className="flex items-center">
-        <div className="bg-white shadow-sm border-b px-4 py-3 w-full flex items-center">
+        <div className="bg-white shadow-xs border-b px-4 py-3 w-full flex items-center">
           <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </Link>
-          <div className="flex items-center justify-between flex-grow">
-            <div className="flex items-center cursor-pointer flex-grow" onClick={() => setUserInfoModalIsActive(true)}>
+          <div className="flex items-center justify-between grow">
+            <div className="flex items-center cursor-pointer grow" onClick={() => setUserInfoModalIsActive(true)}>
               {/*Profile image*/}
               {profile.photoUrl ? (
                 <img
@@ -91,7 +91,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
               chatRoom && (
                 (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked) && (
                   <button
-                    className={button({ intent: chatRoom.isBlocked ? "default" : "danger", size: "small", className: "!rounded-full" })}
+                    className={button({ intent: chatRoom.isBlocked ? "default" : "danger", size: "small", className: "rounded-full!" })}
                     onClick={changeIsBlockingUser}
                   >
                     {chatRoom.isBlocked ? "Unblock" : "Block"}

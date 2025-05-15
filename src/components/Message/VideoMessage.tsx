@@ -63,7 +63,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
             <ToastContainer />
             <button
                 className={`${messageIsForCurrentUser
-                    ? "bg-gradient-to-br from-blue-400 to-blue-600 text-white"
+                    ? "bg-linear-to-br from-blue-400 to-blue-600 text-white"
                     : "bg-white"
                     }
                w-fit min-w-32 p-3 text-[0.925em] z-30 text-start transition-all font-light`}

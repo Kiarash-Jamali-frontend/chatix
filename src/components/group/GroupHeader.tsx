@@ -53,12 +53,12 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
           setIsActive={setGroupInfoModalIsActive} />
       </Modal>
       <div className="flex items-center">
-        <div className="bg-white shadow-sm border-b px-4 py-3 w-full flex items-center">
+        <div className="bg-white shadow-xs border-b px-4 py-3 w-full flex items-center">
           <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </Link>
-          <div className="flex items-center justify-between flex-grow">
-            <div className="flex items-center cursor-pointer flex-grow" onClick={() => setGroupInfoModalIsActive(true)}>
+          <div className="flex items-center justify-between grow">
+            <div className="flex items-center cursor-pointer grow" onClick={() => setGroupInfoModalIsActive(true)}>
               {groupData.groupPhotoUrl ? (
                 <img
                   src={groupData.groupPhotoUrl}
