@@ -4,8 +4,7 @@ import { registerSW } from 'virtual:pwa-register'
 import "./index.css";
 
 registerSW({
-    immediate: true,
+    immediate: false
 })
 
 ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
- 

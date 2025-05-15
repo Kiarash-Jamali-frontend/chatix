@@ -19,6 +19,7 @@ import { UserState } from "../../redux/slices/user";
 import { AnimatePresence, motion } from "framer-motion";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
 import SearchBox from "./SearchBox";
+import AppUpdateMessage from "./AppUpdateMessage";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -57,6 +58,7 @@ const Sidebar: React.FC = () => {
     <>
       <ToastContainer />
       <div className={`w-full relative lg:max-w-[435px] h-svh bg-white border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
+        <AppUpdateMessage />
         {
           isConnecting && (
             <div className="bg-blue-500 p-3 text-center flex items-center justify-center text-white text-sm">

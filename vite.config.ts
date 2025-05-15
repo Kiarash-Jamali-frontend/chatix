@@ -3,14 +3,14 @@ import react from '@vitejs/plugin-react'
 import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 
 const manifestForPlugIn: Partial<VitePWAOptions>  = {
-  registerType: 'autoUpdate',
+  registerType: 'prompt',
   injectManifest: {
     maximumFileSizeToCacheInBytes: 3000000
   },
   workbox: {
     maximumFileSizeToCacheInBytes: 3000000,
     globPatterns: ["**/*"],
-    cleanupOutdatedCaches: true,
+    cleanupOutdatedCaches: false,
     sourcemap: true
   },
   includeAssets: ["**/*",],
