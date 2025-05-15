@@ -58,6 +58,8 @@ const Layout: React.FC = () => {
   }
 
   useEffect(() => {
+    console.log("hi");
+    
     if (user.status === "authenticated") {
       updateLastActivity();
       const interval = setActivityInterval();
