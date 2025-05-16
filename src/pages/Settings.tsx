@@ -163,16 +163,16 @@ export default function Settings() {
                         Theme
                     </div>
                     <div className="grid grid-cols-3 rounded-lg mt-2 overflow-hidden">
-                        <button className={`p-3 cursor-pointer flex items-center justify-center border border-e-transparent rounded-s-lg transition-all ${!theme ? "bg-primary text-white border-primary" : ""}`}
+                        <button className={`p-3 cursor-pointer flex items-center justify-center border border-e-transparent rounded-s-lg transition-all ${!theme ? "bg-primary text-white border-primary" : "bg-secondary"}`}
                             onClick={changeToDefaultThemeHandler}>
                             System default
                         </button>
-                        <button className={`p-3 cursor-pointer flex items-center justify-center border transition-all border-x ${theme == "light" ? "bg-primary text-white border-primary" : ""}`}
+                        <button className={`p-3 cursor-pointer flex items-center justify-center border transition-all border-x ${theme == "light" ? "bg-primary text-white border-primary" : "bg-secondary"}`}
                             onClick={() => changeThemeHandler("light")}>
                             <FontAwesomeIcon icon={faSun} className="me-2 text-lg" />
                             Light
                         </button>
-                        <button className={`p-3 cursor-pointer flex items-center justify-center border border-s-transparent rounded-e-lg transition-all ${theme == "dark" ? "bg-primary text-white border-primary" : ""}`}
+                        <button className={`p-3 cursor-pointer flex items-center justify-center border border-s-transparent rounded-e-lg transition-all ${theme == "dark" ? "bg-primary text-white border-primary" : "bg-secondary"}`}
                             onClick={() => changeThemeHandler("dark")}>
                             <FontAwesomeIcon icon={faMoon} className="me-2 text-lg" />
                             Dark
