@@ -68,10 +68,10 @@ const CreateAccount: React.FC = () => {
     return (
         <div className="flex min-h-svh w-full justify-center items-center">
             <ToastContainer />
-            <div className="bg-secondary h-full lg:h-auto lg:rounded-2xl w-full lg:max-w-[900px] grid gap-x-5 grid-cols-1 lg:grid-cols-2 shadow-xl">
+            <div className="dark:bg-base bg-secondary lg:dark:bg-secondary h-full lg:h-auto lg:rounded-2xl lg:border w-full lg:max-w-[900px] grid gap-x-5 grid-cols-1 lg:grid-cols-2 shadow-xl">
                 <div className="px-10 py-8 lg:py-9 lg:border-e mt-auto lg:mt-0 max-lg:border-t">
                     <h1 className="text-2xl font-bold mb-2">Create Account</h1>
-                    <span className="text-sm text-black/60">
+                    <span className="text-sm text-natural/60">
                         Fill out the form below to create an account
                     </span>
                     <div className="mt-4">
@@ -102,7 +102,7 @@ const CreateAccount: React.FC = () => {
                 <div className="flex lg:pe-5 -order-1 lg:order-2">
                     <Lottie
                         loop
-                        className="flex lg:grow w-auto mx-auto"
+                        className="flex lg:grow w-full h-full m-auto max-h-96"
                         animationData={LoginMessageAnimation}
                         play
                     />

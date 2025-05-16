@@ -93,7 +93,7 @@ export default function Settings() {
     return (
         <>
             <ToastContainer />
-            <div className="p-8 lg:rounded-xl bg-secondary shadow-xs border w-full lg:max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
+            <div className="p-8 lg:rounded-xl dark:bg-black bg-secondary dark:lg:bg-secondary lg:shadow-xs lg:border w-full lg:max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
                 <div className="flex items-center pb-[11px] border-b">
                     <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
@@ -149,7 +149,7 @@ export default function Settings() {
 
                 <div className="mt-4">
                     <label htmlFor="biography" className="text-sm inline-block mb-1">Biography
-                        <span className="text-xs font-light text-black/75 ms-1.5">{profileData.biography.length}/180</span></label>
+                        <span className="text-xs font-light text-natural/75 ms-1.5">{profileData.biography.length}/180</span></label>
                     <textarea
                         value={profileData.biography}
                         onChange={(e) => setProfileData((prev) => ({ ...prev, biography: e.target.value }))}

@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
   return (
     <>
       <ToastContainer />
-      <div className={`w-full relative lg:max-w-[435px] h-svh bg-base lg:bg-secondary border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
+      <div className={`w-full relative lg:max-w-[435px] h-svh dark:bg-base bg-secondary dark:lg:bg-secondary border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
         <AppUpdateMessage />
         {
           isConnecting && (

@@ -46,10 +46,10 @@ const Login: React.FC = () => {
   return (
     <div className="flex min-h-svh w-full justify-center items-center">
       <ToastContainer />
-      <div className="bg-white h-full lg:h-auto lg:rounded-2xl w-full lg:max-w-[900px] grid gap-x-5 grid-cols-1 lg:grid-cols-2 shadow-xl">
+      <div className="dark:bg-base bg-secondary lg:dark:bg-secondary lg:border h-full lg:h-auto lg:rounded-2xl w-full lg:max-w-[900px] grid gap-x-5 grid-cols-1 lg:grid-cols-2 shadow-xl">
         <div className="px-10 py-8 lg:py-9 lg:border-e mt-auto lg:mt-0 max-lg:border-t">
           <h1 className="text-2xl font-bold mb-2">Login</h1>
-          <span className="text-sm text-black/60">
+          <span className="text-sm text-natural/60">
             Welcome to <span className="font-bold text-primary-500">Chatix</span>
           </span>
           <div className="mt-4">
@@ -71,7 +71,7 @@ const Login: React.FC = () => {
               I don't have account
             </Link>
             <div className="flex justify-center mt-5">
-              <Link unstable_viewTransition to={"/reset-password"} className="text-sm text-black/75 hover:underline">
+              <Link unstable_viewTransition to={"/reset-password"} className="text-sm text-natural/75 hover:underline">
                 I forgot my password
               </Link>
             </div>
@@ -80,7 +80,7 @@ const Login: React.FC = () => {
         <div className="flex lg:pe-5 -order-1 lg:order-2">
           <Lottie
             loop
-            className="flex lg:grow w-auto mx-auto"
+            className="flex lg:grow w-full h-full m-auto max-h-96"
             animationData={LoginMessageAnimation}
             play
           />
