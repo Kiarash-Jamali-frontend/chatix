@@ -190,15 +190,29 @@ const Layout: React.FC = () => {
     || ["/login", "/create-account", "/reset-password"].includes(location.pathname)
   ) {
     return (
-      <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
-        <div className="relative z-10 w-full h-full flex">
-          <ProfileModal />
-          {
-            (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
-          }
-          <Outlet />
+      <>
+        {
+          !theme ? (
+            <>
+              <meta name="theme-color" content="#000" media="(prefers-color-scheme: dark)" />
+              <meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)" />
+            </>
+          ) : (
+            <>
+              <meta name="theme-color" content={theme == "dark" ? "#000" : "#fff"} />
+            </>
+          )
+        }
+        <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
+          <div className="relative z-10 w-full h-full flex">
+            <ProfileModal />
+            {
+              (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
+            }
+            <Outlet />
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 

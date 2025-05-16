@@ -43,8 +43,7 @@ const manifestForPlugIn: Partial<VitePWAOptions>  = {
       purpose: 'any maskable',
     }
     ],
-    theme_color: '#fff',
-    background_color: '#fff',
+    theme_color: '#2b7fff',
     display: "standalone",
     scope: '/',
     start_url: "/",
