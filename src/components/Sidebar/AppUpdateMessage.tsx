@@ -10,7 +10,7 @@ export default function AppUpdateMessage() {
 
     if (needRefresh) {
         return (
-            <div className="py-3 px-4 bg-purple-100 border-b-purple-300 border-b-2 text-sm font-semibold flex items-center justify-between">
+            <div className="py-3 px-4 bg-purple-100 border-b-purple-300 border-b-2 text-sm font-semibold text-black flex items-center justify-between">
                 <span>
                     Chatix has a new update!
                 </span>
