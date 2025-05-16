@@ -79,7 +79,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
             }}>
             <Link unstable_viewTransition
                 to={`/chat/${chat.email}`}
-                className={`flex items-center justify-between ${chatIsSelected ? "bg-primary-500 hover:bg-primary-600" : "hover:bg-base/50 hover:border-natural/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors duration-300`}
+                className={`flex items-center justify-between ${chatIsSelected ? "bg-primary-500 hover:bg-primary-600" : "hover:bg-base/50 hover:border-natural/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors`}
                 key={chat.email}
             >
                 <div className="flex items-center w-full grow">

@@ -3,7 +3,7 @@ import { auth } from "../../../utils/firebase";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { faPencil, faPlus, faShareNodes, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faPlus, faShareNodes, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { RootState } from "../../redux/store";
 import ChatListItem from "./ChatListItem";
 import { useAppSelector } from "../../redux/hooks";
@@ -58,12 +58,12 @@ const Sidebar: React.FC = () => {
   return (
     <>
       <ToastContainer />
-      <div className={`w-full relative lg:max-w-[435px] h-svh bg-secondary border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
+      <div className={`w-full relative lg:max-w-[435px] h-svh bg-base lg:bg-secondary border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
         <AppUpdateMessage />
         {
           isConnecting && (
             <div className="bg-primary-500 p-3 text-center flex items-center justify-center text-white text-sm">
-              <div className="size-4 bg-transparent border rounded-full border-e-transparent animate-spin me-2">
+              <div className="size-4 bg-transparent border border-white rounded-full border-e-transparent animate-spin me-2">
 
               </div>
               Connecting ...
@@ -83,10 +83,10 @@ const Sidebar: React.FC = () => {
                 )
               }
               <Link unstable_viewTransition
-                to={"/edit-profile"}
-                className="absolute bottom-0 right-0 bg-natural/85 text-secondary rounded-full flex items-center justify-center text-center size-[22px]"
+                to={"/settings"}
+                className="absolute bottom-0 right-0 bg-natural/85 border-secondary border text-secondary rounded-full flex items-center justify-center text-center size-[22px]"
               >
-                <FontAwesomeIcon icon={faPencil} size="2xs" />
+                <FontAwesomeIcon icon={faGear} size="2xs" />
               </Link>
             </div>
             <div className="ps-4 min-w-0">
@@ -164,7 +164,7 @@ const Sidebar: React.FC = () => {
               onBlur={() => setCreateMenuIsOpen(false)}
               ref={createMenuButtonRef}
             >
-              <FontAwesomeIcon icon={faPlus} size="xl" className={`transition-transform duration-300 ${createMenuIsOpen ? "rotate-45" : "rotate-0"}`} />
+              <FontAwesomeIcon icon={faPlus} size="xl" className={`transition-transform ${createMenuIsOpen ? "rotate-45" : "rotate-0"}`} />
             </button>
             {
               createMenuIsOpen && (

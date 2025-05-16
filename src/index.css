@@ -6,6 +6,7 @@ layer(base);
 @import 'tailwindcss';
 
 @theme {
+  --default-transition-duration: 250ms;
   --color-base: #f6f6f6;
 
   --color-primary-100: var(--color-blue-100);
@@ -33,24 +34,7 @@ layer(base);
   --font-Vazir: Vazirmatn;
 }
 
-@custom-variant dark (&:where([data-theme=dark] [data-theme=dark] *));
-
-@variant dark {
-  --color-base: #f6f6f6;
-  --color-natural: var(--color-black);
-  --color-secondary: var(--color-white);
-  --color-zinc-50: var(--color-gray-50);
-  --color-zinc-100: var(--color-gray-100);
-  --color-zinc-200: var(--color-gray-200);
-  --color-zinc-300: var(--color-gray-300);
-  --color-zinc-400: var(--color-gray-400);
-  --color-zinc-500: var(--color-gray-500);
-  --color-zinc-600: var(--color-gray-600);
-  --color-zinc-700: var(--color-gray-700);
-  --color-zinc-800: var(--color-gray-800);
-  --color-zinc-900: var(--color-gray-900);
-  --color-zinc-950: var(--color-gray-950);
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -60,6 +44,7 @@ layer(base);
   If we ever want to remove these styles, we need to add an explicit border
   color utility to any element that depends on these defaults.
 */
+
 @layer base {
   *,
   ::after,
@@ -67,6 +52,25 @@ layer(base);
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
+    @apply dark:border-white/10;
+  }
+
+  .dark {
+    color: #fff;
+  --color-base: #000;
+  --color-natural: var(--color-white);
+  --color-secondary: #121212;
+  --color-zinc-50: invert(var(--color-gray-50)) ;
+  --color-zinc-100: invert(var(--color-gray-100));
+  --color-zinc-200: invert(var(--color-gray-200));
+  --color-zinc-300: invert(var(--color-gray-300));
+  --color-zinc-400: invert(var(--color-gray-400));
+  --color-zinc-500: invert(var(--color-gray-500));
+  --color-zinc-600: invert(var(--color-gray-600));
+  --color-zinc-700: invert(var(--color-gray-700));
+  --color-zinc-800: invert(var(--color-gray-800));
+  --color-zinc-900: invert(var(--color-gray-900));
+  --color-zinc-950: invert(var(--color-gray-950));
   }
 }
 

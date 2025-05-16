@@ -135,9 +135,9 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
                     }} data-is-button="true"
                         className={`flex items-center overflow-hidden justify-center size-10 rounded-full relative ${messageIsForCurrentUser ? "bg-white text-blue-500" : "bg-natural/5 text-natural border shadow-xs"}`}>
                         <FontAwesomeIcon icon={faPause} size="lg"
-                            className={`absolute transition-all duration-300 ${isStopped ? "opacity-0 scale-0" : ""}`} />
+                            className={`absolute transition-all ${isStopped ? "opacity-0 scale-0" : ""}`} />
                         <FontAwesomeIcon icon={faPlay} size="lg"
-                            className={`absolute transition-all duration-300 ${!isStopped ? "opacity-0 scale-0" : ""}`} />
+                            className={`absolute transition-all ${!isStopped ? "opacity-0 scale-0" : ""}`} />
                     </button>
                     <div className="ms-2">
                         <div className="flex items-center">

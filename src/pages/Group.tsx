@@ -186,7 +186,7 @@ export default function Group() {
                             </>
                         )
                     })}
-                    <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all duration-300`}></div>
+                    <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all`}></div>
                 </div>
                 <div className="px-3 md:px-5">
                     <div className="mb-3 md:mb-5 mx-auto max-w-[810px]">

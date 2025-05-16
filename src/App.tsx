@@ -7,13 +7,13 @@ import Login from "./pages/Login";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreateChat from "./pages/CreateChat";
 import Helmet from "react-helmet";
-import EditProfile from "./pages/EditProfile";
 import 'react-toastify/dist/ReactToastify.css';
 import CreateAccount from "./pages/CreateAccount";
 import ResetPassword from "./pages/ResetPassword";
 import CreateGroup from "./pages/CreateGroup";
 import Group from "./pages/Group";
 import "/node_modules/video-react/dist/video-react.css";
+import Settings from "./pages/Settings";
 
 const router = createBrowserRouter([
   {
@@ -49,8 +49,8 @@ const router = createBrowserRouter([
         element: <CreateAccount />
       },
       {
-        path: "/edit-profile",
-        element: <EditProfile />
+        path: "/settings",
+        element: <Settings />
       },
       {
         path: "/reset-password",

@@ -5,16 +5,17 @@ import { RootState } from "../redux/store"
 import Profile from "../types/Profile";
 import button from "../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faUpload } from "@fortawesome/free-solid-svg-icons";
-import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faArrowLeft, faGear, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faMoon, faSun, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { changeUserProfile } from "../redux/slices/user";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import toastConf from "../../utils/toastConfig";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, validatePassword } from "firebase/auth";
 import { auth } from "../../utils/firebase";
+import { changeTheme, changeToSystemDefaultTheme, ThemeType } from "../redux/slices/theme";
 
-export default function EditProfile() {
+export default function Settings() {
     const [pending, setPending] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
@@ -26,6 +27,7 @@ export default function EditProfile() {
     const [newPasswordConfirm, setNewPasswordConfirm] = useState<string>("");
     const profileImageInput = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
+    const { value: theme } = useAppSelector((state: RootState) => state.theme);
 
     const removeProfileImageHandler = () => {
         if (profileImageInput.current) {
@@ -85,6 +87,9 @@ export default function EditProfile() {
 
     }
 
+    const changeToDefaultThemeHandler = () => dispatch(changeToSystemDefaultTheme());
+    const changeThemeHandler = (theme: Exclude<ThemeType['value'], undefined>) => dispatch(changeTheme(theme));
+
     return (
         <>
             <ToastContainer />
@@ -94,7 +99,8 @@ export default function EditProfile() {
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
                     </Link>
                     <h2 className="font-bold text-2xl">
-                        Edit profile
+                        <FontAwesomeIcon icon={faGear} className="me-2 !hidden lg:!inline-block" />
+                        Settings
                     </h2>
                 </div>
 
@@ -152,7 +158,29 @@ export default function EditProfile() {
                         rows={3} id="biography"></textarea>
                 </div>
 
-                <div className="pt-4 mt-6 border-t">
+                <div className=" border-t pt-4 mt-6 text-sm">
+                    <div>
+                        Theme
+                    </div>
+                    <div className="grid grid-cols-3 rounded-lg mt-2 overflow-hidden">
+                        <button className={`p-3 cursor-pointer flex items-center justify-center border border-e-transparent rounded-s-lg transition-all ${!theme ? "bg-primary text-white border-primary" : ""}`}
+                            onClick={changeToDefaultThemeHandler}>
+                            System default
+                        </button>
+                        <button className={`p-3 cursor-pointer flex items-center justify-center border transition-all border-x ${theme == "light" ? "bg-primary text-white border-primary" : ""}`}
+                            onClick={() => changeThemeHandler("light")}>
+                            <FontAwesomeIcon icon={faSun} className="me-2 text-lg" />
+                            Light
+                        </button>
+                        <button className={`p-3 cursor-pointer flex items-center justify-center border border-s-transparent rounded-e-lg transition-all ${theme == "dark" ? "bg-primary text-white border-primary" : ""}`}
+                            onClick={() => changeThemeHandler("dark")}>
+                            <FontAwesomeIcon icon={faMoon} className="me-2 text-lg" />
+                            Dark
+                        </button>
+                    </div>
+                </div>
+
+                <div className="pt-4 mt-4 border-t">
                     <label htmlFor="oldPassword" className="text-sm inline-block mb-1">Old password</label>
                     <input id="oldPassword" value={oldPassword}
                         onChange={({ target }) => setOldPassword(target.value)}

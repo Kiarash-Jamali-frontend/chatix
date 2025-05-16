@@ -1,6 +1,6 @@
 import { cva } from "class-variance-authority";
 
-const button = cva("text-center flex items-center disabled:pointer-events-none font-Inter disabled:opacity-70 justify-center font-medium rounded-lg transition-all duration-300 active:scale-95 cursor-pointer", {
+const button = cva("text-center flex items-center disabled:pointer-events-none font-Inter disabled:opacity-70 justify-center font-medium rounded-lg transition-all active:scale-95 cursor-pointer", {
     variants: {
         intent: {
             default: "bg-secondary text-natural border hover:bg-base",

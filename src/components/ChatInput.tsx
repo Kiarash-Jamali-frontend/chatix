@@ -166,7 +166,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         {
           messageSelectedForReply && (
             <motion.div
-              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-49 shadow-lg rounded-full bg-linear-to-br from-zinc-600 to-zinc-800"
+              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-49 shadow-lg rounded-full bg-linear-to-br from-[#68666E] to-[#3B3A3D]"
               variants={{
                 hide: {
                   opacity: 0,
@@ -214,10 +214,10 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         <div className="px-3 shadow-xs rounded-full border bg-secondary flex items-center grow">
           <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
             onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
-            <span className={`absolute transition-all duration-300 size-5 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
+            <span className={`absolute transition-all size-5 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
               <FontAwesomeIcon icon={faClose} className="!size-5" />
             </span>
-            <span className={`absolute transition-all duration-300 size-5 ${emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
+            <span className={`absolute transition-all size-5 ${emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
               <FontAwesomeIcon icon={faFaceSmile} className="!size-5" />
             </span>
           </button>
@@ -225,7 +225,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             <ContentEditable
               html={messageText ? messageText : ""}
               onChange={(e) => setMessageText(e.target.value)}
-              className={`focus:outline-hidden relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-black/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
+              className={`focus:outline-hidden relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-natural/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
             />
           </div>
           <div className="ms-2 flex items-center relative size-7">
@@ -254,7 +254,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
         onClick={sendMessageHandler} disabled={textMessagePending || filePending || !showSendButton}>
         <FontAwesomeIcon icon={faPaperPlane} size="lg"
-          className={`absolute transition-all duration-300`} />
+          className={`absolute transition-all`} />
       </button>
     </div >
   );

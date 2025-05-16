@@ -70,7 +70,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
 
     return (
         <AnimatePresence>
-            <motion.div className="w-full max-w-lg rounded-xl bg-secondary p-6 shadow-xl"
+            <motion.div className="w-full max-w-lg rounded-xl border bg-secondary p-6 shadow-xl"
                 variants={{
                     hide: {
                         opacity: 0,

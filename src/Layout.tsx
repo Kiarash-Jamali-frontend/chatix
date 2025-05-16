@@ -17,6 +17,8 @@ import ProfileModal from "./components/ProfileModal";
 import getProfile from "./helpers/usersAndProfiles/getProfile";
 import getNotSeenedMessagesCount from "./helpers/chat/getNotSeenedMessagesCount";
 import GroupMember from "./types/GroupMember";
+import useThemeDetector from "./hooks/useThemeDetector";
+import { changeTheme } from "./redux/slices/theme";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,6 +26,8 @@ const Layout: React.FC = () => {
   const user = useAppSelector((state: RootState) => state.user);
   const chatsStatus = useAppSelector((state: RootState) => state.chats.status);
   const groupsStatus = useAppSelector((state: RootState) => state.groups.status);
+  const { value: theme } = useAppSelector((state: RootState) => state.theme);
+  const systemThemeIsDark = useThemeDetector();
 
   const isOnline = useOnlineStatus();
 
@@ -136,6 +140,11 @@ const Layout: React.FC = () => {
     })
   }
 
+  const getTheme = () => {
+    const themeInLocalStorage = localStorage.getItem("chatix_theme") as "dark" | "light" | null;
+    themeInLocalStorage && dispatch(changeTheme(themeInLocalStorage))
+  }
+
   useLayoutEffect(() => {
     dispatch(setUserDataAndProfileFromLocalStorage());
     // dispatch(changeUserStatus("loading"));
@@ -169,6 +178,7 @@ const Layout: React.FC = () => {
   useEffect(() => {
     getChatsFromLocalStorage();
     getGroupsFromLocalStorage();
+    getTheme();
   }, []);
 
   if (!isOnline && user.status == "unauthenticated") {
@@ -180,7 +190,7 @@ const Layout: React.FC = () => {
     || ["/login", "/create-account", "/reset-password"].includes(location.pathname)
   ) {
     return (
-      <div className="lg:flex min-h-svh before:absolute before:inset-0 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0">
+      <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
         <div className="relative z-10 w-full h-full flex">
           <ProfileModal />
           {

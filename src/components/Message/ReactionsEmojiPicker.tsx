@@ -40,7 +40,7 @@ export default function ReactionsEmojiPicker({ message }: PropTypes) {
                     }}>
                         <EmojiPicker searchDisabled={true} reactionsDefaultOpen={true}
                             allowExpandReactions={false}
-                            className="bg-secondary!"
+                            className="bg-secondary! dark:!border-white/12"
                             onReactionClick={emojiAndReactionClickHandler} />
                     </motion.div>
                 )

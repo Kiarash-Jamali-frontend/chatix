@@ -71,7 +71,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >
                 <div className="relative">
-                    <div className={`absolute z-50 top-4 right-3 flex transition-all duration-300 ${!messageIsSelected ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100"}`}>
+                    <div className={`absolute z-50 top-4 right-3 flex transition-all ${!messageIsSelected ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100"}`}>
                         {
                             messageIsForCurrentUser && (
                                 <button

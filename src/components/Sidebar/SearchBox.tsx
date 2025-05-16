@@ -20,6 +20,7 @@ export default function SearchBox({ search, setSearch }: PropTypes) {
                 </div>
                 <input
                     value={search}
+                    name="searchInChats"
                     onChange={({ target }) => setSearch(target.value)}
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}

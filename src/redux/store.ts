@@ -8,6 +8,7 @@ import openedImageReducer from "./slices/openedImage";
 import selectedChatOrGroupReducer from "./slices/selectedChatOrGroup"
 import groupsReducer from "./slices/groups";
 import openedProfileReducer from "./slices/openedProfile";
+import themeReducer from "./slices/theme";
 
 export const store = configureStore({
     reducer: {
@@ -19,7 +20,8 @@ export const store = configureStore({
         openedImage: openedImageReducer,
         selectedChatOrGroup: selectedChatOrGroupReducer,
         groups: groupsReducer,
-        openedProfile: openedProfileReducer
+        openedProfile: openedProfileReducer,
+        theme: themeReducer
     },
 })
 

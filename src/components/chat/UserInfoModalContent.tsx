@@ -54,7 +54,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
 
     return (
         <AnimatePresence>
-            <motion.div className="w-full max-w-lg rounded-xl bg-secondary p-6 shadow-xl"
+            <motion.div className="w-full max-w-lg rounded-xl bg-secondary border p-6 shadow-xl"
                 variants={{
                     hide: {
                         opacity: 0,
@@ -91,7 +91,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                 {userProfile.biography && (
                     <div className="bg-zinc-50 py-2.5 px-4 border text-sm rounded-xl mt-5">
                         <span className="font-medium">Biography: </span>
-                        <p className="text-black/75 font-Vazir mt-2" dir="auto">
+                        <p className="text-natural/75 font-Vazir mt-2" dir="auto">
                             {userProfile.biography}
                         </p>
                     </div>
