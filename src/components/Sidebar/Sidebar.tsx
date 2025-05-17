@@ -84,7 +84,7 @@ const Sidebar: React.FC = () => {
               }
               <Link unstable_viewTransition
                 to={"/settings"}
-                className="absolute bottom-0 right-0 bg-natural/85 border-secondary border text-secondary rounded-full flex items-center justify-center text-center size-[22px]"
+                className="absolute bottom-0 right-0 bg-black/85 text-white border-white/30 border rounded-full flex items-center justify-center text-center size-[22px]"
               >
                 <FontAwesomeIcon icon={faGear} size="2xs" />
               </Link>
