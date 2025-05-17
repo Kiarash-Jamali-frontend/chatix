@@ -5,7 +5,7 @@ import { db, storage } from "../../utils/firebase";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 import { faClose, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { changeMessageSelectedForReply } from "../redux/slices/messageSelectedForReply";
 import { Parser } from "html-to-react";
 import { MemberProfile } from "../pages/Group";
+import useThemeDetector from "../hooks/useThemeDetector";
 
 type PropTypes = {
   mode: "group" | "private";
@@ -28,6 +29,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
   const messageSelectedForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
+  const theme = useAppSelector((state: RootState) => state.theme.value);
+  const systemThemeIsDark = useThemeDetector();
   const dispatch = useAppDispatch();
 
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
@@ -154,6 +157,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             }} initial="hide" exit="hide" animate="open"
               className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50">
               <EmojiPicker open={emojiPickerIsOpen}
+                theme={theme == "dark" || systemThemeIsDark ? Theme.DARK : Theme.LIGHT}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
                 onEmojiClick={(e) => setMessageText((prev) =>
                   prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`

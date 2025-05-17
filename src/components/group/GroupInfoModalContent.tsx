@@ -97,7 +97,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                         }
                         <div className="ms-3 flex flex-col">
                             <div className="font-semibold font-Vazir mb-0.5">{groupData.groupName}</div>
-                            <div className="text-xs flex items-center text-black/60">
+                            <div className="text-xs flex items-center text-natural/60">
                                 {
                                     membersCount ? (
                                         <span>

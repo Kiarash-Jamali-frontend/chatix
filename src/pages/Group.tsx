@@ -177,12 +177,16 @@ export default function Group() {
                                     )
                                 }
 
-                                <Message senderProfile={messageSender} isGroupMessage={true} key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
-                                    replyToMessage ? {
-                                        ...replyToMessage,
-                                        sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
-                                    } : null
-                                } />
+                                <Message senderProfile={messageSender}
+                                    isGroupMessage={true}
+                                    nextMessageSender={messages[i + 1]?.from}
+                                    key={m.id} message={m}
+                                    scrollDown={scrollDownHandler} replyedMessage={
+                                        replyToMessage ? {
+                                            ...replyToMessage,
+                                            sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
+                                        } : null
+                                    } />
                             </>
                         )
                     })}

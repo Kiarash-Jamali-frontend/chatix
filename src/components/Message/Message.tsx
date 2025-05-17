@@ -26,9 +26,10 @@ type PropTypes = {
     id: string
   };
   isGroupMessage?: boolean;
+  nextMessageSender?: string | null;
 };
 
-const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage, senderProfile }) => {
+const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage, senderProfile, nextMessageSender }) => {
   const { parse } = Parser();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsList = useAppSelector((state: RootState) => state.chats.list);
@@ -66,7 +67,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     const replayedMessageOffsetTop = document.getElementById(replyedMessage.id)?.offsetTop;
     const messagesList = document.getElementById("messagesList");
     if (replayedMessageOffsetTop && messagesList) {
-      messagesList.scroll(0, replayedMessageOffsetTop - document.documentElement.offsetHeight/2);
+      messagesList.scroll(0, replayedMessageOffsetTop - document.documentElement.offsetHeight / 2);
     }
     const params = new URLSearchParams();
     params.set("message", replyedMessage.id);
@@ -102,10 +103,10 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
 
   return (
     <div id={message.id}
-      className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} ${(selectedMessage?.id == message.id && !isGroupMessage) ? "z-50" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-gray-500/5" : ""}`}
+      className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} ${(selectedMessage?.id == message.id && !isGroupMessage) ? "z-50" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-natural/10" : ""}`}
       onDoubleClick={selectMessageForReply}>
       {
-        isGroupMessage && message.from != user.data?.email && senderProfile && (
+        isGroupMessage && message.from != user.data?.email && senderProfile && nextMessageSender != message.from && (
           <Link unstable_viewTransition to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
             className={`mt-auto me-2`}>
             {
@@ -133,7 +134,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
                 className="bg-linear-to-tr p-2 flex rounded-t-xl flex-col items-start shrink from-gray-600 to-gray-900 text-white">
                 <span className="text-sm font-medium">
                   <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
-                  {replyedMessage.sender.name}
+                  {replyedMessage.sender?.name}
                 </span>
                 <p className="text-xs mt-1 text-start" dir="auto">
                   {

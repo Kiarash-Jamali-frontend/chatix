@@ -72,7 +72,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
                 <div className="font-semibold mb-0.5 font-Vazir">
                   {groupData.groupName}
                 </div>
-                <div className="text-xs flex items-center text-black/60">
+                <div className="text-xs flex items-center text-natural/60">
                   {
                     membersCount ? (
                       <span>
