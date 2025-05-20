@@ -5,7 +5,7 @@ import { db, storage } from "../../utils/firebase";
 import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
-import EmojiPicker, { Theme } from "emoji-picker-react";
+import EmojiPicker, { SuggestionMode, Theme } from "emoji-picker-react";
 import { faClose, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -154,11 +154,13 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 opacity: 1,
                 transform: "scale(1) translate(0px, 0px)"
               }
-            }} initial="hide" exit="hide" animate="open"
+            }}
+              transition={{ duration: 0.2 }} initial="hide" exit="hide" animate="open"
               className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50">
               <EmojiPicker open={emojiPickerIsOpen}
                 theme={theme == "dark" || systemThemeIsDark ? Theme.DARK : Theme.LIGHT}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
+                suggestedEmojisMode={SuggestionMode.FREQUENT}
                 onEmojiClick={(e) => setMessageText((prev) =>
                   prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`
                 )} />
