@@ -47,7 +47,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
       ),
       limit(1)
     );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const unsubscribe = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
       querySnapshot.forEach((r) => {
         setChatRoom({ ...r.data(), id: r.id })
       });

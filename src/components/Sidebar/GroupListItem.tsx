@@ -25,7 +25,7 @@ export default function GroupListItem({ group, search }: { group: SidebarGroupDa
             where("memberEmail", "==", userEmail),
             where("groupId", "==", group.id)
         ), limit(1))
-        const unsub = onSnapshot(q, (querySnapshot) => {
+        const unsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
             const data = querySnapshot.docs[0].data();
             setNotSeenedMessagesCount(data.notSeenedMessagesCount);
         });
@@ -42,7 +42,7 @@ export default function GroupListItem({ group, search }: { group: SidebarGroupDa
             orderBy("timestamp", "desc"),
             limit(1)
         );
-        const unsubscribeLastMessage = onSnapshot(lastMessageQuery, async (querySnapshot) => {
+        const unsubscribeLastMessage = onSnapshot(lastMessageQuery, { includeMetadataChanges: true }, async (querySnapshot) => {
             if (querySnapshot.size) {
                 const lastMsgData = querySnapshot.docs[0].data();
                 const senderProfileDocRef = doc(db, "profile", lastMsgData.from);

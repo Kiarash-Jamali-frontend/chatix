@@ -32,7 +32,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
             where("to", "==", userEmail),
             where("seen", "==", false)
         );
-        const unsubscribeUnreadMessagesCount = onSnapshot(unreadMessagesQuery, (querySnapshot) => {
+        const unsubscribeUnreadMessagesCount = onSnapshot(unreadMessagesQuery, { includeMetadataChanges: true }, (querySnapshot) => {
             setUnreadMessagesCount(querySnapshot.size);
         });
 
@@ -58,7 +58,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                 orderBy("timestamp", "desc"),
                 limit(1)
             );
-            const unsubscribeLastMessage = onSnapshot(lastMessageQuery, (querySnapshot) => {
+            const unsubscribeLastMessage = onSnapshot(lastMessageQuery, { includeMetadataChanges: true }, (querySnapshot) => {
                 if (querySnapshot.size) {
                     setLastMessage(querySnapshot.docs[0].data());
                 } else {

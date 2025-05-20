@@ -30,7 +30,7 @@ const Sidebar: React.FC = () => {
   const user: UserState = useAppSelector((state: RootState) => state.user);
   const { list: chats, status: chatsStatus } = useAppSelector((state: RootState) => state.chats);
   const { list: groups, status: groupsStatus } = useAppSelector((state: RootState) => state.groups);
-  const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "cacheLoaded" || v == "loading") || !isOnline);
+  const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "loading") || !isOnline);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -159,7 +159,7 @@ const Sidebar: React.FC = () => {
             }
           </AnimatePresence>
           <div className="relative overflow-hidden">
-            <button className="size-12 z-20 relative rounded-full text-white flex items-center justify-center bg-primary-500"
+            <button className="size-12 z-20 cursor-pointer relative rounded-full text-white flex items-center justify-center bg-primary-500"
               onFocus={() => setCreateMenuIsOpen(true)}
               onBlur={() => setCreateMenuIsOpen(false)}
               ref={createMenuButtonRef}

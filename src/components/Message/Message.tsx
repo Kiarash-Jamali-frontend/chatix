@@ -106,7 +106,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
       className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} ${(selectedMessage?.id == message.id && !isGroupMessage) ? "z-50" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-natural/10" : ""}`}
       onDoubleClick={selectMessageForReply}>
       {
-        isGroupMessage && message.from != user.data?.email && senderProfile && nextMessageSender != message.from && (
+        isGroupMessage && message.from != user.data?.email && senderProfile && nextMessageSender != message.from ? (
           <Link unstable_viewTransition to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
             className={`mt-auto me-2`}>
             {
@@ -117,6 +117,10 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
               )
             }
           </Link>
+        ) : (
+          isGroupMessage && message.from != user.data?.email && (
+            <div className="size-10 me-2"></div>
+          )
         )
       }
       <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>

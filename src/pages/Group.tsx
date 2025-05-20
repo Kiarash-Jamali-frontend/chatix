@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { SidebarGroupData } from "../redux/slices/groups";
 import { and, collection, doc, onSnapshot, orderBy, query, runTransaction, Timestamp, where } from "firebase/firestore";
 import { db } from "../../utils/firebase";
-import Loading from "../components/Loading";
 import GroupHeader from "../components/group/GroupHeader";
 import ChatInput from "../components/ChatInput";
 import Message from "../components/Message/Message";
@@ -53,7 +52,7 @@ export default function Group() {
     useEffect(() => {
         if (groupId) {
             const messagesQuery = query(collection(db, "group_message"), where("to", "==", groupId), orderBy("timestamp", "asc"));
-            const unsubMessages = onSnapshot(messagesQuery, (snapshot) => {
+            const unsubMessages = onSnapshot(messagesQuery, { includeMetadataChanges: true }, (snapshot) => {
                 let messages: any[] = [];
                 snapshot.docs.forEach((snap) => {
                     messages = [...messages, { ...snap.data(), id: snap.id }];
@@ -70,13 +69,13 @@ export default function Group() {
     useEffect(() => {
         if (groupId) {
             const groupMembersQuery = query(collection(db, "group_member"), where("groupId", "==", groupId))
-            const unsubGroupMembers = onSnapshot(groupMembersQuery, (snapshot) => {
+            const unsubGroupMembers = onSnapshot(groupMembersQuery, { includeMetadataChanges: true }, (snapshot) => {
                 let newMembersProfiles: MemberProfile[] = [];
                 snapshot.forEach(async (querySnapshot) => {
                     const { removedFromGroup, notSeenedMessagesCount } = querySnapshot.data();
                     const memberEmail = querySnapshot.data().memberEmail;
                     const docRef = doc(db, "profile", memberEmail);
-                    const unsub = onSnapshot(docRef, (snap) => {
+                    const unsub = onSnapshot(docRef, { includeMetadataChanges: true }, (snap) => {
                         newMembersProfiles = [...newMembersProfiles.filter((p) => p.id != memberEmail), {
                             ...snap.data() as Profile,
                             id: memberEmail,
@@ -100,12 +99,12 @@ export default function Group() {
     useEffect(() => {
         if (groupId && userEmail) {
             const groupDocRef = doc(db, 'group', groupId);
-            const unsubGroup = onSnapshot(groupDocRef, (snapshot) => {
+            const unsubGroup = onSnapshot(groupDocRef, { includeMetadataChanges: true }, (snapshot) => {
                 const q = query(collection(db, "group_member"), and(
                     where("groupId", "==", groupId),
                     where("memberEmail", "==", userEmail)
                 ))
-                const unsub = onSnapshot(q, (snap) => {
+                const unsub = onSnapshot(q, { includeMetadataChanges: true }, (snap) => {
                     const data = snap.docs[0].data() as GroupMember;
                     if (!snap.empty && !data.removedFromGroup) {
                         setGroupData({ ...snapshot.data(), id: snapshot.id } as SidebarGroupData);
@@ -145,12 +144,6 @@ export default function Group() {
     useEffect(() => {
         if (!pending) scrollDownHandler();
     }, [pending])
-
-    if (pending) {
-        return (
-            <Loading />
-        )
-    }
 
     if (groupData && membersProfiles.length) {
         return (

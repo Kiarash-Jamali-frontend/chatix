@@ -10,7 +10,7 @@ export type UserState = {
         email: string,
     } | null,
     profile: (Profile & { id: string }) | null;
-    status: "loading" | "authenticated" | "unauthenticated" | "cacheLoaded"
+    status: "loading" | "authenticated" | "unauthenticated"
 }
 
 const initialState: UserState = {
@@ -75,19 +75,6 @@ const user = createSlice({
         },
         changeUserStatus: (state, action: PayloadAction<UserState['status']>) => {
             state.status = action.payload;
-        },
-        setUserDataAndProfileFromLocalStorage: (state) => {
-            const userProfileInLocalStorage = localStorage.getItem("chatix_user_profile");
-            const userDataInLocalStorage = localStorage.getItem("chatix_user_data");
-            if (userProfileInLocalStorage && userDataInLocalStorage) {
-                const parsedUserProfile = JSON.parse(userProfileInLocalStorage);
-                const parsedUserData = JSON.parse(userDataInLocalStorage);
-                if ([parsedUserData, parsedUserProfile].every((v) => typeof v == "object")) {
-                    state.profile = parsedUserProfile;
-                    state.data = parsedUserData;
-                    state.status = "cacheLoaded";
-                }
-            }
         }
     },
     extraReducers(builder) {
@@ -113,4 +100,4 @@ const user = createSlice({
 
 export default user.reducer;
 
-export const { changeUserData, changeUserStatus, setUserDataAndProfileFromLocalStorage } = user.actions;
+export const { changeUserData, changeUserStatus } = user.actions;

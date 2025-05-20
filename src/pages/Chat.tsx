@@ -16,7 +16,6 @@ import {
 import { db } from "../../utils/firebase";
 import Message from "../components/Message/Message";
 import { RootState } from "../redux/store";
-import Loading from "../components/Loading";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import ImageModal from "../components/ImageModal";
 import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
@@ -49,34 +48,35 @@ const Chat: React.FC = () => {
   }, [email])
 
   useEffect(() => {
-    // messages
-    const q = query(
-      collection(db, "chat_message"),
-      or(
-        and(where("from", "==", email), where("to", "==", userData?.email)),
-        and(where("to", "==", email), where("from", "==", userData?.email))
-      ),
-      orderBy("timestamp", "asc")
-    );
-    const unsubMessages = onSnapshot(q, (snapshot) => {
-      let messagesList: Array<any> = [];
-      snapshot.forEach((m) => {
-        messagesList.push({ ...m.data(), id: m.id });
+    if (userData?.email) {
+      const q = query(
+        collection(db, "chat_message"),
+        or(
+          and(where("from", "==", email), where("to", "==", userData.email)),
+          and(where("to", "==", email), where("from", "==", userData.email))
+        ),
+        orderBy("timestamp", "asc")
+      );
+      const unsubMessages = onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
+        let messagesList: Array<any> = [];
+        snapshot.forEach((m) => {
+          messagesList.push({ ...m.data(), id: m.id });
+        });
+        setMessages(messagesList);
       });
-      setMessages(messagesList);
-    });
 
-    // profile data
-    const profileDocRef = doc(db, "profile", String(email));
-    const unsubProfile = onSnapshot(profileDocRef, (querySnap) => {
-      setProfile({ ...querySnap.data(), email: querySnap.id });
-    });
+      // profile data
+      const profileDocRef = doc(db, "profile", String(email));
+      const unsubProfile = onSnapshot(profileDocRef, { includeMetadataChanges: true }, (querySnap) => {
+        setProfile({ ...querySnap.data(), email: querySnap.id });
+      });
 
-    return () => {
-      unsubMessages();
-      unsubProfile();
-    };
-  }, [email]);
+      return () => {
+        unsubMessages();
+        unsubProfile();
+      };
+    }
+  }, [email, userData]);
 
   useEffect(() => {
     // if profile is seted get room data
@@ -95,7 +95,7 @@ const Chat: React.FC = () => {
         ),
         limit(1)
       );
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const unsubscribe = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
         querySnapshot.forEach((r) => {
           setRoomData({ ...r.data(), id: r.id })
         });
@@ -116,12 +116,6 @@ const Chat: React.FC = () => {
   useEffect(() => {
     if (!pending) scrollDownHandler();
   }, [pending])
-
-  if (pending) {
-    return (
-      <Loading />
-    )
-  }
 
   if (profile && roomData) {
     return (

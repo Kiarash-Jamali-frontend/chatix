@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 
-const manifestForPlugIn: Partial<VitePWAOptions>  = {
+const manifestForPlugIn: Partial<VitePWAOptions> = {
   registerType: 'prompt',
   injectManifest: {
     maximumFileSizeToCacheInBytes: 3000000
@@ -11,7 +11,17 @@ const manifestForPlugIn: Partial<VitePWAOptions>  = {
     maximumFileSizeToCacheInBytes: 3000000,
     globPatterns: ["**/*"],
     cleanupOutdatedCaches: false,
-    sourcemap: true
+    sourcemap: true,
+    runtimeCaching: [
+      {
+        urlPattern: ({ request }) => request.destination === 'image',
+        handler: "CacheFirst",
+      },
+      {
+        urlPattern: ({ request }) => request.destination === 'font',
+        handler: "CacheFirst",
+      }
+    ]
   },
   includeAssets: ["**/*",],
   manifest: {

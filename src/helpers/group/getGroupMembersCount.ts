@@ -6,7 +6,7 @@ export default function getGroupMembersCount(groupId: string, callback: (snapsho
         where("groupId", "==", groupId),
         where("removedFromGroup", "==", false)
     ));
-    const unsubGroupMembersCount = onSnapshot(groupMembersQuery, callback);
+    const unsubGroupMembersCount = onSnapshot(groupMembersQuery, { includeMetadataChanges: true }, callback);
 
     return () => unsubGroupMembersCount();
 }

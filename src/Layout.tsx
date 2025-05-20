@@ -5,8 +5,7 @@ import { Navigate, Outlet, redirect, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
 import { auth, db } from "../utils/firebase";
-import { changeUserData, changeUserStatus, getUserProfile, setUserDataAndProfileFromLocalStorage } from "./redux/slices/user";
-import Loading from "./components/Loading";
+import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
 import { and, collection, doc, getDoc, onSnapshot, or, query, runTransaction, setDoc, Timestamp, where } from "firebase/firestore";
 import { changeChatsList, changeChatsStatus, ChatsState } from "./redux/slices/chats";
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
@@ -24,8 +23,6 @@ const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const user = useAppSelector((state: RootState) => state.user);
-  const chatsStatus = useAppSelector((state: RootState) => state.chats.status);
-  const groupsStatus = useAppSelector((state: RootState) => state.groups.status);
   const { value: theme } = useAppSelector((state: RootState) => state.theme);
   const systemThemeIsDark = useThemeDetector();
 
@@ -70,15 +67,6 @@ const Layout: React.FC = () => {
     }
   }, [user]);
 
-  const getChatsFromLocalStorage = () => {
-    const chatsInLocalStorage = localStorage.getItem("chatix_chats");
-    if (chatsInLocalStorage) {
-      const parsedChats = JSON.parse(chatsInLocalStorage);
-      dispatch(changeChatsList(parsedChats));
-      dispatch(changeChatsStatus("cacheLoaded"));
-    }
-  }
-
   const getChats = async () => {
     const q = query(
       collection(db, "chat_room"),
@@ -87,7 +75,7 @@ const Layout: React.FC = () => {
         where("user_2", "==", user.data?.email)
       )
     );
-    onSnapshot(q, async (querySnapshot) => {
+    onSnapshot(q, { includeMetadataChanges: true }, async (querySnapshot) => {
       let chatsList: (ChatsState['list']) = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const chatData = querySnapshot.docs[i].data();
@@ -110,15 +98,6 @@ const Layout: React.FC = () => {
     })
   }
 
-  const getGroupsFromLocalStorage = () => {
-    const groupsInLocalStorage = localStorage.getItem("chatix_groups");
-    if (groupsInLocalStorage) {
-      const parsedGroups = JSON.parse(groupsInLocalStorage);
-      dispatch(changeGroupsList(parsedGroups));
-      dispatch(changeGroupsStatus("cacheLoaded"));
-    }
-  }
-
   const getGroups = async () => {
     const q = query(
       collection(db, "group_member"),
@@ -127,7 +106,7 @@ const Layout: React.FC = () => {
         where("removedFromGroup", "==", false)
       ),
     );
-    onSnapshot(q, async (querySnapshot) => {
+    onSnapshot(q, { includeMetadataChanges: true }, async (querySnapshot) => {
       let groupsList: SidebarGroupData[] = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const groupMemberData = querySnapshot.docs[i].data() as GroupMember;
@@ -146,7 +125,6 @@ const Layout: React.FC = () => {
   }
 
   useLayoutEffect(() => {
-    dispatch(setUserDataAndProfileFromLocalStorage());
     // dispatch(changeUserStatus("loading"));
     // dispatch(changeChatsStatus("loading"));
     // dispatch(changeGroupsStatus("loading"));
@@ -169,46 +147,35 @@ const Layout: React.FC = () => {
   }, [isOnline]);
 
   useEffect(() => {
-    if (user.data?.email && user.status == "authenticated" && isOnline) {
-      getChats();
-      getGroups();
-    }
+    getChats();
+    getGroups();
   }, [user, isOnline])
 
   useEffect(() => {
-    getChatsFromLocalStorage();
-    getGroupsFromLocalStorage();
     getTheme();
   }, []);
 
-  if (!isOnline && user.status == "unauthenticated") {
+  if (!isOnline && user?.status == "unauthenticated") {
     return <OfflineModal />
-  }
-
-  if (
-    ([user.status, chatsStatus, groupsStatus].every((v) => v == "cacheLoaded" || v == "success" || v == "authenticated"))
-    || ["/login", "/create-account", "/reset-password"].includes(location.pathname)
-  ) {
-    return (
-      <>
-        <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
-          <div className="relative z-10 w-full h-full flex">
-            <ProfileModal />
-            {
-              (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
-            }
-            <Outlet />
-          </div>
-        </div>
-      </>
-    );
   }
 
   if (user.status === "unauthenticated") {
     return <Navigate to={"/login"} />
   }
 
-  return <Loading />
+  return (
+    <>
+      <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
+        <div className="relative z-10 w-full h-full flex">
+          <ProfileModal />
+          {
+            (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
+          }
+          <Outlet />
+        </div>
+      </div>
+    </>
+  );
 
 };
 
