@@ -37,6 +37,9 @@ export default function ReactionsEmojiPicker({ message }: PropTypes) {
                     }} exit={{
                         opacity: 0,
                         transform: "scale(0.9) translateX(-1rem)"
+                    }}
+                    transition={{
+                        duration: 0.2
                     }}>
                         <EmojiPicker searchDisabled={true} reactionsDefaultOpen={true}
                             allowExpandReactions={false}
