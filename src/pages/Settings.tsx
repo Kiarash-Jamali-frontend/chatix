@@ -18,7 +18,7 @@ import { changeTheme, changeToSystemDefaultTheme, ThemeType } from "../redux/sli
 export default function Settings() {
     const [pending, setPending] = useState<boolean>(false);
     const dispatch = useAppDispatch();
-    const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
+    const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const profile = useAppSelector((state: RootState) => state.user.profile);
     const [profileData, setProfileData] = useState<Profile>(profile!);
     const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -38,20 +38,22 @@ export default function Settings() {
     }
 
     const changeUserProfileHandler = () => {
-        setPending(true);
-        newPassword && oldPassword && changeUserPasswordHandler();
-        dispatch(changeUserProfile({
-            userEmail: userEmail,
-            biography: profileData.biography,
-            name: profileData.name,
-            profileImage,
-            defaultProfileUrl: profile!.photoUrl
-        }))
-            .then(() => {
-                setPending(false);
-                removeProfileImageHandler();
-                navigate("/", { unstable_viewTransition: true });
-            });
+        if (userEmail) {
+            setPending(true);
+            newPassword && oldPassword && changeUserPasswordHandler();
+            dispatch(changeUserProfile({
+                userEmail: userEmail,
+                biography: profileData.biography,
+                name: profileData.name,
+                profileImage,
+                defaultProfileUrl: profile!.photoUrl
+            }))
+                .then(() => {
+                    setPending(false);
+                    removeProfileImageHandler();
+                    navigate("/", { unstable_viewTransition: true });
+                });
+        }
     }
 
     const changeUserPasswordHandler = async () => {
