@@ -16,10 +16,6 @@ const manifestForPlugIn: Partial<VitePWAOptions> = {
       {
         urlPattern: ({ request }) => request.destination === 'image',
         handler: "CacheFirst",
-      },
-      {
-        urlPattern: ({ request }) => request.destination === 'font',
-        handler: "CacheFirst",
       }
     ]
   },
