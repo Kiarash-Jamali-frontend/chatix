@@ -68,34 +68,36 @@ const Layout: React.FC = () => {
   }, [user]);
 
   const getChats = async () => {
-    const q = query(
-      collection(db, "chat_room"),
-      or(
-        where("user_1", "==", user.data?.email),
-        where("user_2", "==", user.data?.email)
-      )
-    );
-    onSnapshot(q, { includeMetadataChanges: true }, async (querySnapshot) => {
-      let chatsList: (ChatsState['list']) = [];
-      for (let i = 0; i < querySnapshot.size; i++) {
-        const chatData = querySnapshot.docs[i].data();
-        const oppositeUserEmail =
-          user.data?.email === chatData.user_1
-            ? chatData.user_2
-            : chatData.user_1;
+    if (user.data?.email) {
+      const q = query(
+        collection(db, "chat_room"),
+        or(
+          where("user_1", "==", user.data?.email),
+          where("user_2", "==", user.data?.email)
+        )
+      );
+      onSnapshot(q, { includeMetadataChanges: true }, async (querySnapshot) => {
+        let chatsList: (ChatsState['list']) = [];
+        for (let i = 0; i < querySnapshot.size; i++) {
+          const chatData = querySnapshot.docs[i].data();
+          const oppositeUserEmail =
+            user.data?.email === chatData.user_1
+              ? chatData.user_2
+              : chatData.user_1;
 
-        const notSeenedMessagesCount = await getNotSeenedMessagesCount(oppositeUserEmail, user.data!.email);
-        const profile = await getProfile(oppositeUserEmail);
+          const notSeenedMessagesCount = await getNotSeenedMessagesCount(oppositeUserEmail, user.data!.email);
+          const profile = await getProfile(oppositeUserEmail);
 
-        chatsList = [...chatsList, {
-          ...profile!,
-          notSeenedMessages: notSeenedMessagesCount,
-          createdAt: chatData.createdAt
-        }]
-      }
-      dispatch(changeChatsList(chatsList));
-      dispatch(changeChatsStatus("success"));
-    })
+          chatsList = [...chatsList, {
+            ...profile!,
+            notSeenedMessages: notSeenedMessagesCount,
+            createdAt: chatData.createdAt
+          }]
+        }
+        dispatch(changeChatsList(chatsList));
+        dispatch(changeChatsStatus("success"));
+      })
+    }
   }
 
   const getGroups = async () => {
