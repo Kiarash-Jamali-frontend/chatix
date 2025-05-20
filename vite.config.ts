@@ -14,7 +14,7 @@ const manifestForPlugIn: Partial<VitePWAOptions> = {
     sourcemap: true,
     runtimeCaching: [
       {
-        urlPattern: ({ request }) => request.destination === 'image',
+        urlPattern: ({ request }) => (["image", "font", "audio", "font"] as RequestDestination[]).includes(request.destination),
         handler: "CacheFirst",
       }
     ]
