@@ -32,7 +32,8 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
                         {
                             profile.photoUrl ? (
                                 <img src={profile.photoUrl} alt="profile"
-                                    className="size-12 object-cover object-center rounded-full" />
+                                    className="size-12 object-cover object-center rounded-full"
+                                    crossOrigin="anonymous" />
                             ) : (
                                 <GradiantProfile name={profile.name} size="md" />
                             )

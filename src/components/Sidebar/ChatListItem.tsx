@@ -26,20 +26,22 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     const chatIsSelected = selectedChatOrGroupID === chat.email;
 
     useEffect(() => {
-        const unreadMessagesQuery = query(
-            collection(db, "chat_message"),
-            where("from", "==", chat.email),
-            where("to", "==", userEmail),
-            where("seen", "==", false)
-        );
-        const unsubscribeUnreadMessagesCount = onSnapshot(unreadMessagesQuery, { includeMetadataChanges: true }, (querySnapshot) => {
-            setUnreadMessagesCount(querySnapshot.size);
-        });
+        if (userEmail) {
+            const unreadMessagesQuery = query(
+                collection(db, "chat_message"),
+                where("from", "==", chat.email),
+                where("to", "==", userEmail),
+                where("seen", "==", false)
+            );
+            const unsubscribeUnreadMessagesCount = onSnapshot(unreadMessagesQuery, { includeMetadataChanges: true }, (querySnapshot) => {
+                setUnreadMessagesCount(querySnapshot.size);
+            });
 
-        return () => {
-            unsubscribeUnreadMessagesCount();
-        };
-    }, []);
+            return () => {
+                unsubscribeUnreadMessagesCount();
+            };
+        }
+    }, [userEmail]);
 
     useEffect(() => {
         if (userEmail) {
@@ -89,6 +91,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                             <img
                                 src={chat.photoUrl}
                                 alt={"profile"}
+                                crossOrigin="anonymous"
                                 className="size-12 border border-natural/10 min-w-12 object-cover rounded-full"
                             />
                         ) : (

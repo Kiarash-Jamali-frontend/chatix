@@ -101,6 +101,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage }: Pr
                     </div>
                     <div className="rounded-lg overflow-hidden block w-[280px] sm:w-[350px] md:w-[400px]">
                         <Player
+                            crossOrigin="anonymous"
                             src={message.content}
                             preload="auto"
                             ref={videoRef}

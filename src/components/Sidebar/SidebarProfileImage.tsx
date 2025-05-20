@@ -10,6 +10,7 @@ export default function SidebarProfileImage() {
         <img
             src={user.profile!.photoUrl}
             alt={"profile"}
+            crossOrigin="anonymous"
             className="object-cover object-center cursor-pointer size-16 block rounded-full border"
             onClick={() => {
                 dispatch(changeOpenedProfile({

@@ -21,19 +21,21 @@ export default function GroupListItem({ group, search }: { group: SidebarGroupDa
     const [notSeenedMessagesCount, setNotSeenedMessagesCount] = useState<number>(0);
 
     useEffect(() => {
-        const q = query(collection(db, "group_member"), and(
-            where("memberEmail", "==", userEmail),
-            where("groupId", "==", group.id)
-        ), limit(1))
-        const unsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
-            const data = querySnapshot.docs[0].data();
-            setNotSeenedMessagesCount(data.notSeenedMessagesCount);
-        });
+        if (userEmail) {
+            const q = query(collection(db, "group_member"), and(
+                where("memberEmail", "==", userEmail),
+                where("groupId", "==", group.id)
+            ), limit(1))
+            const unsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
+                const data = querySnapshot.docs[0].data();
+                setNotSeenedMessagesCount(data.notSeenedMessagesCount);
+            });
 
-        return () => {
-            unsub();
+            return () => {
+                unsub();
+            }
         }
-    }, [])
+    }, [userEmail])
 
     useEffect(() => {
         const lastMessageQuery = query(
@@ -75,6 +77,7 @@ export default function GroupListItem({ group, search }: { group: SidebarGroupDa
                             {group.groupPhotoUrl ? (
                                 <img
                                     src={group.groupPhotoUrl}
+                                    crossOrigin="anonymous"
                                     alt={"profile"}
                                     className="size-12 border border-natural/10 min-w-12 object-cover rounded-full"
                                 />

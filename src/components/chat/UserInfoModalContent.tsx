@@ -70,6 +70,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                         {
                             userProfile.photoUrl ? (
                                 <img
+                                    crossOrigin="anonymous"
                                     src={userProfile.photoUrl}
                                     alt={"profile"}
                                     className="size-14 object-cover rounded-full cursor-pointer border"

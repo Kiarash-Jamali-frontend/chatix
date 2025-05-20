@@ -62,6 +62,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
               {groupData.groupPhotoUrl ? (
                 <img
                   src={groupData.groupPhotoUrl}
+                  crossOrigin="anonymous"
                   alt={"profile"}
                   className="size-12 object-cover rounded-full border"
                 />

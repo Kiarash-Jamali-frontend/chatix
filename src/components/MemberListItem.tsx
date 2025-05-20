@@ -19,6 +19,7 @@ export default function MemberListItem({ member, isSelected, callbackFn }: PropT
                 {member.photoUrl ? (
                     <img
                         src={member.photoUrl}
+                        crossOrigin="anonymous"
                         alt={"profile"}
                         className="size-12 min-w-12 object-cover rounded-full"
                     />

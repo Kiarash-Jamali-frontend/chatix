@@ -114,7 +114,8 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
             <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
             <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata}
                 onPlay={() => setIsStopped(false)}
-                onPause={() => setIsStopped(true)}></audio>
+                onPause={() => setIsStopped(true)}
+                crossOrigin="anonymous"></audio>
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={({ target }) => {

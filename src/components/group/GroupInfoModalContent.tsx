@@ -88,6 +88,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                                 <img
                                     src={groupData.groupPhotoUrl}
                                     alt={"profile"}
+                                    crossOrigin="anonymous"
                                     className="size-14 object-cover rounded-full cursor-pointer border"
                                     onClick={openProfileHandler}
                                 />

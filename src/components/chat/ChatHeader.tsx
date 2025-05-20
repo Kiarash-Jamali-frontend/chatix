@@ -73,6 +73,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
               {/*Profile image*/}
               {profile.photoUrl ? (
                 <img
+                  crossOrigin="anonymous"
                   src={profile.photoUrl}
                   alt={"profile"}
                   className="size-12 object-cover rounded-full border"

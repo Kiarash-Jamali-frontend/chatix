@@ -30,7 +30,8 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage }: Pr
                 <div className="relative">
                     <div className="relative rounded-lg overflow-hidden cursor-pointer"
                         onClick={() => dispatch(changeImage({ ...message, isGroupMessage }))}>
-                        <img onLoad={scrollDown} src={message.content} className="object-cover max-w-[400px] max-h-[275px] w-full" />
+                        <img
+                            crossOrigin="anonymous" onLoad={scrollDown} src={message.content} className="object-cover max-w-[400px] max-h-[275px] w-full" />
                     </div>
                 </div>
 

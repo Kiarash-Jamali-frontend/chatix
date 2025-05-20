@@ -61,7 +61,9 @@ export default function ImageModal() {
                             </div>
                             <div className="relative px-4">
                                 <div className="relative">
-                                    <img src={openedImageMessage.content} className="rounded-xl object-contain w-full h-full max-h-[calc(100svh-12rem)] max-w-[calc(100svw-1.5rem)]" />
+                                    <img
+                                        crossOrigin="anonymous"
+                                        src={openedImageMessage.content} className="rounded-xl object-contain w-full h-full max-h-[calc(100svh-12rem)] max-w-[calc(100svw-1.5rem)]" />
                                     <div className={`bottom-3 right-3 absolute flex items-center z-50 transition-all`}>
                                         {
                                             userEmail === openedImageMessage.from && (
