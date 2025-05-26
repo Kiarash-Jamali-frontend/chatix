@@ -5,10 +5,10 @@ import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 const manifestForPlugIn: Partial<VitePWAOptions> = {
   registerType: 'prompt',
   injectManifest: {
-    maximumFileSizeToCacheInBytes: 3000000
+    maximumFileSizeToCacheInBytes: 5000000
   },
   workbox: {
-    maximumFileSizeToCacheInBytes: 3000000,
+    maximumFileSizeToCacheInBytes: 5000000,
     globPatterns: ["**/*"],
     cleanupOutdatedCaches: false,
     sourcemap: true,
