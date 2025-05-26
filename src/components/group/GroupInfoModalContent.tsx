@@ -1,5 +1,4 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AnimatePresence, motion } from "framer-motion";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import GradiantProfile from "../GradiantProfile";
@@ -69,87 +68,75 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
     }, [])
 
     return (
-        <AnimatePresence>
-            <motion.div className="w-full max-w-lg rounded-xl border bg-secondary p-6 shadow-xl"
-                variants={{
-                    hide: {
-                        opacity: 0,
-                        transform: "translateY(25px)"
-                    },
-                    open: {
-                        opacity: 1,
-                        transform: "translateY(0px)"
+        <>
+            <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                    {
+                        groupData.groupPhotoUrl ? (
+                            <img
+                                src={groupData.groupPhotoUrl}
+                                alt={"profile"}
+                                crossOrigin="anonymous"
+                                className="size-14 object-cover rounded-full cursor-pointer border"
+                                onClick={openProfileHandler}
+                            />
+                        ) : (
+                            <GradiantProfile name={groupData.groupName} />
+                        )
                     }
-                }} transition={{ duration: 0.35 }}>
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                        {
-                            groupData.groupPhotoUrl ? (
-                                <img
-                                    src={groupData.groupPhotoUrl}
-                                    alt={"profile"}
-                                    crossOrigin="anonymous"
-                                    className="size-14 object-cover rounded-full cursor-pointer border"
-                                    onClick={openProfileHandler}
-                                />
-                            ) : (
-                                <GradiantProfile name={groupData.groupName} />
-                            )
-                        }
-                        <div className="ms-3 flex flex-col">
-                            <div className="font-semibold font-Vazir mb-0.5">{groupData.groupName}</div>
-                            <div className="text-xs flex items-center text-natural/60">
-                                {
-                                    membersCount ? (
-                                        <span>
-                                            {membersCount} members
+                    <div className="ms-3 flex flex-col">
+                        <div className="font-semibold font-Vazir mb-0.5">{groupData.groupName}</div>
+                        <div className="text-xs flex items-center text-natural/60">
+                            {
+                                membersCount ? (
+                                    <span>
+                                        {membersCount} members
+                                    </span>
+                                ) : null
+                            }
+                            {
+                                onlineMembersCount ? (
+                                    <>
+                                        <span className="mx-1">|</span>
+                                        <span className="text-primary-600">
+                                            {onlineMembersCount} online
                                         </span>
-                                    ) : null
-                                }
-                                {
-                                    onlineMembersCount ? (
-                                        <>
-                                            <span className="mx-1">|</span>
-                                            <span className="text-primary-600">
-                                                {onlineMembersCount} online
-                                            </span>
-                                        </>
-                                    ) : null
-                                }
-                            </div>
+                                    </>
+                                ) : null
+                            }
                         </div>
                     </div>
-                    <button className="size-8 bg-zinc-100 border rounded-full flex items-center justify-center"
-                        onClick={() => setIsActive(false)}>
-                        <FontAwesomeIcon icon={faClose} />
-                    </button>
                 </div>
-                {
-                    modalContentType == ModalContentType.DEFAULT && (
-                        <GroupInfoModalDefaultContent
-                            setModalContentType={setModalContentType}
-                            groupData={groupData}
-                            membersProfiles={membersProfiles} />
-                    )
-                }
-                {
-                    modalContentType == ModalContentType.EDIT_GROUP && (
-                        <GroupInfoModalEditContent
-                            groupData={groupData}
-                            setModalContentType={setModalContentType}
-                        />
-                    )
-                }
-                {
-                    modalContentType == ModalContentType.ADD_MEMBER_FORM && (
-                        <AddMemberForm
-                            membersProfiles={membersProfiles}
-                            membersEmails={membersProfiles.filter((m) => !m.removedFromGroup).map((m) => m.email)}
-                            setModalContentType={setModalContentType}
-                            groupData={groupData} />
-                    )
-                }
-            </motion.div>
-        </AnimatePresence>
+                <button className="size-8 bg-zinc-100 border rounded-full flex items-center justify-center"
+                    onClick={() => setIsActive(false)}>
+                    <FontAwesomeIcon icon={faClose} />
+                </button>
+            </div>
+            {
+                modalContentType == ModalContentType.DEFAULT && (
+                    <GroupInfoModalDefaultContent
+                        setModalContentType={setModalContentType}
+                        groupData={groupData}
+                        membersProfiles={membersProfiles} />
+                )
+            }
+            {
+                modalContentType == ModalContentType.EDIT_GROUP && (
+                    <GroupInfoModalEditContent
+                        groupData={groupData}
+                        setModalContentType={setModalContentType}
+                    />
+                )
+            }
+            {
+                modalContentType == ModalContentType.ADD_MEMBER_FORM && (
+                    <AddMemberForm
+                        membersProfiles={membersProfiles}
+                        membersEmails={membersProfiles.filter((m) => !m.removedFromGroup).map((m) => m.email)}
+                        setModalContentType={setModalContentType}
+                        groupData={groupData} />
+                )
+            }
+        </>
     )
 }

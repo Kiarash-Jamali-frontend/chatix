@@ -158,7 +158,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
               transition={{ duration: 0.2 }} initial="hide" exit="hide" animate="open"
               className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50">
               <EmojiPicker open={emojiPickerIsOpen}
-                theme={theme == "dark" || systemThemeIsDark ? Theme.DARK : Theme.LIGHT}
+                theme={theme == "dark" || (!theme && systemThemeIsDark) ? Theme.DARK : Theme.LIGHT}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
                 suggestedEmojisMode={SuggestionMode.FREQUENT}
                 onEmojiClick={(e) => setMessageText((prev) =>

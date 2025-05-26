@@ -5,7 +5,7 @@ const button = cva("text-center flex items-center disabled:pointer-events-none f
         intent: {
             default: "bg-secondary text-natural border hover:bg-base",
             primary: "bg-linear-to-br from-primary-400 to-primary-600 text-white",
-            dark: "bg-natural/90 text-secbg-secondary/90 hover:bg-natural/85",
+            dark: "bg-natural/90 text-secondary/90 hover:bg-natural/85",
             primaryOutline: "bg-secondary text-primary-500 border border-primary-500 hover:bg-primary-500/5 hover:border-primary-600",
             danger: "bg-red-500 text-white hover:bg-red-600"
         },

@@ -29,9 +29,10 @@ export const getUserProfile = createAsyncThunk("user/getUserProfile", async (ema
 });
 
 export const changeUserProfile = createAsyncThunk("user/changeUserProfile", async ({ userEmail, name, biography, profileImage, defaultProfileUrl }:
-    { userEmail: string, name: string, biography: string, profileImage: File | null, defaultProfileUrl: string }) => {
+    { userEmail: string, name: string, biography: string, profileImage: File | null, defaultProfileUrl: string }, thunk) => {
     let profileUrl = defaultProfileUrl;
     if (profileImage) {
+        await thunk.dispatch(deleteProfileImage({ userEmail, profileUrl: defaultProfileUrl }));
         const profileRef = ref(storage, `profiles/${userEmail}.${getFileExt(profileImage.name)}`);
         await uploadBytes(profileRef, profileImage);
         profileUrl = await getDownloadURL(profileRef);
