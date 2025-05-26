@@ -20,7 +20,7 @@ export default function Settings() {
     const dispatch = useAppDispatch();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const profile = useAppSelector((state: RootState) => state.user.profile);
-    const [profileData, setProfileData] = useState<Profile>(profile!);
+    const [profileData, setProfileData] = useState<Profile | null>(profile);
     const [profileImage, setProfileImage] = useState<File | null>(null);
     const [oldPassword, setOldPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
@@ -38,7 +38,7 @@ export default function Settings() {
     }
 
     const changeUserProfileHandler = () => {
-        if (userEmail) {
+        if (userEmail && profileData) {
             setPending(true);
             newPassword && oldPassword && changeUserPasswordHandler();
             dispatch(changeUserProfile({
@@ -109,8 +109,8 @@ export default function Settings() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 mt-3 gap-4">
                     <div>
                         <label htmlFor="name" className="text-sm inline-block mb-1">Name</label>
-                        <input id="name" value={profileData.name}
-                            onChange={(e) => setProfileData((prev) => ({ ...prev, name: e.target.value }))}
+                        <input id="name" value={profileData?.name}
+                            onChange={(e) => setProfileData((prev) => prev ? ({ ...prev, name: e.target.value }) : null)}
                             type="text"
                             className={input()} maxLength={30} />
                     </div>
@@ -151,10 +151,10 @@ export default function Settings() {
 
                 <div className="mt-4">
                     <label htmlFor="biography" className="text-sm inline-block mb-1">Biography
-                        <span className="text-xs font-light text-natural/75 ms-1.5">{profileData.biography.length}/180</span></label>
+                        <span className="text-xs font-light text-natural/75 ms-1.5">{profileData?.biography.length}/180</span></label>
                     <textarea
-                        value={profileData.biography}
-                        onChange={(e) => setProfileData((prev) => ({ ...prev, biography: e.target.value }))}
+                        value={profileData?.biography}
+                        onChange={(e) => setProfileData((prev) => prev ? ({ ...prev, biography: e.target.value }) : null)}
                         className={input({ className: "resize-none" })}
                         maxLength={180}
                         rows={3} id="biography"></textarea>
