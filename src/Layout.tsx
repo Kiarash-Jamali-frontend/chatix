@@ -18,6 +18,7 @@ import getNotSeenedMessagesCount from "./helpers/chat/getNotSeenedMessagesCount"
 import GroupMember from "./types/GroupMember";
 import useThemeDetector from "./hooks/useThemeDetector";
 import { changeTheme } from "./redux/slices/theme";
+import publicRoutes from "./constants/publicRoutes";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -25,6 +26,7 @@ const Layout: React.FC = () => {
   const user = useAppSelector((state: RootState) => state.user);
   const { value: theme } = useAppSelector((state: RootState) => state.theme);
   const systemThemeIsDark = useThemeDetector();
+  const isPublicRoute = publicRoutes.some((v) => v == location.pathname);
 
   const isOnline = useOnlineStatus();
 
@@ -162,7 +164,7 @@ const Layout: React.FC = () => {
     return <OfflineModal />
   }
 
-  if (user.status == "unauthenticated") {
+  if (user.status == "unauthenticated" && (!isPublicRoute)) {
     return <Navigate to={"/login"} />
   }
 
@@ -172,7 +174,7 @@ const Layout: React.FC = () => {
         <div className="relative z-10 w-full h-full flex">
           <ProfileModal />
           {
-            (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
+            !isPublicRoute && <Sidebar />
           }
           <Outlet />
         </div>
