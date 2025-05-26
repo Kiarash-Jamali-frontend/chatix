@@ -166,25 +166,19 @@ const Layout: React.FC = () => {
     return <Navigate to={"/login"} />
   }
 
-  if (user.status == "authenticated") {
-    return (
-      <>
-        <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
-          <div className="relative z-10 w-full h-full flex">
-            <ProfileModal />
-            {
-              (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
-            }
-            {
-              user.profile && (
-                <Outlet />
-              )
-            }
-          </div>
+  return (
+    <>
+      <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
+        <div className="relative z-10 w-full h-full flex">
+          <ProfileModal />
+          {
+            (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
+          }
+          <Outlet />
         </div>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
 
 };
 
