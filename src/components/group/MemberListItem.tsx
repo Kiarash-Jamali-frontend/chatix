@@ -53,7 +53,7 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
                     <button
                         disabled={pending}
                         onClick={() => removeUserFromGroupHandler(profile.groupMemberDocId)}
-                        className="border rounded-lg disabled:opacity-50 size-8 cursor-pointer hover:bg-red-50 active:bg-red-100 transition-colors border-red-500 text-red-500">
+                        className="border rounded-lg disabled:opacity-50 size-8 cursor-pointer hover:bg-red-500/5 active:bg-red-500/10 transition-colors border-red-500 text-red-500">
                         <FontAwesomeIcon icon={faTrashCan} />
                     </button>
                 )
