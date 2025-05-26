@@ -174,7 +174,11 @@ const Layout: React.FC = () => {
           {
             (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
           }
-          <Outlet />
+          {
+            user.profile && (
+              <Outlet />
+            )
+          }
         </div>
       </div>
     </>
