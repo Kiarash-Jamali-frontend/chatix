@@ -162,27 +162,29 @@ const Layout: React.FC = () => {
     return <OfflineModal />
   }
 
-  if (user.status === "unauthenticated") {
+  if (user.status == "unauthenticated") {
     return <Navigate to={"/login"} />
   }
 
-  return (
-    <>
-      <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
-        <div className="relative z-10 w-full h-full flex">
-          <ProfileModal />
-          {
-            (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
-          }
-          {
-            user.profile && (
-              <Outlet />
-            )
-          }
+  if (user.status == "authenticated") {
+    return (
+      <>
+        <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
+          <div className="relative z-10 w-full h-full flex">
+            <ProfileModal />
+            {
+              (location.pathname !== "/login" && location.pathname !== "/create-account" && location.pathname !== "/reset-password") && <Sidebar />
+            }
+            {
+              user.profile && (
+                <Outlet />
+              )
+            }
+          </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 
 };
 
