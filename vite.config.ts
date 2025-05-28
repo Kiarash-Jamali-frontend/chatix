@@ -26,6 +26,18 @@ const manifestForPlugIn: Partial<VitePWAOptions> = {
         handler: "CacheFirst",
       },
       {
+        urlPattern: ({ request }) => request.destination == "audioworklet",
+        handler: "CacheFirst",
+      },
+      {
+        urlPattern: ({ request }) => request.destination == "document",
+        handler: "CacheFirst",
+      },
+      {
+        urlPattern: ({ request }) => request.destination == "track",
+        handler: "CacheFirst",
+      },
+      {
         urlPattern: ({ request }) => request.destination == "video",
         handler: "CacheFirst",
       }
