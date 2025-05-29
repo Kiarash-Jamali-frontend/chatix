@@ -62,11 +62,16 @@ const Sidebar: React.FC = () => {
         <AppUpdateMessage />
         {
           isConnecting && (
-            <div className="bg-primary-500 p-3 text-center flex items-center justify-center text-white text-sm">
-              <div className="size-4 bg-transparent border border-white rounded-full border-e-transparent animate-spin me-2">
+            <div className="bg-primary-500 py-3 px-4 text-center flex items-center justify-between text-white text-sm">
+              <div className="flex items-center">
+                <div className="size-4 bg-transparent border border-white rounded-full border-e-transparent animate-spin me-2">
 
+                </div>
+                Connecting ...
               </div>
-              Connecting ...
+              <button className={button({ size: "extraSmall" })} onClick={() => navigate(0)}>
+                Refresh
+              </button>
             </div>
           )
         }

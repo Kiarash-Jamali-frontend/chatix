@@ -10,6 +10,7 @@ const button = cva("text-center flex items-center disabled:pointer-events-none f
             danger: "bg-red-500 text-white hover:bg-red-600"
         },
         size: {
+            extraSmall:"text-xs px-2.5 py-1.5",
             small: "text-sm px-4 py-2",
             medium: "text-sm px-4 py-2.5",
             large: "py-3 text-sm"

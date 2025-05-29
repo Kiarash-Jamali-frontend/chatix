@@ -170,9 +170,9 @@ const Layout: React.FC = () => {
     }
   }, [isConnecting])
 
-  if (!isOnline && user?.status == "unauthenticated") {
-    return <OfflineModal />
-  }
+  // if (!isOnline && user?.status == "unauthenticated") {
+  //   return <OfflineModal />
+  // }
 
   if (user.status == "unauthenticated" && (!isPublicRoute)) {
     return <Navigate to={"/login"} />
