@@ -11,7 +11,6 @@ import { changeChatsList, changeChatsStatus, ChatsState } from "./redux/slices/c
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { changeGroupsList, changeGroupsStatus, SidebarGroupData } from "./redux/slices/groups";
 import useOnlineStatus from "./hooks/useOnlineStatus";
-import OfflineModal from "./components/OfflineModal";
 import ProfileModal from "./components/ProfileModal";
 import getProfile from "./helpers/usersAndProfiles/getProfile";
 import getNotSeenedMessagesCount from "./helpers/chat/getNotSeenedMessagesCount";
@@ -130,9 +129,6 @@ const Layout: React.FC = () => {
   }
 
   useLayoutEffect(() => {
-    // dispatch(changeUserStatus("loading"));
-    // dispatch(changeChatsStatus("loading"));
-    // dispatch(changeGroupsStatus("loading"));
     getGoogleSigninRedirectResult();
     const unsub = onAuthStateChanged(auth, (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));

@@ -67,6 +67,7 @@ function App() {
         <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#fff" />
         <meta name="description" content="" />
+        <meta name="keywords" content="chatix,chatix messenger" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Helmet>
       <Provider store={store}>
