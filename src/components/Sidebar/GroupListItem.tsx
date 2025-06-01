@@ -9,8 +9,9 @@ import { db } from "../../../utils/firebase";
 import { and, collection, doc, getDoc, limit, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 import { Parser } from "html-to-react";
-import GradiantProfile from "../GradiantProfile";
 import customFormatRelative from "../../helpers/customFormatRelative";
+import ProfileImage from "../common/ProfileImage";
+import ProfileImageSizes from "../../types/ProfileImageSizes";
 
 export default function GroupListItem({ group, search }: { group: SidebarGroupData, search: string }) {
     const { parse } = Parser();
@@ -74,16 +75,9 @@ export default function GroupListItem({ group, search }: { group: SidebarGroupDa
                     <div className="flex items-center w-full grow">
                         {/*Profile image*/}
                         <div className="basis-12">
-                            {group.groupPhotoUrl ? (
-                                <img
-                                    src={group.groupPhotoUrl}
-                                    crossOrigin="anonymous"
-                                    alt={"profile"}
-                                    className="size-12 border border-natural/10 min-w-12 object-cover rounded-full"
-                                />
-                            ) : (
-                                <GradiantProfile name={group.groupName} />
-                            )}
+                            <ProfileImage name={group.groupName}
+                                photoUrl={group.groupPhotoUrl}
+                                size={ProfileImageSizes.MEDIUM} />
                         </div>
                         <div className="ps-2 min-w-0 grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
                             <div className="grow min-w-0">

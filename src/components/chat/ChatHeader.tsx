@@ -20,7 +20,8 @@ import UserLastActivity from "../UserLastActivity";
 import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
 import Modal from "../Modal";
 import UserInfoModalContent from "./UserInfoModalContent";
-import GradiantProfile from "../GradiantProfile";
+import ProfileImage from "../common/ProfileImage";
+import ProfileImageSizes from "../../types/ProfileImageSizes";
 
 type PropTypes = {
   profile: Profile & { email: string };
@@ -71,16 +72,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
           <div className="flex items-center justify-between grow">
             <div className="flex items-center cursor-pointer grow" onClick={() => setUserInfoModalIsActive(true)}>
               {/*Profile image*/}
-              {profile.photoUrl ? (
-                <img
-                  crossOrigin="anonymous"
-                  src={profile.photoUrl}
-                  alt={"profile"}
-                  className="size-12 object-cover rounded-full border"
-                />
-              ) : (
-                <GradiantProfile name={profile.name} />
-              )}
+              <ProfileImage size={ProfileImageSizes.MEDIUM} name={profile.name} photoUrl={profile.photoUrl} />
               <div className="ps-2 flex flex-col">
                 <div className="font-semibold mb-0.5 font-Vazir">
                   {profile.name}

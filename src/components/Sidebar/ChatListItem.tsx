@@ -8,9 +8,10 @@ import { Parser } from "html-to-react";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { faCheck, faVideo } from "@fortawesome/free-solid-svg-icons";
-import GradiantProfile from "../GradiantProfile";
 import { ChatData } from "../../redux/slices/chats";
 import customFormatRelative from "../../helpers/customFormatRelative";
+import ProfileImage from "../common/ProfileImage";
+import ProfileImageSizes from "../../types/ProfileImageSizes";
 
 type PropTypes = {
     chat: ChatData;
@@ -87,16 +88,9 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                 <div className="flex items-center w-full grow">
                     {/*Profile image*/}
                     <div className="basis-12">
-                        {chat.photoUrl ? (
-                            <img
-                                src={chat.photoUrl}
-                                alt={"profile"}
-                                crossOrigin="anonymous"
-                                className="size-12 border border-natural/10 min-w-12 object-cover rounded-full"
-                            />
-                        ) : (
-                            <GradiantProfile name={chat.name} />
-                        )}
+                        <ProfileImage name={chat.name}
+                            photoUrl={chat.photoUrl}
+                            size={ProfileImageSizes.MEDIUM} />
                     </div>
                     <div className="ps-2 min-w-0 grow flex items-end justify-between">
                         <div className="grow min-w-0">

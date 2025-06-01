@@ -20,6 +20,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import useOnlineStatus from "../../hooks/useOnlineStatus";
 import SearchBox from "./SearchBox";
 import AppUpdateMessage from "./AppUpdateMessage";
+import ProfileImageSizes from "../../types/ProfileImageSizes";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -79,7 +80,7 @@ const Sidebar: React.FC = () => {
               )}
               {
                 user.profile?.name && !user.profile.photoUrl && (
-                  <GradiantProfile size="xl" name={user.profile?.name} />
+                  <GradiantProfile size={ProfileImageSizes.EXTRA_LARGE} name={user.profile?.name} />
                 )
               }
               <Link unstable_viewTransition

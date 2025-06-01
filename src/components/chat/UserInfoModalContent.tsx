@@ -11,8 +11,9 @@ import canBrowserShareData from "../../helpers/shareWebAPI/canBrowserShareData";
 import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
 import { RootState } from "../../redux/store";
 import { Dispatch, SetStateAction } from "react";
-import GradiantProfile from "../GradiantProfile";
 import { changeOpenedProfile } from "../../redux/slices/openedProfile";
+import ProfileImage from "../common/ProfileImage";
+import ProfileImageSizes from "../../types/ProfileImageSizes";
 
 type PropTypes = {
     userProfile: Profile & { email: string },
@@ -39,35 +40,29 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
     }
 
     const openProfileHandler = () => {
-        setIsActive(false);
-        dispatch(changeOpenedProfile({
-            data: {
-                isCurrentUserProfile: false,
-                profile: userProfile.photoUrl
-            },
-            hideCallback() {
-                setIsActive(true);
-            },
-        }))
+        if (userProfile.photoUrl) {
+            setIsActive(false);
+            dispatch(changeOpenedProfile({
+                data: {
+                    isCurrentUserProfile: false,
+                    profile: userProfile.photoUrl
+                },
+                hideCallback() {
+                    setIsActive(true);
+                },
+            }))
+        }
     }
 
     return (
         <>
             <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                    {
-                        userProfile.photoUrl ? (
-                            <img
-                                crossOrigin="anonymous"
-                                src={userProfile.photoUrl}
-                                alt={"profile"}
-                                className="size-14 object-cover rounded-full cursor-pointer border"
-                                onClick={openProfileHandler}
-                            />
-                        ) : (
-                            <GradiantProfile name={userProfile.name} />
-                        )
-                    }
+                    <div
+                        onClick={openProfileHandler}
+                    >
+                        <ProfileImage size={ProfileImageSizes.LARGE} name={userProfile.name} photoUrl={userProfile.photoUrl} />
+                    </div>
                     <div className="ms-3 flex flex-col">
                         <div className="font-semibold mb-0.5 font-Vazir">{userProfile.name}</div>
                         <UserLastActivity profile={userProfile} />

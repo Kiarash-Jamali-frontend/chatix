@@ -2,13 +2,14 @@ import { Link } from "react-router-dom";
 import { MemberProfile } from "../../pages/Group";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import GradiantProfile from "../GradiantProfile";
 import UserLastActivity from "../UserLastActivity";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
+import ProfileImage from "../common/ProfileImage";
+import ProfileImageSizes from "../../types/ProfileImageSizes";
 
 export default function MemberListItem({ profile, groupData }: { profile: MemberProfile, groupData: SidebarGroupData }) {
     const chatsList = useAppSelector((state: RootState) => state.chats.list);
@@ -29,15 +30,9 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
                 to={userEmail == profile.email ? "#" : chatIsCreated ? `/chat/${profile.email}` : `/create-chat?email=${profile.email}`}>
                 <div className="flex items-center">
                     <div className="size-12">
-                        {
-                            profile.photoUrl ? (
-                                <img src={profile.photoUrl} alt="profile"
-                                    className="size-12 object-cover object-center rounded-full"
-                                    crossOrigin="anonymous" />
-                            ) : (
-                                <GradiantProfile name={profile.name} size="md" />
-                            )
-                        }
+                        <ProfileImage name={profile.name}
+                            photoUrl={profile.photoUrl}
+                            size={ProfileImageSizes.MEDIUM} />
                     </div>
                     <div className="ps-3">
                         <div className="text-sm flex items-center font-medium font-Vazir">{profile.name} {groupData.creator == profile.email && (

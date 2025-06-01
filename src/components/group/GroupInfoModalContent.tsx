@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { SidebarGroupData } from "../../redux/slices/groups";
-import GradiantProfile from "../GradiantProfile";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import getGroupMembersCount from "../../helpers/group/getGroupMembersCount";
 import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
@@ -12,6 +11,8 @@ import GroupInfoModalDefaultContent from "./GroupInfoModalDefaultContent";
 import AddMemberForm from "./AddMemberForm";
 import { changeOpenedProfile } from "../../redux/slices/openedProfile";
 import GroupInfoModalEditContent from "./GroupInfoModalEditContent";
+import ProfileImage from "../common/ProfileImage";
+import ProfileImageSizes from "../../types/ProfileImageSizes";
 
 type PropTypes = {
     groupData: SidebarGroupData;
@@ -35,16 +36,18 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
     const [modalContentType, setModalContentType] = useState<ModalContentType>(ModalContentType.DEFAULT);
 
     const openProfileHandler = () => {
-        setIsActive(false);
-        dispatch(changeOpenedProfile({
-            data: {
-                isCurrentUserProfile: false,
-                profile: groupData.groupPhotoUrl
-            },
-            hideCallback() {
-                setIsActive(true);
-            },
-        }))
+        if (groupData.groupPhotoUrl) {
+            setIsActive(false);
+            dispatch(changeOpenedProfile({
+                data: {
+                    isCurrentUserProfile: false,
+                    profile: groupData.groupPhotoUrl
+                },
+                hideCallback() {
+                    setIsActive(true);
+                },
+            }))
+        }
     }
 
     const getOnlineMembersCount = useCallback(() => {
@@ -71,19 +74,12 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
         <>
             <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                    {
-                        groupData.groupPhotoUrl ? (
-                            <img
-                                src={groupData.groupPhotoUrl}
-                                alt={"profile"}
-                                crossOrigin="anonymous"
-                                className="size-14 object-cover rounded-full cursor-pointer border"
-                                onClick={openProfileHandler}
-                            />
-                        ) : (
-                            <GradiantProfile name={groupData.groupName} />
-                        )
-                    }
+                    <div
+                        onClick={openProfileHandler}>
+                        <ProfileImage name={groupData.groupName}
+                            photoUrl={groupData.groupPhotoUrl}
+                            size={ProfileImageSizes.LARGE} />
+                    </div>
                     <div className="ms-3 flex flex-col">
                         <div className="font-semibold font-Vazir mb-0.5">{groupData.groupName}</div>
                         <div className="text-xs flex items-center text-natural/60">
