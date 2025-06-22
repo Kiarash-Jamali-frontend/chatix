@@ -80,7 +80,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
             style={{
                 order: `-${lastMessage?.timestamp?.seconds || chat.createdAt?.seconds || 0}`
             }}>
-            <Link unstable_viewTransition
+            <Link viewTransition
                 to={`/chat/${chat.email}`}
                 className={`flex items-center justify-between ${chatIsSelected ? "bg-primary-500 hover:bg-primary-600" : "hover:bg-base/50 hover:border-natural/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors`}
                 key={chat.email}

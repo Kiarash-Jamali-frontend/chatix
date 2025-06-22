@@ -55,7 +55,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
       </Modal>
       <div className="flex items-center">
         <div className="bg-secondary shadow-xs border-b px-4 py-3 w-full flex items-center">
-          <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
+          <Link viewTransition to={"/"} className="lg:hidden me-3">
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </Link>
           <div className="flex items-center justify-between grow">

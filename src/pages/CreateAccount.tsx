@@ -40,7 +40,7 @@ const CreateAccount: React.FC = () => {
             setLoading(false);
         } else {
             createAccountHandler();
-        };
+        }
     }
 
     const createAccountHandler = async () => {

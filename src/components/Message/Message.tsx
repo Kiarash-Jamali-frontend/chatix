@@ -17,6 +17,7 @@ import { Parser } from "html-to-react";
 import Profile from "../../types/Profile";
 import GradiantProfile from "../GradiantProfile";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
+import ProfileImageSizes from "../../types/ProfileImageSizes";
 
 type PropTypes = {
   message: any;
@@ -107,13 +108,13 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
       onDoubleClick={selectMessageForReply}>
       {
         isGroupMessage && message.from != user.data?.email && senderProfile && nextMessageSender != message.from ? (
-          <Link unstable_viewTransition to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
+          <Link viewTransition to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
             className={`mt-auto me-2`}>
             {
               senderProfile?.photoUrl ? (
                 <img src={senderProfile?.photoUrl} className="size-10 object-cover rounded-full object-center" />
               ) : (
-                <GradiantProfile name={senderProfile?.name} size="sm" />
+                <GradiantProfile name={senderProfile?.name} size={ProfileImageSizes.SMALL} />
               )
             }
           </Link>

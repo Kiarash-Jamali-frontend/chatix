@@ -51,7 +51,7 @@ export default function Settings() {
                 .then(() => {
                     setPending(false);
                     removeProfileImageHandler();
-                    navigate("/", { unstable_viewTransition: true });
+                    navigate("/", { viewTransition: true });
                 });
         }
     }
@@ -98,7 +98,7 @@ export default function Settings() {
                 <ToastContainer />
                 <div className="p-8 lg:rounded-xl dark:bg-black bg-secondary dark:lg:bg-secondary lg:shadow-xs lg:border w-full lg:max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
                     <div className="flex items-center pb-[11px] border-b">
-                        <Link unstable_viewTransition to={"/"} className="lg:hidden me-3">
+                        <Link viewTransition to={"/"} className="lg:hidden me-3">
                             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
                         </Link>
                         <h2 className="font-bold text-2xl">
@@ -136,7 +136,7 @@ export default function Settings() {
                                                 <div className="text-sm mb-0.5">
                                                     {profileImage.name}
                                                 </div>
-                                                <div className="text-xs text-black/60">
+                                                <div className="text-xs text-natural/60">
                                                     {(profileImage.size / 10 ** 6).toFixed(2)} MB
                                                 </div>
                                             </div>

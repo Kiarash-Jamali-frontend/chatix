@@ -67,11 +67,11 @@ const Login: React.FC = () => {
               className={button({ intent: "primary", className: "w-full mt-4", size: "large" })} disabled={loading}>
               Login to Chatix <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
             </button>
-            <Link unstable_viewTransition to={"/create-account"} className={button({ className: "w-full mt-2", size: "large" })}>
+            <Link viewTransition to={"/create-account"} className={button({ className: "w-full mt-2", size: "large" })}>
               I don't have account
             </Link>
             <div className="flex justify-center mt-5">
-              <Link unstable_viewTransition to={"/reset-password"} className="text-sm text-natural/75 hover:underline">
+              <Link viewTransition to={"/reset-password"} className="text-sm text-natural/75 hover:underline">
                 I forgot my password
               </Link>
             </div>

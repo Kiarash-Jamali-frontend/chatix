@@ -83,14 +83,14 @@ const Sidebar: React.FC = () => {
                   <GradiantProfile size={ProfileImageSizes.EXTRA_LARGE} name={user.profile?.name} />
                 )
               }
-              <Link unstable_viewTransition
+              <Link viewTransition
                 to={"/settings"}
                 className="absolute bottom-0 right-0 bg-black/85 text-white border-white/30 border rounded-full flex items-center justify-center text-center size-[22px]"
               >
                 <FontAwesomeIcon icon={faGear} size="2xs" />
               </Link>
             </div>
-            <div className="ps-4 min-w-0">
+            <div className="px-4 min-w-0">
               {/*user name*/}
               <div className="flex items-center">
                 <span className="font-bold font-Vazir">
@@ -145,12 +145,12 @@ const Sidebar: React.FC = () => {
                   className="bg-whit border me-2 flex flex-col relative shadow-lg rounded-lg w-52 z-10 bg-secondary/75 backdrop-blur-xl"
                   onClick={() => setCreateMenuIsOpen(false)}
                 >
-                  <Link unstable_viewTransition to={"/create-chat"}
+                  <Link viewTransition to={"/create-chat"}
                     className="flex items-center w-full relative rounded-t-lg z-10 px-4 py-2 text-sm hover:bg-primary-500 hover:text-white transition-colors">
                     <FontAwesomeIcon icon={faUser} className="me-2" />
                     Create Chat
                   </Link>
-                  <Link unstable_viewTransition to={"/create-group"}
+                  <Link viewTransition to={"/create-group"}
                     className="flex items-center w-full relative rounded-b-lg z-10 px-4 py-2 text-sm hover:bg-primary-500 hover:text-white transition-colors">
                     <FontAwesomeIcon icon={faUsers} className="me-2" />
                     Create Group
