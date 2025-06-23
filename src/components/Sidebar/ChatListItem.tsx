@@ -76,7 +76,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     }, [])
 
     return (
-        <div className={`lg:px-2 mb-1 ${(!chat.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`}
+        <div className={`lg:px-2 lg:mb-1 ${(!chat.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`}
             style={{
                 order: `-${lastMessage?.timestamp?.seconds || chat.createdAt?.seconds || 0}`
             }}>
@@ -87,12 +87,12 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
             >
                 <div className="flex items-stretch w-full grow">
                     {/*Profile image*/}
-                    <div className="basis-12 py-1 lg:py-0">
+                    <div className="basis-12 py-1.5 lg:py-0">
                         <ProfileImage name={chat.name}
                             photoUrl={chat.photoUrl}
                             size={ProfileImageSizes.MEDIUM} />
                     </div>
-                    <div className="border-b py-1 lg:py-0 lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
+                    <div className="border-b py-1.5 lg:py-0 lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
                         <div className="min-w-0 grow flex items-end justify-between pe-4 lg:pe-0">
                             <div className="grow min-w-0">
                                 <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>
