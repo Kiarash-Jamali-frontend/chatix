@@ -74,17 +74,17 @@ export default function GroupListItem({ group, search }: PropTypes) {
             }}>
                 <Link viewTransition
                     to={`/group/${group.id}`}
-                    className={`ps-4 flex items-center justify-between ${groupIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 py-2 lg:py-1.5 transition-colors`}
+                    className={`ps-4 flex items-center justify-between ${groupIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 lg:py-1.5 transition-colors`}
                     key={group.id}
                 >
                     <div className="flex items-stretch w-full grow">
                         {/*Profile image*/}
-                        <div className="basis-12">
+                        <div className="basis-12 py-1 lg:py-0">
                             <ProfileImage name={group.groupName}
                                 photoUrl={group.groupPhotoUrl}
                                 size={ProfileImageSizes.MEDIUM} />
                         </div>
-                        <div className="border-b lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
+                        <div className="border-b py-1 lg:py-0 lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
                             <div className="min-w-0 grow flex items-end justify-between pe-4">
                                 <div className="grow min-w-0">
                                     <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>

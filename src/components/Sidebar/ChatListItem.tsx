@@ -76,24 +76,24 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     }, [])
 
     return (
-        <div className={`lg:px-2 lg:mb-1 ${(!chat.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`}
+        <div className={`lg:px-2 mb-1 ${(!chat.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`}
             style={{
                 order: `-${lastMessage?.timestamp?.seconds || chat.createdAt?.seconds || 0}`
             }}>
             <Link viewTransition
                 to={`/chat/${chat.email}`}
-                className={`ps-4 flex items-center justify-between ${chatIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} border-natural/10 lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 py-2 lg:py-1.5 transition-colors`}
+                className={`ps-4 flex items-center justify-between ${chatIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} border-natural/10 lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 lg:py-1.5 transition-colors`}
                 key={chat.email}
             >
                 <div className="flex items-stretch w-full grow">
                     {/*Profile image*/}
-                    <div className="basis-12">
+                    <div className="basis-12 py-1 lg:py-0">
                         <ProfileImage name={chat.name}
                             photoUrl={chat.photoUrl}
                             size={ProfileImageSizes.MEDIUM} />
                     </div>
-                    <div className="border-b lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
-                        <div className="min-w-0 grow flex items-end justify-between pe-4">
+                    <div className="border-b py-1 lg:py-0 lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
+                        <div className="min-w-0 grow flex items-end justify-between pe-4 lg:pe-0">
                             <div className="grow min-w-0">
                                 <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>
                                     {!search ? chat.name : chat.name.split("").map((letter) => {
