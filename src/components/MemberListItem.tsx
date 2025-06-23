@@ -1,4 +1,5 @@
 import Profile from "../types/Profile";
+import ProfileImageSizes from "../types/ProfileImageSizes";
 import GradiantProfile from "./GradiantProfile";
 
 type PropTypes = {
@@ -24,7 +25,7 @@ export default function MemberListItem({ member, isSelected, callbackFn }: PropT
                         className="size-12 min-w-12 object-cover rounded-full"
                     />
                 ) : (
-                    <GradiantProfile name={member.name} size="sm" />
+                    <GradiantProfile name={member.name} size={ProfileImageSizes.SMALL} />
                 )}
                 <div className="flex flex-col ms-2.5">
                     <span className="text-sm font-medium font-Vazir">{member.name}</span>
