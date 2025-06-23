@@ -64,12 +64,12 @@ export default function GroupListItem({ group, search }: { group: SidebarGroupDa
 
     return (
         <>
-            <div className={`px-2 mb-1 ${(!group.groupName.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`} style={{
+            <div className={`lg:px-2 lg:mb-1 ${(!group.groupName.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`} style={{
                 order: `-${lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0}`
             }}>
                 <Link viewTransition
                     to={`/group/${group.id}`}
-                    className={`flex items-center justify-between ${groupIsSelected ? "bg-primary-500 hover:bg-primary-600" : "hover:bg-base/50 hover:border-natural/5"} border border-transparent rounded-xl text-sm px-2 py-1.5 transition-colors`}
+                    className={`px-4 flex items-center justify-between ${groupIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} border-t lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 py-2 lg:py-1.5 transition-colors`}
                     key={group.id}
                 >
                     <div className="flex items-center w-full grow">

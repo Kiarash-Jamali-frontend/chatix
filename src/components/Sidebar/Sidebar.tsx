@@ -116,7 +116,7 @@ const Sidebar: React.FC = () => {
         <SearchBox search={search} setSearch={setSearch} />
         <div className={`flex flex-col grow overflow-auto`}>
           <div className={`grow overflow-auto`}>
-            <div className="flex flex-col pb-3 overflow-auto h-full font-Vazir">
+            <div className="flex flex-col overflow-auto h-full font-Vazir">
               {chats.map((c, index) => {
                 return <ChatListItem chat={c} key={index} search={search} />;
               })}
