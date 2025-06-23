@@ -13,7 +13,7 @@ export default function SearchBox({ search, setSearch }: PropTypes) {
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
     return (
-        <div className="mb-3">
+        <div className="lg:mb-3">
             <div className={`rounded-full py-2 px-3 flex items-center justify-between mx-4 border-2 ${isFocused ? "border-primary bg-secondary" : "bg-natural/5 hover:border-natural/15 border-natural/5"} transition-all flex items-center`}>
                 <div className="flex items-center">
                     <FontAwesomeIcon icon={faSearch} className={isFocused ? "text-primary" : "text-natural/50"} />

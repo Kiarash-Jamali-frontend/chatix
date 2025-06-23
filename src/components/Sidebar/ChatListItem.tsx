@@ -82,75 +82,77 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
             }}>
             <Link viewTransition
                 to={`/chat/${chat.email}`}
-                className={`px-4 flex items-center justify-between ${chatIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} border-t border-natural/10 lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 py-2 lg:py-1.5 transition-colors`}
+                className={`ps-4 flex items-center justify-between ${chatIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} border-natural/10 lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 py-2 lg:py-1.5 transition-colors`}
                 key={chat.email}
             >
-                <div className="flex items-center w-full grow">
+                <div className="flex items-stretch w-full grow">
                     {/*Profile image*/}
                     <div className="basis-12">
                         <ProfileImage name={chat.name}
                             photoUrl={chat.photoUrl}
                             size={ProfileImageSizes.MEDIUM} />
                     </div>
-                    <div className="ps-2 min-w-0 grow flex items-end justify-between">
-                        <div className="grow min-w-0">
-                            <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>
-                                {!search ? chat.name : chat.name.split("").map((letter) => {
-                                    return (
-                                        <span className={`${search.toLocaleLowerCase().includes(letter.toLocaleLowerCase()) ?
-                                            `font-extrabold underline underline-offset-3 
+                    <div className="border-b lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
+                        <div className="min-w-0 grow flex items-end justify-between pe-4">
+                            <div className="grow min-w-0">
+                                <div className={`${chatIsSelected && "text-white"} text-sm font-medium`}>
+                                    {!search ? chat.name : chat.name.split("").map((letter) => {
+                                        return (
+                                            <span className={`${search.toLocaleLowerCase().includes(letter.toLocaleLowerCase()) ?
+                                                `font-extrabold underline underline-offset-3 
                                          ${!chatIsSelected ? "text-primary" : ""}` : ""}`}>
-                                            {letter}
-                                        </span>
-                                    )
-                                })}
+                                                {letter}
+                                            </span>
+                                        )
+                                    })}
+                                </div>
+                                <div dir="auto" className={`text-left last-message text-xs min-w-0 w-full ${chatIsSelected ? "text-white/80" : "text-natural/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
+                                    {
+                                        lastMessage && (
+                                            lastMessage?.type !== "text" && (
+                                                <div className="flex capitalize">
+                                                    <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
+                                                        className="me-1" />
+                                                    {lastMessage?.type}
+                                                </div>
+                                            )
+                                        )
+                                    }
+                                    {
+                                        lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
+                                    }
+                                </div>
                             </div>
-                            <div dir="auto" className={`text-left last-message text-xs min-w-0 w-full ${chatIsSelected ? "text-white/80" : "text-natural/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
+                            <div className="flex flex-col">
+                                {unreadMessagesCount ? (
+                                    <div className="size-4 text-[11px] rounded-full bg-red-500 text-white text-center font-Inter flex items-center justify-center ms-auto mb-1">
+                                        {unreadMessagesCount}
+                                    </div>
+                                ) : (
+                                    ""
+                                )}
                                 {
                                     lastMessage && (
-                                        lastMessage?.type !== "text" && (
-                                            <div className="flex capitalize">
-                                                <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
-                                                    className="me-1" />
-                                                {lastMessage?.type}
+                                        <div className="flex items-center justify-between w-fit ps-2">
+                                            <div className={`${chatIsSelected ? "text-white/60" : "text-natural/60"} flex items-center`}>
+                                                <div className="text-xs text-nowrap">
+                                                    {customFormatRelative(lastMessage.timestamp)}
+                                                </div>
+                                                {
+                                                    lastMessage.from === userEmail && (
+                                                        <div className={`flex items-center ${lastMessage.seen ? "ms-2" : "ms-1"} relative`}>
+                                                            {lastMessage.seen && (
+                                                                <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[-5px] absolute" />
+                                                            )}
+                                                            <FontAwesomeIcon icon={faCheck} width={10} height={10} />
+                                                        </div>
+                                                    )
+                                                }
                                             </div>
-                                        )
+                                        </div>
                                     )
                                 }
-                                {
-                                    lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
-                                }
                             </div>
-                        </div>
-                        <div className="flex flex-col">
-                            {unreadMessagesCount ? (
-                                <div className="size-4 text-[11px] rounded-full bg-red-500 text-white text-center font-Inter flex items-center justify-center ms-auto mb-1">
-                                    {unreadMessagesCount}
-                                </div>
-                            ) : (
-                                ""
-                            )}
-                            {
-                                lastMessage && (
-                                    <div className="flex items-center justify-between w-fit ps-2">
-                                        <div className={`${chatIsSelected ? "text-white/60" : "text-natural/60"} flex items-center`}>
-                                            <div className="text-xs text-nowrap">
-                                                {customFormatRelative(lastMessage.timestamp)}
-                                            </div>
-                                            {
-                                                lastMessage.from === userEmail && (
-                                                    <div className={`flex items-center ${lastMessage.seen ? "ms-2" : "ms-1"} relative`}>
-                                                        {lastMessage.seen && (
-                                                            <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[-5px] absolute" />
-                                                        )}
-                                                        <FontAwesomeIcon icon={faCheck} width={10} height={10} />
-                                                    </div>
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                )
-                            }
                         </div>
                     </div>
                 </div>

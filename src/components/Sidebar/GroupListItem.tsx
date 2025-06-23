@@ -13,7 +13,12 @@ import customFormatRelative from "../../helpers/customFormatRelative";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 
-export default function GroupListItem({ group, search }: { group: SidebarGroupData, search: string }) {
+type PropTypes = {
+    group: SidebarGroupData;
+    search: string;
+};
+
+export default function GroupListItem({ group, search }: PropTypes) {
     const { parse } = Parser();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedChatOrGroupID = useAppSelector((state: RootState) => state.selectedChatOrGroup.id);
@@ -69,73 +74,75 @@ export default function GroupListItem({ group, search }: { group: SidebarGroupDa
             }}>
                 <Link viewTransition
                     to={`/group/${group.id}`}
-                    className={`px-4 flex items-center justify-between ${groupIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} border-t lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 py-2 lg:py-1.5 transition-colors`}
+                    className={`ps-4 flex items-center justify-between ${groupIsSelected ? "lg:bg-primary-500 lg:hover:bg-primary-600" : "lg:hover:bg-base/50 lg:hover:border-natural/5"} lg:border lg:border-transparent lg:rounded-xl text-sm lg:px-2 py-2 lg:py-1.5 transition-colors`}
                     key={group.id}
                 >
-                    <div className="flex items-center w-full grow">
+                    <div className="flex items-stretch w-full grow">
                         {/*Profile image*/}
                         <div className="basis-12">
                             <ProfileImage name={group.groupName}
                                 photoUrl={group.groupPhotoUrl}
                                 size={ProfileImageSizes.MEDIUM} />
                         </div>
-                        <div className="ps-2 min-w-0 grow flex items-end justify-between max-w-[calc(100%-2.5rem)]">
-                            <div className="grow min-w-0">
-                                <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>
-                                    <FontAwesomeIcon icon={faUsers} className="text-xs me-1" />
-                                    {!search ? group.groupName : group.groupName.split("").map((letter) => {
-                                        return (
-                                            <span className={`${search.toLocaleLowerCase().includes(letter.toLocaleLowerCase()) ?
-                                                `font-extrabold underline underline-offset-3
+                        <div className="border-b lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
+                            <div className="min-w-0 grow flex items-end justify-between pe-4">
+                                <div className="grow min-w-0">
+                                    <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>
+                                        <FontAwesomeIcon icon={faUsers} className="text-xs me-1" />
+                                        {!search ? group.groupName : group.groupName.split("").map((letter) => {
+                                            return (
+                                                <span className={`${search.toLocaleLowerCase().includes(letter.toLocaleLowerCase()) ?
+                                                    `font-extrabold underline underline-offset-3
                                               ${!groupIsSelected ? "text-primary" : ""}` : ""}`}>
-                                                {letter}
-                                            </span>
-                                        )
-                                    })}
-                                </div>
-                                <div className={`last-message text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-natural/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
-                                    {
-                                        lastMessage && (
-                                            <span className={`${groupIsSelected ? "text-white" : "text-natural"} font-medium`}>
-                                                {lastMessage?.senderProfile.email == userEmail ? "You: " : `${lastMessage?.senderProfile.name}: `}
-                                            </span>
-                                        )
-                                    }
-                                    {
-                                        lastMessage && (
-                                            lastMessage?.type !== "text" && (
-                                                <span className="capitalize">
-                                                    <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
-                                                        className="me-1" />
-                                                    {lastMessage?.type}
+                                                    {letter}
                                                 </span>
                                             )
-                                        )
-                                    }
-                                    {
-                                        lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
-                                    }
-                                </div>
-                            </div>
-                            <div className="flex flex-col">
-                                {notSeenedMessagesCount ? (
-                                    <div className="size-4 text-[11px] rounded-full bg-red-500 text-white text-center font-Inter flex items-center justify-center ms-auto mb-1">
-                                        {notSeenedMessagesCount}
+                                        })}
                                     </div>
-                                ) : (
-                                    ""
-                                )}
-                                {
-                                    lastMessage && (
-                                        <div className="flex items-center justify-between w-fit">
-                                            <div className={`${groupIsSelected ? "text-white/60" : "text-natural/60"} flex items-center`}>
-                                                <div className="text-xs text-nowrap">
-                                                    {customFormatRelative(lastMessage.timestamp)}
+                                    <div className={`last-message text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-natural/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
+                                        {
+                                            lastMessage && (
+                                                <span className={`${groupIsSelected ? "text-white" : "text-natural"} font-medium`}>
+                                                    {lastMessage?.senderProfile.email == userEmail ? "You: " : `${lastMessage?.senderProfile.name}: `}
+                                                </span>
+                                            )
+                                        }
+                                        {
+                                            lastMessage && (
+                                                lastMessage?.type !== "text" && (
+                                                    <span className="capitalize">
+                                                        <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
+                                                            className="me-1" />
+                                                        {lastMessage?.type}
+                                                    </span>
+                                                )
+                                            )
+                                        }
+                                        {
+                                            lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
+                                        }
+                                    </div>
+                                </div>
+                                <div className="flex flex-col">
+                                    {notSeenedMessagesCount ? (
+                                        <div className="size-4 text-[11px] rounded-full bg-red-500 text-white text-center font-Inter flex items-center justify-center ms-auto mb-1">
+                                            {notSeenedMessagesCount}
+                                        </div>
+                                    ) : (
+                                        ""
+                                    )}
+                                    {
+                                        lastMessage && (
+                                            <div className="flex items-center justify-between w-fit">
+                                                <div className={`${groupIsSelected ? "text-white/60" : "text-natural/60"} flex items-center`}>
+                                                    <div className="text-xs text-nowrap">
+                                                        {customFormatRelative(lastMessage.timestamp)}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )
-                                }
+                                        )
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
