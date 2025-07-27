@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
 import { auth, db } from "../utils/firebase";
 import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
-import { and, collection, disableNetwork, doc, enableNetwork, getDoc, onSnapshot, or, query, runTransaction, setDoc, Timestamp, where } from "firebase/firestore";
+import { and, collection, doc, getDoc, onSnapshot, or, query, runTransaction, setDoc, Timestamp, where } from "firebase/firestore";
 import { changeChatsList, changeChatsStatus, ChatsState } from "./redux/slices/chats";
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { changeGroupsList, changeGroupsStatus, SidebarGroupData } from "./redux/slices/groups";
@@ -26,10 +26,7 @@ const Layout: React.FC = () => {
   const { value: theme } = useAppSelector((state: RootState) => state.theme);
   const systemThemeIsDark = useThemeDetector();
   const isPublicRoute = publicRoutes.some((v) => v == location.pathname);
-  const { status: chatsStatus } = useAppSelector((state: RootState) => state.chats);
-  const { status: groupsStatus } = useAppSelector((state: RootState) => state.groups);
   const isOnline = useOnlineStatus();
-  const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "loading") || !isOnline);
 
   const updateLastActivity = async () => {
     const newDate = Timestamp.now();
@@ -71,7 +68,6 @@ const Layout: React.FC = () => {
   }, [user]);
 
   const getChats = async () => {
-
     const q = query(
       collection(db, "chat_room"),
       or(
@@ -157,14 +153,6 @@ const Layout: React.FC = () => {
   useEffect(() => {
     getTheme();
   }, []);
-
-  useEffect(() => {
-    if (isConnecting) {
-      disableNetwork(db);
-    } else {
-      enableNetwork(db);
-    }
-  }, [isConnecting])
 
   // if (!isOnline && user?.status == "unauthenticated") {
   //   return <OfflineModal />
