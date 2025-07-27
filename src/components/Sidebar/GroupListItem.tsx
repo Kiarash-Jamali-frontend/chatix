@@ -85,7 +85,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
                                 size={ProfileImageSizes.MEDIUM} />
                         </div>
                         <div className="border-b py-2 lg:py-0 lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
-                            <div className="min-w-0 grow flex items-end justify-between pe-4">
+                            <div className="min-w-0 grow flex items-end justify-between pe-4 lg:pe-0">
                                 <div className="grow min-w-0">
                                     <div className={`${groupIsSelected && "text-white"} text-sm font-medium`}>
                                         <FontAwesomeIcon icon={faUsers} className="text-xs me-1" />
