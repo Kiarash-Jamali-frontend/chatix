@@ -41,7 +41,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
                 unsub();
             }
         }
-    }, [userEmail])
+    }, [userEmail, group.id])
 
     useEffect(() => {
         const lastMessageQuery = query(
@@ -65,7 +65,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
         return () => {
             unsubscribeLastMessage();
         }
-    }, [])
+    }, [group.id])
 
     return (
         <>

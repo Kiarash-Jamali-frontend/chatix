@@ -18,6 +18,7 @@ import GroupMember from "./types/GroupMember";
 import useThemeDetector from "./hooks/useThemeDetector";
 import { changeTheme } from "./redux/slices/theme";
 import publicRoutes from "./constants/publicRoutes";
+import { Unsubscribe } from "firebase/firestore";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -98,7 +99,9 @@ const Layout: React.FC = () => {
     })
   }
 
-  const getGroups = async () => {
+  const getGroups = () => {
+    let groupUnsubs: Unsubscribe[] = [];
+
     const q = query(
       collection(db, "group_member"),
       and(
@@ -106,18 +109,41 @@ const Layout: React.FC = () => {
         where("removedFromGroup", "==", false)
       ),
     );
-    onSnapshot(q, { includeMetadataChanges: true }, async (querySnapshot) => {
+
+    const groupMemberUnsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
       let groupsList: SidebarGroupData[] = [];
-      for (let i = 0; i < querySnapshot.size; i++) {
-        const groupMemberData = querySnapshot.docs[i].data() as GroupMember;
-        const groupDocRef = doc(db, "group", groupMemberData.groupId);
-        const groupData = (await getDoc(groupDocRef)).data() as SidebarGroupData;
-        groupsList = [...groupsList, { ...groupData, id: querySnapshot.docs[i].data().groupId }]
-      }
-      dispatch(changeGroupsList(groupsList));
-      dispatch(changeGroupsStatus("success"));
-    })
-  }
+      let groupIds: string[] = [];
+
+      groupUnsubs.forEach(unsub => unsub());
+      groupUnsubs = [];
+
+      querySnapshot.forEach((docSnap) => {
+        const groupMemberData = docSnap.data() as GroupMember;
+        groupIds.push(groupMemberData.groupId);
+      });
+
+      groupIds.forEach((groupId) => {
+        const groupDocRef = doc(db, "group", groupId);
+        const unsub = onSnapshot(groupDocRef, (groupDoc) => {
+          if (groupDoc.exists()) {
+            const groupData = groupDoc.data() as SidebarGroupData;
+            groupsList = [
+              ...groupsList.filter(g => g.id !== groupId),
+              { ...groupData, id: groupId }
+            ];
+            dispatch(changeGroupsList([...groupsList]));
+            dispatch(changeGroupsStatus("success"));
+          }
+        });
+        groupUnsubs.push(unsub);
+      });
+    });
+
+    return () => {
+      groupMemberUnsub();
+      groupUnsubs.forEach(unsub => unsub());
+    };
+  };
 
   const getTheme = () => {
     const themeInLocalStorage = localStorage.getItem("chatix_theme") as "dark" | "light" | null;
@@ -146,9 +172,12 @@ const Layout: React.FC = () => {
   useEffect(() => {
     if (user.data?.email) {
       getChats();
-      getGroups();
+      const cleanupGroups = getGroups();
+      return () => {
+        cleanupGroups && cleanupGroups();
+      };
     }
-  }, [user, isOnline])
+  }, [user, isOnline]);
 
   useEffect(() => {
     getTheme();
