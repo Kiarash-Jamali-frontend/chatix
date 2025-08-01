@@ -93,7 +93,7 @@ export default function Settings() {
     const changeToDefaultThemeHandler = () => dispatch(changeToSystemDefaultTheme());
     const changeThemeHandler = (theme: Exclude<ThemeType['value'], undefined>) => dispatch(changeTheme(theme));
 
-    if (profileData) {
+    if (profile) {
         return (
             <>
                 <ToastContainer />
