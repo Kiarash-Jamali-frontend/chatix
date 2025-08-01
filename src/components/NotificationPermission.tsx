@@ -61,7 +61,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
     setIsLoading(true);
     try {
       const result = await requestPermission();
-      if (result === 'granted') {
+      if (result != false) {
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 3000);
         
