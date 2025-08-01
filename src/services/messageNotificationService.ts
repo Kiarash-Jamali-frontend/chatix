@@ -1,8 +1,8 @@
 import { 
   getOneSignalUserIdFromFirebase, 
   storeMessageNotification, 
-  createNotificationPayload,
-  getNotificationSettings 
+  getNotificationSettings,
+  sendMessageNotificationViaBackend
 } from './notificationService';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
@@ -95,20 +95,23 @@ export const handleNewMessageNotification = async (
       groupId: isGroupMessage ? groupId : undefined
     });
 
-    // Create OneSignal payload
-    const payload = createNotificationPayload(
+    // Send notification using the backend service
+    const notificationResult = await sendMessageNotificationViaBackend(
       oneSignalUserId,
-      title,
-      message,
-      notificationData
+      senderName,
+      messageData.type,
+      messageData.content || '',
+      isGroupMessage,
+      isGroupMessage && groupId ? (await getDoc(doc(db, 'group', groupId))).data()?.groupName : undefined,
+      isGroupMessage ? undefined : messageData.from,
+      isGroupMessage ? groupId : undefined
     );
 
-    // Send notification (this would be handled by your backend)
-    console.log('Sending notification payload:', payload);
-    
-    // In a real implementation, you would make an API call to your backend
-    // which would then use OneSignal's REST API to send the notification
-    // await sendOneSignalNotification(payload);
+    if (notificationResult.success) {
+      console.log('Notification sent successfully:', notificationResult);
+    } else {
+      console.error('Failed to send notification:', notificationResult.error);
+    }
 
     return true;
   } catch (error) {

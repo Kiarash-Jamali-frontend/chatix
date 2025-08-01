@@ -200,4 +200,82 @@ export const sendOneSignalNotification = async (payload: any) => {
     console.error('Failed to send OneSignal notification:', error);
     return { success: false, error };
   }
+};
+
+// Send notification using notification-service.js backend
+export const sendNotificationViaBackend = async (
+  recipientId: string,
+  title: string,
+  message: string,
+  data: any = {}
+) => {
+  try {
+    const backendUrl = process.env.REACT_APP_NOTIFICATION_SERVICE_URL || 'http://localhost:3001';
+    
+    const response = await fetch(`${backendUrl}/api/notifications/send`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        recipientId,
+        title,
+        message,
+        data
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Failed to send notification via backend:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+};
+
+// Send message notification using the specialized message endpoint
+export const sendMessageNotificationViaBackend = async (
+  recipientId: string,
+  senderName: string,
+  messageType: string,
+  messageContent: string,
+  isGroupMessage: boolean = false,
+  groupName?: string,
+  chatId?: string,
+  groupId?: string
+) => {
+  try {
+    const backendUrl = process.env.VITE_NOTIFICATION_SERVICE_URL || 'http://localhost:3001';
+    
+    const response = await fetch(`${backendUrl}/api/notifications/message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        recipientId,
+        senderName,
+        messageType,
+        messageContent,
+        isGroupMessage,
+        groupName,
+        chatId,
+        groupId
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Failed to send message notification via backend:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
 }; 
