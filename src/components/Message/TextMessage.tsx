@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { RootState } from "../../redux/store";
 import { Parser } from "html-to-react";
 import DeleteTextFileAudioMessageButton from "./DeleteTextFileAudioMessageButton";
@@ -8,15 +8,52 @@ import MessagePropTypes from "../../types/MessagePropTypes";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import urlify from "../../helpers/urlify";
+import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
+import { useEncryption } from "../../hooks/useEncryption";
 
 const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, replayMessage }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
   const dispatch = useAppDispatch();
+  const { getChatSecret } = useEncryption();
+
+  const [decryptedContent, setDecryptedContent] = useState<string>("");
+  const [isDecrypting, setIsDecrypting] = useState<boolean>(false);
 
   const messageIsSelected = selectedMessage?.id === message.id;
   const messageIsForCurrentUser = userEmail === message.from;
+
+  // Handle decryption of encrypted messages
+  useEffect(() => {
+    const handleDecryption = async () => {
+      if (isEncryptedMessage(message) && !isGroupMessage) {
+        setIsDecrypting(true);
+        try {
+          const chatSecret = getChatSecret(message.from, message.to);
+          const decrypted = await decryptMessage(
+            {
+              encryptedContent: message.encryptedContent,
+              iv: message.iv,
+              salt: message.salt
+            },
+            chatSecret
+          );
+          setDecryptedContent(decrypted);
+        } catch (error) {
+          console.error('Failed to decrypt message:', error);
+          setDecryptedContent('[Encrypted Message - Unable to decrypt]');
+        } finally {
+          setIsDecrypting(false);
+        }
+      } else {
+        // For non-encrypted messages or group messages, use original content
+        setDecryptedContent(message.content || '');
+      }
+    };
+
+    handleDecryption();
+  }, [message, isGroupMessage, getChatSecret]);
 
   return (
     <div className="flex">
@@ -34,9 +71,13 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, repl
           } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-s-none!" : ""}
              w-fit grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative`}
       >
-        <p className="max-w-[400px] break-all message-text" dir="auto">
-          {parse(urlify(message.content))}
-        </p>
+                 <div className="max-w-[400px] break-all message-text" dir="auto">
+           {isDecrypting ? (
+             <span className="text-gray-500 italic">Loading...</span>
+           ) : (
+             parse(urlify(decryptedContent))
+           )}
+         </div>
         <div className="mt-1 flex justify-end">
           <MessageTime message={message} />
           {message.from === userEmail && !isGroupMessage && (

@@ -14,6 +14,7 @@ import CreateGroup from "./pages/CreateGroup";
 import Group from "./pages/Group";
 import "/node_modules/video-react/dist/video-react.css";
 import Settings from "./pages/Settings";
+import { useOneSignal } from "./hooks/useOneSignal";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,9 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  // Initialize OneSignal
+  useOneSignal();
+
   return (
     <div className="min-h-svh select-none overflow-hidden">
       <Helmet>

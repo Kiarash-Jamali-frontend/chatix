@@ -67,25 +67,25 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
                 <div className="font-semibold mb-0.5 font-Vazir">
                   {groupData.groupName}
                 </div>
-                <div className="text-xs flex items-center text-natural/60">
-                  {
-                    membersCount ? (
-                      <span>
-                        {membersCount} members
-                      </span>
-                    ) : null
-                  }
-                  {
-                    onlineMembersCount ? (
-                      <>
-                        <span className="mx-1">|</span>
-                        <span className="text-primary-600">
-                          {onlineMembersCount} online
-                        </span>
-                      </>
-                    ) : null
-                  }
-                </div>
+                                 <div className="text-xs flex items-center text-natural/60">
+                   {
+                     membersCount ? (
+                       <span>
+                         {membersCount} members
+                       </span>
+                     ) : null
+                   }
+                   {
+                     onlineMembersCount ? (
+                       <>
+                         <span className="mx-1">|</span>
+                         <span className="text-primary-600">
+                           {onlineMembersCount} online
+                         </span>
+                       </>
+                     ) : null
+                   }
+                 </div>
               </div>
             </div>
           </div>

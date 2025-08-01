@@ -12,6 +12,8 @@ import { ChatData } from "../../redux/slices/chats";
 import customFormatRelative from "../../helpers/customFormatRelative";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
+import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
+import { useEncryption } from "../../hooks/useEncryption";
 
 type PropTypes = {
     chat: ChatData;
@@ -24,7 +26,9 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email)
     const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(chat.notSeenedMessages);
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
+    const [decryptedLastMessage, setDecryptedLastMessage] = useState<string>("");
     const chatIsSelected = selectedChatOrGroupID === chat.email;
+    const { getChatSecret } = useEncryption();
 
     useEffect(() => {
         if (userEmail) {
@@ -75,6 +79,35 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
         }
     }, [])
 
+    // Handle decryption of last message for preview
+    useEffect(() => {
+        const handleDecryption = async () => {
+            if (lastMessage && isEncryptedMessage(lastMessage) && lastMessage.type === "text") {
+                try {
+                    const chatSecret = getChatSecret(lastMessage.from, lastMessage.to);
+                    const decrypted = await decryptMessage(
+                        {
+                            encryptedContent: lastMessage.encryptedContent,
+                            iv: lastMessage.iv,
+                            salt: lastMessage.salt
+                        },
+                        chatSecret
+                    );
+                    setDecryptedLastMessage(decrypted);
+                } catch (error) {
+                    console.error('Failed to decrypt last message:', error);
+                    setDecryptedLastMessage('[Message]');
+                }
+            } else if (lastMessage?.type === "text") {
+                setDecryptedLastMessage(lastMessage.content || '');
+            } else {
+                setDecryptedLastMessage('');
+            }
+        };
+
+        handleDecryption();
+    }, [lastMessage, getChatSecret]);
+
     return (
         <div className={`lg:px-2 lg:mb-1 ${(!chat.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`}
             style={{
@@ -119,7 +152,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                                         )
                                     }
                                     {
-                                        lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
+                                        lastMessage?.type === "text" && parse(decryptedLastMessage?.split("<br>").join(" "))
                                     }
                                 </div>
                             </div>

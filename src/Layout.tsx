@@ -19,6 +19,7 @@ import useThemeDetector from "./hooks/useThemeDetector";
 import { changeTheme } from "./redux/slices/theme";
 import publicRoutes from "./constants/publicRoutes";
 import { Unsubscribe } from "firebase/firestore";
+import NotificationBanner from "./components/NotificationBanner";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -99,6 +100,7 @@ const Layout: React.FC = () => {
       }
       dispatch(changeChatsList(chatsList));
       dispatch(changeChatsStatus("success"));
+      localStorage.setItem("chatix_has_cache_data", "true");
     })
   }
 
@@ -136,6 +138,7 @@ const Layout: React.FC = () => {
             ];
             dispatch(changeGroupsList([...groupsList]));
             dispatch(changeGroupsStatus("success"));
+            localStorage.setItem("chatix_has_cache_data", "true");
           }
         });
         groupUnsubs.push(unsub);
@@ -161,6 +164,7 @@ const Layout: React.FC = () => {
         dispatch(changeUserStatus("unauthenticated"));
         dispatch(changeChatsStatus("userUnauthenticated"));
         dispatch(changeGroupsStatus("userUnauthenticated"));
+        localStorage.removeItem("chatix_has_cache_data");
       }
       user && dispatch(getUserProfile(user.email!)).then(() => {
         dispatch(changeUserStatus("authenticated"));
@@ -176,9 +180,6 @@ const Layout: React.FC = () => {
     if (user.data?.email) {
       getChats();
       const cleanupGroups = getGroups();
-      if (!localStorage.getItem("chatix_has_cache_data")) {
-        localStorage.setItem("chatix_has_cache_data", "true");
-      }
       return () => {
         cleanupGroups && cleanupGroups();
       };
@@ -208,6 +209,7 @@ const Layout: React.FC = () => {
 
   return (
     <>
+      <NotificationBanner />
       <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
         <div className="relative z-10 w-full h-full flex">
           <ProfileModal />

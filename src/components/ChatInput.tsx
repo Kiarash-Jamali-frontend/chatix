@@ -16,6 +16,9 @@ import { changeMessageSelectedForReply } from "../redux/slices/messageSelectedFo
 import { Parser } from "html-to-react";
 import { MemberProfile } from "../pages/Group";
 import useThemeDetector from "../hooks/useThemeDetector";
+import { encryptMessage } from "../utils/crypto";
+import { useEncryption } from "../hooks/useEncryption";
+import { handlePrivateMessageNotification, handleGroupMessageNotification } from "../services/messageNotificationService";
 
 type PropTypes = {
   mode: "group" | "private";
@@ -32,6 +35,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const theme = useAppSelector((state: RootState) => state.theme.value);
   const systemThemeIsDark = useThemeDetector();
   const dispatch = useAppDispatch();
+  const { getChatSecret } = useEncryption();
 
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
@@ -51,16 +55,69 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     setTextMessagePending(true);
     removeMessageSelectedForRelpy();
     setMessageText("");
-    await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), {
-      content: messageText.trim(),
-      from: userEmail,
-      seen: false,
-      timestamp: Timestamp.now(),
-      to: messageTo,
-      type: "text",
-      replyTo: messageSelectedForReply?.id || null
-    });
-    setNewNotSeenedMessageForAllGroupMembers();
+    
+    try {
+      let messageData: any = {
+        from: userEmail,
+        seen: false,
+        timestamp: Timestamp.now(),
+        to: messageTo,
+        type: "text",
+        replyTo: messageSelectedForReply?.id || null
+      };
+
+      if (isPrivateChat) {
+        // Encrypt text messages for private chats
+        const chatSecret = getChatSecret(userEmail, oppositeProfile.email);
+        const encryptedData = await encryptMessage(messageText.trim(), chatSecret);
+        messageData = {
+          ...messageData,
+          ...encryptedData,
+          isEncrypted: true
+        };
+      } else {
+        // For group messages, keep as plain text for now
+        messageData.content = messageText.trim();
+      }
+
+                   const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), messageData);
+             
+             // Trigger notification for new message
+             if (isPrivateChat) {
+               await handlePrivateMessageNotification({
+                 id: docRef.id,
+                 from: messageData.from,
+                 to: messageData.to,
+                 type: messageData.type,
+                 content: messageData.content,
+                 timestamp: messageData.timestamp.toDate()
+               });
+             } else if (groupId) {
+               await handleGroupMessageNotification({
+                 id: docRef.id,
+                 from: messageData.from,
+                 to: messageData.to,
+                 type: messageData.type,
+                 content: messageData.content,
+                 timestamp: messageData.timestamp.toDate()
+               }, groupId);
+             }
+             
+             setNewNotSeenedMessageForAllGroupMembers();
+    } catch (error) {
+      console.error('Failed to send encrypted message:', error);
+      // Fallback to plain text if encryption fails
+      await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), {
+        content: messageText.trim(),
+        from: userEmail,
+        seen: false,
+        timestamp: Timestamp.now(),
+        to: messageTo,
+        type: "text",
+        replyTo: messageSelectedForReply?.id || null
+      });
+    }
+    
     setTextMessagePending(false);
   };
 
@@ -100,8 +157,30 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           data.fileName = file.name;
           data.fileSize = file.size;
         }
-        await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
-        i++;
+                 const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
+         
+         // Trigger notification for file message
+         if (isPrivateChat) {
+           await handlePrivateMessageNotification({
+             id: docRef.id,
+             from: data.from,
+             to: data.to,
+             type: data.type,
+             content: data.content,
+             timestamp: data.timestamp.toDate()
+           });
+         } else if (groupId) {
+           await handleGroupMessageNotification({
+             id: docRef.id,
+             from: data.from,
+             to: data.to,
+             type: data.type,
+             content: data.content,
+             timestamp: data.timestamp.toDate()
+           }, groupId);
+         }
+         
+         i++;
       }
     }
     setNewNotSeenedMessageForAllGroupMembers();

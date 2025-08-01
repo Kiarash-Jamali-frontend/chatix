@@ -14,6 +14,7 @@ import toastConf from "../../utils/toastConfig";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, validatePassword } from "firebase/auth";
 import { auth } from "../../utils/firebase";
 import { changeTheme, changeToSystemDefaultTheme, ThemeType } from "../redux/slices/theme";
+import NotificationPermission from "../components/NotificationPermission";
 
 export default function Settings() {
     const [pending, setPending] = useState<boolean>(false);
@@ -181,6 +182,11 @@ export default function Settings() {
                                 Dark
                             </button>
                         </div>
+                    </div>
+
+                    <div className="border-t pt-4 mt-6">
+                        <div className="text-sm mb-2">Notifications</div>
+                        <NotificationPermission showSettings={true} />
                     </div>
 
                     <div className="pt-4 mt-4 border-t">

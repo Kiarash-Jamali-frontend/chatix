@@ -21,6 +21,7 @@ import useOnlineStatus from "../../hooks/useOnlineStatus";
 import SearchBox from "./SearchBox";
 import AppUpdateMessage from "./AppUpdateMessage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
+import { useEncryption } from "../../hooks/useEncryption";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -32,12 +33,15 @@ const Sidebar: React.FC = () => {
   const { list: chats, status: chatsStatus } = useAppSelector((state: RootState) => state.chats);
   const { list: groups, status: groupsStatus } = useAppSelector((state: RootState) => state.groups);
   const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "loading") || !isOnline);
+  const { clearAllSecrets } = useEncryption();
 
   const location = useLocation();
   const navigate = useNavigate();
 
   const signoutFromChatix = async () => {
     setLogoutPending(true);
+    // Clear encryption keys before logout
+    clearAllSecrets();
     signOut(auth).then(() => {
       setLogoutPending(false);
       navigate("/login");
