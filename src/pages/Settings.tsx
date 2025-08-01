@@ -101,7 +101,7 @@ export default function Settings() {
         return (
             <>
                 <ToastContainer />
-                <div className="p-8 lg:rounded-xl dark:bg-black bg-secondary dark:lg:bg-secondary lg:shadow-xs lg:border w-full lg:max-w-2xl m-auto h-fit max-lg:h-full max-lg:min-h-svh flex flex-col">
+                <div className="p-6 lg:p-8 lg:max-h-[600px] overflow-auto lg:rounded-xl dark:bg-black bg-secondary dark:lg:bg-secondary lg:shadow-xs lg:border w-full lg:max-w-2xl m-auto max-lg:h-full max-lg:min-h-svh flex flex-col">
                     <div className="flex items-center pb-[11px] border-b">
                         <Link viewTransition to={"/"} className="lg:hidden me-3">
                             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
@@ -112,7 +112,7 @@ export default function Settings() {
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 mt-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 mt-3 gap-4">
                         <div>
                             <label htmlFor="name" className="text-sm inline-block mb-1">Name</label>
                             <input id="name" value={profileData.name}
@@ -188,10 +188,7 @@ export default function Settings() {
                         </div>
                     </div>
 
-                    <div className="border-t pt-4 mt-6">
-                        <div className="text-sm mb-2">Notifications</div>
-                        <NotificationPermission showSettings={true} />
-                    </div>
+                    <NotificationPermission />
 
                     <div className="pt-4 mt-4 border-t">
                         <label htmlFor="oldPassword" className="text-sm inline-block mb-1">Old password</label>
@@ -201,7 +198,7 @@ export default function Settings() {
                             className={input()} />
                     </div>
 
-                    <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="newPassword" className="text-sm inline-block mb-1">New password</label>
                             <input id="newPassword" value={newPassword}

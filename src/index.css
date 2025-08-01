@@ -75,16 +75,33 @@ layer(base);
   scrollbar-width: none;
 }
 
-.scrollbar::-webkit-scrollbar {
-  width: 5px;
-  border-radius: 10px;
-  background:#e0e0e0;
+/* Global minimal scrollbar for all elements */
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
-.scrollbar::-webkit-scrollbar-thumb {
-  width: 5px;
-  border-radius: 10px;
-  background: #c9c9c9;
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-zinc-300);
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-zinc-700);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Hide scrollbar buttons (arrows) */
+*::-webkit-scrollbar-button {
+  display: none;
 }
 
 .message-text a {

@@ -12,8 +12,7 @@ import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { changeGroupsList, changeGroupsStatus, SidebarGroupData } from "./redux/slices/groups";
 import useOnlineStatus from "./hooks/useOnlineStatus";
 import ProfileModal from "./components/ProfileModal";
-import getProfile from "./helpers/usersAndProfiles/getProfile";
-import getNotSeenedMessagesCount from "./helpers/chat/getNotSeenedMessagesCount";
+
 import GroupMember from "./types/GroupMember";
 import useThemeDetector from "./hooks/useThemeDetector";
 import { changeTheme } from "./redux/slices/theme";
@@ -72,7 +71,10 @@ const Layout: React.FC = () => {
     }
   }, [user]);
 
-  const getChats = async () => {
+  const getChats = () => {
+    let profileUnsubs: Unsubscribe[] = [];
+    let messageCountUnsubs: Unsubscribe[] = [];
+
     const q = query(
       collection(db, "chat_room"),
       or(
@@ -80,31 +82,95 @@ const Layout: React.FC = () => {
         where("user_2", "==", user.data?.email)
       )
     );
-    onSnapshot(q, { includeMetadataChanges: true }, async (querySnapshot) => {
+
+    const chatUnsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
+      // Clean up previous subscriptions
+      profileUnsubs.forEach(unsub => unsub());
+      messageCountUnsubs.forEach(unsub => unsub());
+      profileUnsubs = [];
+      messageCountUnsubs = [];
+
       if (!querySnapshot.size) {
         dispatch(changeChatsStatus("success"));
+        return;
       }
+
       let chatsList: (ChatsState['list']) = [];
-      for (let i = 0; i < querySnapshot.size; i++) {
-        const chatData = querySnapshot.docs[i].data();
+      const oppositeUserEmails: string[] = [];
+
+      // Extract opposite user emails from chat rooms
+      querySnapshot.forEach((docSnap) => {
+        const chatData = docSnap.data();
         const oppositeUserEmail =
           user.data?.email === chatData.user_1
             ? chatData.user_2
             : chatData.user_1;
+        
+        oppositeUserEmails.push(oppositeUserEmail);
+      });
 
-        const notSeenedMessagesCount = await getNotSeenedMessagesCount(oppositeUserEmail, user.data!.email);
-        const profile = await getProfile(oppositeUserEmail);
+      // Set up profile listeners for each opposite user
+      oppositeUserEmails.forEach((oppositeUserEmail) => {
+        const profileDocRef = doc(db, "profile", oppositeUserEmail);
+        const profileUnsub = onSnapshot(profileDocRef, (profileDoc) => {
+          if (profileDoc.exists()) {
+            const profile = profileDoc.data();
+            
+                         // Set up message count listener for this user
+             const messageCountUnsub = onSnapshot(
+               query(
+                 collection(db, "message"),
+                 and(
+                   where("senderEmail", "==", oppositeUserEmail),
+                   where("receiverEmail", "==", user.data?.email),
+                   where("seen", "==", false)
+                 )
+               ),
+               (messageSnapshot) => {
+                 const notSeenedMessagesCount = messageSnapshot.size;
+                 
+                 // Find the chat data for this user
+                 const chatDoc = querySnapshot.docs.find(doc => {
+                   const chatData = doc.data();
+                   return (user.data?.email === chatData.user_1 && oppositeUserEmail === chatData.user_2) ||
+                          (user.data?.email === chatData.user_2 && oppositeUserEmail === chatData.user_1);
+                 });
 
-        chatsList = [...chatsList, {
-          ...profile!,
-          notSeenedMessages: notSeenedMessagesCount,
-          createdAt: chatData.createdAt
-        }]
-      }
-      dispatch(changeChatsList(chatsList));
-      dispatch(changeChatsStatus("success"));
-      localStorage.setItem("chatix_has_cache_data", "true");
-    })
+                 if (chatDoc) {
+                   const chatData = chatDoc.data();
+                   
+                   // Update chats list with real-time data
+                   chatsList = [
+                     ...chatsList.filter(chat => chat.email !== oppositeUserEmail),
+                     {
+                       name: profile.name || "",
+                       photoUrl: profile.photoUrl || "",
+                       lastActivity: profile.lastActivity,
+                       biography: profile.biography || "",
+                       email: oppositeUserEmail,
+                       notSeenedMessages: notSeenedMessagesCount,
+                       createdAt: chatData.createdAt
+                     }
+                   ];
+                   
+                   dispatch(changeChatsList([...chatsList]));
+                   dispatch(changeChatsStatus("success"));
+                   localStorage.setItem("chatix_has_cache_data", "true");
+                 }
+               }
+             );
+            messageCountUnsubs.push(messageCountUnsub);
+          }
+        });
+        profileUnsubs.push(profileUnsub);
+      });
+    });
+
+    return () => {
+      chatUnsub();
+      profileUnsubs.forEach(unsub => unsub());
+      messageCountUnsubs.forEach(unsub => unsub());
+    };
   }
 
   const getGroups = () => {
@@ -185,9 +251,10 @@ const Layout: React.FC = () => {
 
   useEffect(() => {
     if (user.data?.email) {
-      getChats();
+      const cleanupChats = getChats();
       const cleanupGroups = getGroups();
       return () => {
+        cleanupChats && cleanupChats();
         cleanupGroups && cleanupGroups();
       };
     }
