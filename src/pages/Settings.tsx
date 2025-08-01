@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import input from "../cva/input";
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
 import { RootState } from "../redux/store"
@@ -21,7 +21,7 @@ export default function Settings() {
     const dispatch = useAppDispatch();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const profile = useAppSelector((state: RootState) => state.user.profile);
-    const [profileData, setProfileData] = useState<Profile>(profile!);
+    const [profileData, setProfileData] = useState<Profile | null>(profile);
     const [profileImage, setProfileImage] = useState<File | null>(null);
     const [oldPassword, setOldPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
@@ -44,8 +44,8 @@ export default function Settings() {
             newPassword && oldPassword && changeUserPasswordHandler();
             dispatch(changeUserProfile({
                 userEmail: userEmail,
-                biography: profileData.biography,
-                name: profileData.name,
+                biography: profileData!.biography,
+                name: profileData!.name,
                 profileImage,
                 defaultProfileUrl: profile!.photoUrl
             }))
@@ -93,7 +93,11 @@ export default function Settings() {
     const changeToDefaultThemeHandler = () => dispatch(changeToSystemDefaultTheme());
     const changeThemeHandler = (theme: Exclude<ThemeType['value'], undefined>) => dispatch(changeTheme(theme));
 
-    if (profile) {
+    useEffect(() => {
+        setProfileData(profile);
+    }, [profile])
+
+    if (profileData) {
         return (
             <>
                 <ToastContainer />
@@ -112,7 +116,7 @@ export default function Settings() {
                         <div>
                             <label htmlFor="name" className="text-sm inline-block mb-1">Name</label>
                             <input id="name" value={profileData.name}
-                                onChange={(e) => setProfileData((prev) => ({ ...prev, name: e.target.value }))}
+                                onChange={(e) => setProfileData((prev) => ({ ...prev!, name: e.target.value }))}
                                 type="text"
                                 className={input()} maxLength={30} />
                         </div>
@@ -156,7 +160,7 @@ export default function Settings() {
                             <span className="text-xs font-light text-natural/75 ms-1.5">{profileData.biography.length}/180</span></label>
                         <textarea
                             value={profileData.biography}
-                            onChange={(e) => setProfileData((prev) => ({ ...prev, biography: e.target.value }))}
+                            onChange={(e) => setProfileData((prev) => ({ ...prev!, biography: e.target.value }))}
                             className={input({ className: "resize-none" })}
                             maxLength={180}
                             rows={3} id="biography"></textarea>

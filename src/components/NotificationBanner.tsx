@@ -23,12 +23,12 @@ const NotificationBanner: React.FC<NotificationBannerProps> = ({ onClose }) => {
   };
 
   // Don't show banner if OneSignal is not initialized or notifications are already enabled
-  if (!isInitialized || isEnabled || permission === 'denied') {
+  if (isInitialized || isEnabled || permission === 'denied') {
     return null;
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-blue-600 text-white px-4 py-3 z-50 shadow-lg">
+    <div className="fixed top-0 left-0 right-0 bg-blue-600/60 backdrop-blur-lg text-white px-4 py-3 z-50 shadow-lg">
       <div className="flex items-center justify-between max-w-4xl mx-auto">
         <div className="flex items-center gap-3">
           <FontAwesomeIcon icon={faBell} className="text-lg" />
