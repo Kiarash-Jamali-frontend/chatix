@@ -153,7 +153,7 @@ export const createNotificationPayload = (
   data: any = {}
 ) => {
   return {
-    app_id: process.env.REACT_APP_ONESIGNAL_APP_ID,
+    app_id: import.meta.env.REACT_APP_ONESIGNAL_APP_ID,
     include_external_user_ids: [recipientOneSignalId],
     headings: { en: title },
     contents: { en: message },
@@ -186,7 +186,7 @@ export const sendOneSignalNotification = async (payload: any) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${process.env.ONESIGNAL_REST_API_KEY}`
+        'Authorization': `Basic ${import.meta.env.ONESIGNAL_REST_API_KEY}`
       },
       body: JSON.stringify(payload)
     });
@@ -210,7 +210,7 @@ export const sendNotificationViaBackend = async (
   data: any = {}
 ) => {
   try {
-    const backendUrl = process.env.REACT_APP_NOTIFICATION_SERVICE_URL || 'http://localhost:3001';
+    const backendUrl = import.meta.env.REACT_APP_NOTIFICATION_SERVICE_URL || 'http://localhost:3001';
     
     const response = await fetch(`${backendUrl}/api/notifications/send`, {
       method: 'POST',
@@ -249,7 +249,7 @@ export const sendMessageNotificationViaBackend = async (
   groupId?: string
 ) => {
   try {
-    const backendUrl = process.env.VITE_NOTIFICATION_SERVICE_URL || 'http://localhost:3001';
+    const backendUrl = import.meta.env.VITE_NOTIFICATION_SERVICE_URL || 'http://localhost:3001';
     
     const response = await fetch(`${backendUrl}/api/notifications/message`, {
       method: 'POST',
