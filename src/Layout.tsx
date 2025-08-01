@@ -81,6 +81,9 @@ const Layout: React.FC = () => {
       )
     );
     onSnapshot(q, { includeMetadataChanges: true }, async (querySnapshot) => {
+      if (!querySnapshot.size) {
+        dispatch(changeChatsStatus("success"));
+      }
       let chatsList: (ChatsState['list']) = [];
       for (let i = 0; i < querySnapshot.size; i++) {
         const chatData = querySnapshot.docs[i].data();
@@ -126,6 +129,10 @@ const Layout: React.FC = () => {
         const groupMemberData = docSnap.data() as GroupMember;
         groupIds.push(groupMemberData.groupId);
       });
+
+      if (!querySnapshot.size) {
+        dispatch(changeGroupsStatus("success"));
+      }
 
       groupIds.forEach((groupId) => {
         const groupDocRef = doc(db, "group", groupId);
