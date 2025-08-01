@@ -42,48 +42,6 @@ export const handleNewMessageNotification = async (
     const senderProfileDoc = await getDoc(doc(db, 'profile', messageData.from));
     const senderName = senderProfileDoc.exists() ? senderProfileDoc.data().name : messageData.from;
 
-    // Create notification content
-    let title = '';
-    let message = '';
-    let notificationData: any = {};
-
-    if (isGroupMessage && groupId) {
-      // Group message notification
-      const groupDoc = await getDoc(doc(db, 'group', groupId));
-      const groupName = groupDoc.exists() ? groupDoc.data().groupName : 'Group';
-      
-      title = `${senderName} in ${groupName}`;
-      
-      if (messageData.type === 'text' && notificationSettings.showPreview) {
-        message = messageData.content || 'New message';
-      } else {
-        message = `Sent a ${messageData.type}`;
-      }
-      
-      notificationData = {
-        type: 'group_message',
-        groupId,
-        messageId: messageData.id,
-        url: `/group/${groupId}`
-      };
-    } else {
-      // Private message notification
-      title = senderName;
-      
-      if (messageData.type === 'text' && notificationSettings.showPreview) {
-        message = messageData.content || 'New message';
-      } else {
-        message = `Sent a ${messageData.type}`;
-      }
-      
-      notificationData = {
-        type: 'private_message',
-        chatId: messageData.from,
-        messageId: messageData.id,
-        url: `/chat/${messageData.from}`
-      };
-    }
-
     // Store notification data in Firebase
     await storeMessageNotification(messageData.id, {
       from: messageData.from,
