@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  initializeOneSignal, 
-  requestNotificationPermission, 
-  isNotificationEnabled, 
-  getOneSignalUserId, 
-  setOneSignalUserEmail, 
+import {
+  requestNotificationPermission,
+  isNotificationEnabled,
+  getOneSignalUserId,
+  setOneSignalUserEmail,
   setOneSignalUserProperties,
   subscribeToNotifications,
   unsubscribeFromNotifications,
   handleNotificationClick,
-  handlePermissionChange
+  handlePermissionChange,
+  initializeOneSignalIsSuccessful
 } from '../utils/onesignal';
 
 interface OneSignalState {
@@ -30,11 +30,11 @@ export const useOneSignal = () => {
   // Initialize OneSignal
   const initialize = useCallback(async () => {
     try {
-      const success = await initializeOneSignal();
+      const success = initializeOneSignalIsSuccessful;
       if (success) {
-        const enabled = await isNotificationEnabled();
-        const userId = await getOneSignalUserId();
-        
+        const enabled = isNotificationEnabled();
+        const userId = getOneSignalUserId();
+
         setState(prev => ({
           ...prev,
           isInitialized: true,
@@ -72,8 +72,8 @@ export const useOneSignal = () => {
   const requestPermission = useCallback(async () => {
     try {
       const permission = await requestNotificationPermission();
-      const enabled = await isNotificationEnabled();
-      
+      const enabled = isNotificationEnabled();
+
       setState(prev => ({
         ...prev,
         permission: permission ? 'granted' : 'denied',
@@ -92,9 +92,9 @@ export const useOneSignal = () => {
   }, []);
 
   // Set user email
-  const setUserEmail = useCallback(async (email: string) => {
+  const setUserEmail = useCallback((email: string) => {
     try {
-      await setOneSignalUserEmail(email);
+      setOneSignalUserEmail(email);
       console.log('OneSignal user email set:', email);
     } catch (error) {
       console.error('Failed to set user email:', error);
@@ -102,9 +102,9 @@ export const useOneSignal = () => {
   }, []);
 
   // Set user properties
-  const setUserProperties = useCallback(async (properties: Record<string, any>) => {
+  const setUserProperties = useCallback((properties: Record<string, any>) => {
     try {
-      await setOneSignalUserProperties(properties);
+      setOneSignalUserProperties(properties);
       console.log('OneSignal user properties set:', properties);
     } catch (error) {
       console.error('Failed to set user properties:', error);
@@ -148,7 +148,7 @@ export const useOneSignal = () => {
   // Get current user ID
   const getUserId = useCallback(async () => {
     try {
-      const userId = await getOneSignalUserId();
+      const userId = getOneSignalUserId();
       setState(prev => ({
         ...prev,
         userId: userId || null

@@ -3,8 +3,10 @@ import OneSignal from 'react-onesignal';
 // OneSignal configuration
 export const ONESIGNAL_APP_ID = '8279bc50-2fb0-466b-a5eb-1661b14022a2'; // Replace with your actual OneSignal App ID
 
+export let initializeOneSignalIsSuccessful = false;
+
 // Initialize OneSignal
-export const initializeOneSignal = async () => {
+const initializeOneSignal = async () => {
   try {
     await OneSignal.init({
       appId: ONESIGNAL_APP_ID,
@@ -20,12 +22,16 @@ export const initializeOneSignal = async () => {
     });
 
     console.log('OneSignal initialized successfully');
+    initializeOneSignalIsSuccessful = true;
     return true;
   } catch (error) {
     console.error('Failed to initialize OneSignal:', error);
+    initializeOneSignalIsSuccessful = false;
     return false;
   }
 };
+
+initializeOneSignal();
 
 // Request notification permission
 export const requestNotificationPermission = async () => {
@@ -39,7 +45,7 @@ export const requestNotificationPermission = async () => {
 };
 
 // Check if notifications are enabled
-export const isNotificationEnabled = async () => {
+export const isNotificationEnabled = () => {
   try {
     const permission = OneSignal.Notifications.permission;
     return permission;
@@ -50,7 +56,7 @@ export const isNotificationEnabled = async () => {
 };
 
 // Get the current user's OneSignal ID
-export const getOneSignalUserId = async () => {
+export const getOneSignalUserId = () => {
   try {
     const userId = OneSignal.User.onesignalId;
     return userId;
@@ -61,7 +67,7 @@ export const getOneSignalUserId = async () => {
 };
 
 // Set user email for OneSignal
-export const setOneSignalUserEmail = async (email: string) => {
+export const setOneSignalUserEmail = (email: string) => {
   try {
     OneSignal.User.addEmail(email);
     console.log('OneSignal user email set successfully');
@@ -71,7 +77,7 @@ export const setOneSignalUserEmail = async (email: string) => {
 };
 
 // Set user properties for OneSignal
-export const setOneSignalUserProperties = async (properties: Record<string, any>) => {
+export const setOneSignalUserProperties = (properties: Record<string, any>) => {
   try {
     OneSignal.User.addAliases(properties);
     console.log('OneSignal user properties set successfully');
@@ -81,7 +87,7 @@ export const setOneSignalUserProperties = async (properties: Record<string, any>
 };
 
 // Send notification to specific user
-export const sendNotificationToUser = async (userId: string, title: string, message: string, data?: any) => {
+export const sendNotificationToUser = (userId: string, title: string, message: string, data?: any) => {
   try {
     // This would typically be done from your backend
     // For now, we'll just log the notification details
@@ -91,7 +97,7 @@ export const sendNotificationToUser = async (userId: string, title: string, mess
       message,
       data
     });
-    
+
     // In a real implementation, you would make an API call to your backend
     // which would then use OneSignal's REST API to send the notification
     return true;
