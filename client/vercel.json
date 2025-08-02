@@ -3,19 +3,7 @@
     "rewrites": [
         {
             "source": "/push/onesignal/:path*",
-            "destination": "/push/onesignal/:path*",
-            "has": [
-                {
-                    "type": "query",
-                    "key": "appId",
-                    "value": "**"
-                },
-                {
-                    "type": "query",
-                    "key": "sdkVersion",
-                    "value": "**"
-                }
-            ]
+            "destination": "/push/onesignal/:path*"
         },
         {
             "source": "/(.*)",
