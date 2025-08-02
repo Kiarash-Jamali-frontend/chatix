@@ -33,10 +33,15 @@ const Chat: React.FC = () => {
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
   const [roomData, setRoomData] = useState<any>();
+  const [decryptedMessagesCount, setDecryptedMessagesCount] = useState<number>(0);
   const messagesListRef = useRef<HTMLDivElement>(null);
 
   const scrollDownHandler = () => {
     messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
+  }
+
+  const increaseDecryptedMessagesCount = () => {
+    setDecryptedMessagesCount((prev) => prev + 1);
   }
 
   useEffect(() => {
@@ -111,7 +116,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     scrollDownHandler();
-  }, [messages.length]);
+  }, [messages.length, decryptedMessagesCount]);
 
   useEffect(() => {
     if (!pending) scrollDownHandler();
@@ -140,12 +145,14 @@ const Chat: React.FC = () => {
                     </div>
                   )
                 }
-                <Message key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
-                  replyToMessage ? {
-                    ...replyToMessage,
-                    sender: replyToMessage.from === userData?.email ? userProfile : profile
-                  } : null
-                } />
+                <Message
+                  increaseDecryptedMessagesCount={increaseDecryptedMessagesCount}
+                  key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
+                    replyToMessage ? {
+                      ...replyToMessage,
+                      sender: replyToMessage.from === userData?.email ? userProfile : profile
+                    } : null
+                  } />
               </>
             )
           })}

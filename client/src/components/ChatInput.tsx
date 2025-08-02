@@ -55,7 +55,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     setTextMessagePending(true);
     removeMessageSelectedForRelpy();
     setMessageText("");
-    
+
     try {
       let messageData: any = {
         from: userEmail,
@@ -80,30 +80,32 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         messageData.content = messageText.trim();
       }
 
-                   const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), messageData);
-             
-             // Trigger notification for new message
-             if (isPrivateChat) {
-               await handlePrivateMessageNotification({
-                 id: docRef.id,
-                 from: messageData.from,
-                 to: messageData.to,
-                 type: messageData.type,
-                 content: messageData.content,
-                 timestamp: messageData.timestamp.toDate()
-               });
-             } else if (groupId) {
-               await handleGroupMessageNotification({
-                 id: docRef.id,
-                 from: messageData.from,
-                 to: messageData.to,
-                 type: messageData.type,
-                 content: messageData.content,
-                 timestamp: messageData.timestamp.toDate()
-               }, groupId);
-             }
-             
-             setNewNotSeenedMessageForAllGroupMembers();
+      const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), messageData);
+
+      setTextMessagePending(false);
+
+      // Trigger notification for new message
+      if (isPrivateChat) {
+        await handlePrivateMessageNotification({
+          id: docRef.id,
+          from: messageData.from,
+          to: messageData.to,
+          type: messageData.type,
+          content: messageData.content,
+          timestamp: messageData.timestamp.toDate()
+        });
+      } else if (groupId) {
+        await handleGroupMessageNotification({
+          id: docRef.id,
+          from: messageData.from,
+          to: messageData.to,
+          type: messageData.type,
+          content: messageData.content,
+          timestamp: messageData.timestamp.toDate()
+        }, groupId);
+      }
+
+      setNewNotSeenedMessageForAllGroupMembers();
     } catch (error) {
       console.error('Failed to send encrypted message:', error);
       // Fallback to plain text if encryption fails
@@ -116,9 +118,9 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         type: "text",
         replyTo: messageSelectedForReply?.id || null
       });
+
+      setTextMessagePending(false);
     }
-    
-    setTextMessagePending(false);
   };
 
   const chooseFileHandler = () => {
@@ -157,34 +159,35 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           data.fileName = file.name;
           data.fileSize = file.size;
         }
-                 const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
-         
-         // Trigger notification for file message
-         if (isPrivateChat) {
-           await handlePrivateMessageNotification({
-             id: docRef.id,
-             from: data.from,
-             to: data.to,
-             type: data.type,
-             content: data.content,
-             timestamp: data.timestamp.toDate()
-           });
-         } else if (groupId) {
-           await handleGroupMessageNotification({
-             id: docRef.id,
-             from: data.from,
-             to: data.to,
-             type: data.type,
-             content: data.content,
-             timestamp: data.timestamp.toDate()
-           }, groupId);
-         }
-         
-         i++;
+        const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
+
+        setFilePending(false);
+
+        // Trigger notification for file message
+        if (isPrivateChat) {
+          await handlePrivateMessageNotification({
+            id: docRef.id,
+            from: data.from,
+            to: data.to,
+            type: data.type,
+            content: data.content,
+            timestamp: data.timestamp.toDate()
+          });
+        } else if (groupId) {
+          await handleGroupMessageNotification({
+            id: docRef.id,
+            from: data.from,
+            to: data.to,
+            type: data.type,
+            content: data.content,
+            timestamp: data.timestamp.toDate()
+          }, groupId);
+        }
+
+        i++;
       }
     }
     setNewNotSeenedMessageForAllGroupMembers();
-    setFilePending(false);
   }
 
   const setNewNotSeenedMessageForAllGroupMembers = async () => {

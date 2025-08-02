@@ -30,9 +30,10 @@ type PropTypes = {
   };
   isGroupMessage?: boolean;
   nextMessageSender?: string | null;
+  increaseDecryptedMessagesCount?: () => void;
 };
 
-const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage = false, senderProfile, nextMessageSender }) => {
+const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage = false, senderProfile, nextMessageSender, increaseDecryptedMessagesCount }) => {
   const { parse } = Parser();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsList = useAppSelector((state: RootState) => state.chats.list);
@@ -56,6 +57,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   };
 
   const handleDecryption = async (message: any, isGroupMessage: boolean): Promise<string> => {
+    if (increaseDecryptedMessagesCount) increaseDecryptedMessagesCount();
     if (isEncryptedMessage(message) && !isGroupMessage) {
       try {
         const chatSecret = getChatSecret(message.from, message.to);
