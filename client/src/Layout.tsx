@@ -19,6 +19,7 @@ import { changeTheme } from "./redux/slices/theme";
 import publicRoutes from "./constants/publicRoutes";
 import { Unsubscribe } from "firebase/firestore";
 import NotificationBanner from "./components/NotificationBanner";
+import { Helmet } from "react-helmet";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -105,7 +106,7 @@ const Layout: React.FC = () => {
           user.data?.email === chatData.user_1
             ? chatData.user_2
             : chatData.user_1;
-        
+
         oppositeUserEmails.push(oppositeUserEmail);
       });
 
@@ -115,50 +116,50 @@ const Layout: React.FC = () => {
         const profileUnsub = onSnapshot(profileDocRef, (profileDoc) => {
           if (profileDoc.exists()) {
             const profile = profileDoc.data();
-            
-                         // Set up message count listener for this user
-             const messageCountUnsub = onSnapshot(
-               query(
-                 collection(db, "message"),
-                 and(
-                   where("senderEmail", "==", oppositeUserEmail),
-                   where("receiverEmail", "==", user.data?.email),
-                   where("seen", "==", false)
-                 )
-               ),
-               (messageSnapshot) => {
-                 const notSeenedMessagesCount = messageSnapshot.size;
-                 
-                 // Find the chat data for this user
-                 const chatDoc = querySnapshot.docs.find(doc => {
-                   const chatData = doc.data();
-                   return (user.data?.email === chatData.user_1 && oppositeUserEmail === chatData.user_2) ||
-                          (user.data?.email === chatData.user_2 && oppositeUserEmail === chatData.user_1);
-                 });
 
-                 if (chatDoc) {
-                   const chatData = chatDoc.data();
-                   
-                   // Update chats list with real-time data
-                   chatsList = [
-                     ...chatsList.filter(chat => chat.email !== oppositeUserEmail),
-                     {
-                       name: profile.name || "",
-                       photoUrl: profile.photoUrl || "",
-                       lastActivity: profile.lastActivity,
-                       biography: profile.biography || "",
-                       email: oppositeUserEmail,
-                       notSeenedMessages: notSeenedMessagesCount,
-                       createdAt: chatData.createdAt
-                     }
-                   ];
-                   
-                   dispatch(changeChatsList([...chatsList]));
-                   dispatch(changeChatsStatus("success"));
-                   localStorage.setItem("chatix_has_cache_data", "true");
-                 }
-               }
-             );
+            // Set up message count listener for this user
+            const messageCountUnsub = onSnapshot(
+              query(
+                collection(db, "message"),
+                and(
+                  where("senderEmail", "==", oppositeUserEmail),
+                  where("receiverEmail", "==", user.data?.email),
+                  where("seen", "==", false)
+                )
+              ),
+              (messageSnapshot) => {
+                const notSeenedMessagesCount = messageSnapshot.size;
+
+                // Find the chat data for this user
+                const chatDoc = querySnapshot.docs.find(doc => {
+                  const chatData = doc.data();
+                  return (user.data?.email === chatData.user_1 && oppositeUserEmail === chatData.user_2) ||
+                    (user.data?.email === chatData.user_2 && oppositeUserEmail === chatData.user_1);
+                });
+
+                if (chatDoc) {
+                  const chatData = chatDoc.data();
+
+                  // Update chats list with real-time data
+                  chatsList = [
+                    ...chatsList.filter(chat => chat.email !== oppositeUserEmail),
+                    {
+                      name: profile.name || "",
+                      photoUrl: profile.photoUrl || "",
+                      lastActivity: profile.lastActivity,
+                      biography: profile.biography || "",
+                      email: oppositeUserEmail,
+                      notSeenedMessages: notSeenedMessagesCount,
+                      createdAt: chatData.createdAt
+                    }
+                  ];
+
+                  dispatch(changeChatsList([...chatsList]));
+                  dispatch(changeChatsStatus("success"));
+                  localStorage.setItem("chatix_has_cache_data", "true");
+                }
+              }
+            );
             messageCountUnsubs.push(messageCountUnsub);
           }
         });
@@ -283,6 +284,9 @@ const Layout: React.FC = () => {
 
   return (
     <>
+      <Helmet>
+        <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+      </Helmet>
       <NotificationBanner />
       <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
         <div className="relative z-10 w-full h-full flex">
