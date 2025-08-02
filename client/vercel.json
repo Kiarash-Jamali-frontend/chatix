@@ -6,8 +6,8 @@
             "destination": "/index.html"
         },
         {
-            "source": "/push/onesignal/OneSignalSDKWorker.js",
-            "destination": "/push/onesignal/OneSignalSDKWorker.js"
+            "source": "/push/onesignal/:path*",
+            "destination": "/push/onesignal/:path*"
         }
     ]
 }
