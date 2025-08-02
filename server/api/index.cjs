@@ -6,7 +6,9 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://chatix-server.vercel.app"
+}));
 app.use(express.json());
 
 // OneSignal configuration
@@ -42,7 +44,7 @@ const sendNotificationToUser = async (recipientId, title, message, data = {}) =>
     });
 
     const result = await response.json();
-    
+
     if (result.errors) {
       console.error('OneSignal API errors:', result.errors);
       return { success: false, errors: result.errors };
@@ -84,7 +86,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, data = {}) 
     });
 
     const result = await response.json();
-    
+
     if (result.errors) {
       console.error('OneSignal API errors:', result.errors);
       return { success: false, errors: result.errors };
@@ -148,15 +150,15 @@ app.post('/api/notifications/send-bulk', async (req, res) => {
 // Send message notification (specific to Chatix)
 app.post('/api/notifications/message', async (req, res) => {
   try {
-    const { 
-      recipientId, 
-      senderName, 
-      messageType, 
-      messageContent, 
-      isGroupMessage, 
-      groupName, 
-      chatId, 
-      groupId 
+    const {
+      recipientId,
+      senderName,
+      messageType,
+      messageContent,
+      isGroupMessage,
+      groupName,
+      chatId,
+      groupId
     } = req.body;
 
     if (!recipientId || !senderName) {
