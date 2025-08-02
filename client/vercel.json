@@ -2,10 +2,6 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "rewrites": [
         {
-            "source": "/(.*)",
-            "destination": "/index.html"
-        },
-        {
             "source": "/push/onesignal/:path*",
             "destination": "/push/onesignal/:path*",
             "has": [
@@ -20,6 +16,10 @@
                     "value": "**"
                 }
             ]
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ],
     "headers": [
