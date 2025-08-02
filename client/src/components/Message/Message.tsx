@@ -30,10 +30,9 @@ type PropTypes = {
   };
   isGroupMessage?: boolean;
   nextMessageSender?: string | null;
-  increaseDecryptedMessagesCount?: () => void;
 };
 
-const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage = false, senderProfile, nextMessageSender, increaseDecryptedMessagesCount }) => {
+const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage = false, senderProfile, nextMessageSender }) => {
   const { parse } = Parser();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsList = useAppSelector((state: RootState) => state.chats.list);
@@ -56,16 +55,15 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     });
   };
 
-  const handleDecryption = async (message: any, isGroupMessage: boolean): Promise<string> => {
-    if (isEncryptedMessage(message) && !isGroupMessage) {
-      if (increaseDecryptedMessagesCount) increaseDecryptedMessagesCount();
+  const handleDecryption = async (msg: any, isGroupMsg: boolean): Promise<string> => {
+    if (isEncryptedMessage(msg) && !isGroupMsg) {
       try {
-        const chatSecret = getChatSecret(message.from, message.to);
+        const chatSecret = getChatSecret(msg.from, msg.to);
         const decrypted = await decryptMessage(
           {
-            encryptedContent: message.encryptedContent,
-            iv: message.iv,
-            salt: message.salt
+            encryptedContent: msg.encryptedContent,
+            iv: msg.iv,
+            salt: msg.salt
           },
           chatSecret
         );
@@ -76,7 +74,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
       }
     } else {
       // For non-encrypted messages or group messages, use original content
-      return message.content || '';
+      return msg.content || '';
     }
   };
 
@@ -89,17 +87,6 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     const decrypted = await handleDecryption(replyedMessage, isGroupMessage);
     setDecryptedReplayedMessageContent(decrypted);
   }
-
-  // Handle decryption of encrypted messages
-  useEffect(() => {
-    handleDecryptionMessage();
-  }, [message, isGroupMessage, getChatSecret]);
-
-  useEffect(() => {
-    if (replyedMessage) {
-      handleDecryptionReplyedMessage();
-    }
-  }, [replyedMessage, isGroupMessage, getChatSecret])
 
   const selectMessageForReply = () => {
     if (isGroupMessage && senderProfile) {
@@ -152,6 +139,17 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
         clearTimeout(removeMessageURLParamHandler);
     }
   }, [location.search]);
+
+  // Handle decryption of encrypted messages
+  useEffect(() => {
+    handleDecryptionMessage();
+  }, [message, isGroupMessage, getChatSecret]);
+
+  useEffect(() => {
+    if (replyedMessage) {
+      handleDecryptionReplyedMessage();
+    }
+  }, [replyedMessage, isGroupMessage, getChatSecret]);
 
   if ((decryptedContent && !replyedMessage) || (decryptedContent && replyedMessage && decryptedReplayedMessageContent)) {
     return (

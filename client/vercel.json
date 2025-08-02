@@ -3,7 +3,7 @@
     "rewrites": [
         {
             "source": "/push/onesignal/(.*)",
-            "destination": "/push/onesignal/(.*)"
+            "destination": "/push/onesignal/$1"
         },
         {
             "source": "/(.*)",

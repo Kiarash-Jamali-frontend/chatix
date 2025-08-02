@@ -33,15 +33,10 @@ const Chat: React.FC = () => {
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
   const [roomData, setRoomData] = useState<any>();
-  const [decryptedMessagesCount, setDecryptedMessagesCount] = useState<number>(0);
   const messagesListRef = useRef<HTMLDivElement>(null);
 
   const scrollDownHandler = () => {
     messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
-  }
-
-  const increaseDecryptedMessagesCount = () => {
-    setDecryptedMessagesCount((prev) => prev + 1);
   }
 
   useEffect(() => {
@@ -116,7 +111,7 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     scrollDownHandler();
-  }, [messages.length, decryptedMessagesCount]);
+  }, [messages.length]);
 
   useEffect(() => {
     if (!pending) scrollDownHandler();
@@ -136,7 +131,7 @@ const Chat: React.FC = () => {
             const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
 
             return (
-              <div key={m.id}>
+              <React.Fragment key={m.id}>
                 {
                   (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
                   && (
@@ -146,14 +141,13 @@ const Chat: React.FC = () => {
                   )
                 }
                 <Message
-                  increaseDecryptedMessagesCount={increaseDecryptedMessagesCount}
                   message={m} scrollDown={scrollDownHandler} replyedMessage={
                     replyToMessage ? {
                       ...replyToMessage,
                       sender: replyToMessage.from === userData?.email ? userProfile : profile
                     } : null
                   } />
-              </div>
+              </React.Fragment>
             )
           })}
           <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all`}></div>
