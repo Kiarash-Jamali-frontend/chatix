@@ -96,7 +96,9 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   }, [message, isGroupMessage, getChatSecret, replyedMessage]);
 
   useEffect(() => {
-    handleDecryptionReplyedMessage();
+    if (replyedMessage) {
+      handleDecryptionReplyedMessage();
+    }
   }, [replyedMessage, isGroupMessage, getChatSecret])
 
   const selectMessageForReply = () => {
