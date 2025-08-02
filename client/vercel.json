@@ -7,7 +7,30 @@
         },
         {
             "source": "/push/onesignal/:path*",
-            "destination": "/push/onesignal/:path*"
+            "destination": "/push/onesignal/:path*",
+            "has": [
+                {
+                    "type": "query",
+                    "key": "appId",
+                    "value": ".*"
+                },
+                {
+                    "type": "query",
+                    "key": "sdkVersion",
+                    "value": ".*"
+                }
+            ]
+        }
+    ],
+    "headers": [
+        {
+            "source": "/push/onesignal/OneSignalSDKWorker.js",
+            "headers": [
+                {
+                    "key": "Service-Worker-Allowed",
+                    "value": "/"
+                }
+            ]
         }
     ]
 }
