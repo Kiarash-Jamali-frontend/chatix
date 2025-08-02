@@ -12,12 +12,12 @@
                 {
                     "type": "query",
                     "key": "appId",
-                    "value": ".*"
+                    "value": "**"
                 },
                 {
                     "type": "query",
                     "key": "sdkVersion",
-                    "value": ".*"
+                    "value": "**"
                 }
             ]
         }
