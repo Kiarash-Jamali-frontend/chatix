@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { doc, runTransaction } from "firebase/firestore";
 import { db } from "../../../utils/firebase";
 import { RootState } from "../../redux/store";
@@ -18,6 +18,8 @@ import Profile from "../../types/Profile";
 import GradiantProfile from "../GradiantProfile";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
+import { useEncryption } from "../../hooks/useEncryption";
+import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
 
 type PropTypes = {
   message: any;
@@ -30,7 +32,7 @@ type PropTypes = {
   nextMessageSender?: string | null;
 };
 
-const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage, senderProfile, nextMessageSender }) => {
+const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage = false, senderProfile, nextMessageSender }) => {
   const { parse } = Parser();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsList = useAppSelector((state: RootState) => state.chats.list);
@@ -38,6 +40,9 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { getChatSecret } = useEncryption();
+  const [decryptedContent, setDecryptedContent] = useState<string>("");
+  const [decryptedReplayedMessageContent, setDecryptedReplayedMessageContent] = useState<string>("");
 
   const messageIsForCurrentUser = user.data?.email === message.from;
 
@@ -50,12 +55,54 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     });
   };
 
+  const handleDecryption = async (message: any, isGroupMessage: boolean): Promise<string> => {
+    if (isEncryptedMessage(message) && !isGroupMessage) {
+      try {
+        const chatSecret = getChatSecret(message.from, message.to);
+        const decrypted = await decryptMessage(
+          {
+            encryptedContent: message.encryptedContent,
+            iv: message.iv,
+            salt: message.salt
+          },
+          chatSecret
+        );
+        return decrypted;
+      } catch (error) {
+        console.error('Failed to decrypt message:', error);
+        return '[Encrypted Message - Unable to decrypt]';
+      }
+    } else {
+      // For non-encrypted messages or group messages, use original content
+      return message.content || '';
+    }
+  };
+
+  const handleDecryptionMessage = async () => {
+    const decrypted = await handleDecryption(message, isGroupMessage);
+    setDecryptedContent(decrypted);
+  }
+
+  const handleDecryptionReplyedMessage = async () => {
+    const decrypted = await handleDecryption(replyedMessage, isGroupMessage);
+    setDecryptedReplayedMessageContent(decrypted);
+  }
+
+  // Handle decryption of encrypted messages
+  useEffect(() => {
+    handleDecryptionMessage();
+  }, [message, isGroupMessage, getChatSecret, replyedMessage]);
+
+  useEffect(() => {
+    handleDecryptionReplyedMessage();
+  }, [replyedMessage, isGroupMessage, getChatSecret])
+
   const selectMessageForReply = () => {
     if (isGroupMessage && senderProfile) {
       dispatch(changeMessageSelectedForReply({ ...message, senderName: senderProfile.name }));
     }
     if (!isGroupMessage) {
-      dispatch(changeMessageSelectedForReply(message));
+      dispatch(changeMessageSelectedForReply({ ...message, content: decryptedContent }));
     }
   }
 
@@ -102,90 +149,93 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     }
   }, [location.search]);
 
-  return (
-    <div id={message.id}
-      className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} ${(selectedMessage?.id == message.id && !isGroupMessage) ? "z-50" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-natural/10" : ""}`}
-      onDoubleClick={selectMessageForReply}>
-      {
-        isGroupMessage && message.from != user.data?.email && senderProfile && nextMessageSender != message.from ? (
-          <Link viewTransition to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
-            className={`mt-auto me-2`}>
-            {
-              senderProfile?.photoUrl ? (
-                <img src={senderProfile?.photoUrl} className="size-10 object-cover rounded-full object-center" />
-              ) : (
-                <GradiantProfile name={senderProfile?.name} size={ProfileImageSizes.SMALL} />
-              )
-            }
-          </Link>
-        ) : (
-          isGroupMessage && message.from != user.data?.email && (
-            <div className="size-10 me-2"></div>
-          )
-        )
-      }
-      <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
+  if ((decryptedContent && !replyedMessage) || (decryptedContent && replyedMessage && decryptedReplayedMessageContent)) {
+    return (
+      <div id={message.id}
+        className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} ${(selectedMessage?.id == message.id && !isGroupMessage) ? "z-50" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-natural/10" : ""}`}
+        onDoubleClick={selectMessageForReply}>
         {
-          !isGroupMessage && (
-            <div className="relative z-40">
-              <ReactionsEmojiPicker message={message} />
-            </div>
+          isGroupMessage && message.from != user.data?.email && senderProfile && nextMessageSender != message.from ? (
+            <Link viewTransition to={chatIsCreated ? `/chat/${message.from}` : `/create-chat?email=${message.from}`}
+              className={`mt-auto me-2`}>
+              {
+                senderProfile?.photoUrl ? (
+                  <img src={senderProfile?.photoUrl} className="size-10 object-cover rounded-full object-center" />
+                ) : (
+                  <GradiantProfile name={senderProfile?.name} size={ProfileImageSizes.SMALL} />
+                )
+              }
+            </Link>
+          ) : (
+            isGroupMessage && message.from != user.data?.email && (
+              <div className="size-10 me-2"></div>
+            )
           )
         }
-        <div className={`rounded-xl overflow-hidden flex flex-col ${messageIsForCurrentUser ? "" : "border"}`}>
+        <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
           {
-            replyedMessage && (
-              <button onClick={scrollToMessageHandler}
-                className="bg-linear-to-tr p-2 flex rounded-t-xl flex-col items-start shrink from-gray-600 to-gray-900 text-white">
-                <span className="text-sm font-medium">
-                  <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
-                  {replyedMessage.sender?.name}
-                </span>
-                <p className="text-xs mt-1 text-start" dir="auto">
-                  {
-                    replyedMessage.type !== "text" ? <span className="capitalize">{replyedMessage.type}</span> : (
-                      parse(replyedMessage.content.split("<br>").join(""))
-                    )
-                  }
-                </p>
-              </button>
+            !isGroupMessage && (
+              <div className="relative z-40">
+                <ReactionsEmojiPicker message={message} />
+              </div>
             )
           }
-          {
-            message.type === "image" && <ImageMessage key={message.id}
-              replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
-              senderProfile={senderProfile}
-              scrollDown={scrollDown} />
-          }
-          {
-            message.type === "video" && <VideoMessage key={message.id}
-              replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
-              senderProfile={senderProfile}
-              scrollDown={scrollDown} />
-          }
-          {
-            message.type === "file" && <FileMessage key={message.id}
-              replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
-              senderProfile={senderProfile} />
-          }
-          {
-            message.type === "audio" && <AudioMessage
-              replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage}
-              senderProfile={senderProfile} />
-          }
-          {
-            message.type === "text" &&
-            <TextMessage replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
-          }
+          <div className={`rounded-xl overflow-hidden flex flex-col ${messageIsForCurrentUser ? "" : "border"}`}>
+            {
+              replyedMessage && (
+                <button onClick={scrollToMessageHandler}
+                  className="bg-linear-to-tr p-2 flex rounded-t-xl flex-col items-start shrink from-gray-600 to-gray-900 text-white">
+                  <span className="text-sm font-medium">
+                    <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
+                    {replyedMessage.sender?.name}
+                  </span>
+                  <p className="text-xs mt-1 text-start" dir="auto">
+                    {
+                      replyedMessage.type !== "text" ? <span className="capitalize">{replyedMessage.type}</span> : (
+                        parse(decryptedReplayedMessageContent.split("<br>").join(""))
+                      )
+                    }
+                  </p>
+                </button>
+              )
+            }
+            {
+              message.type === "image" && <ImageMessage key={message.id}
+                replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+                senderProfile={senderProfile}
+                scrollDown={scrollDown} />
+            }
+            {
+              message.type === "video" && <VideoMessage key={message.id}
+                replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+                senderProfile={senderProfile}
+                scrollDown={scrollDown} />
+            }
+            {
+              message.type === "file" && <FileMessage key={message.id}
+                replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+                senderProfile={senderProfile} />
+            }
+            {
+              message.type === "audio" && <AudioMessage
+                replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage}
+                senderProfile={senderProfile} />
+            }
+            {
+              message.type === "text" &&
+              <TextMessage replayMessage={replyedMessage} key={message.id}
+                message={{ ...message, content: decryptedContent }} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
+            }
+          </div>
         </div>
+        {
+          !isGroupMessage && (
+            <MessageReaction message={message} />
+          )
+        }
       </div>
-      {
-        !isGroupMessage && (
-          <MessageReaction message={message} />
-        )
-      }
-    </div>
-  );
+    );
+  }
 };
 
 export default Message;
