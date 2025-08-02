@@ -19,7 +19,6 @@ import { changeTheme } from "./redux/slices/theme";
 import publicRoutes from "./constants/publicRoutes";
 import { Unsubscribe } from "firebase/firestore";
 import NotificationBanner from "./components/NotificationBanner";
-import { Helmet } from "react-helmet";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -284,9 +283,6 @@ const Layout: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-      </Helmet>
       <NotificationBanner />
       <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
         <div className="relative z-10 w-full h-full flex">
