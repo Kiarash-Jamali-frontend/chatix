@@ -160,7 +160,7 @@ export default function Group() {
                         const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
                         const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
                         return (
-                            <>
+                            <div key={m.id}>
                                 {
                                     (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
                                     && (
@@ -173,20 +173,20 @@ export default function Group() {
                                 <Message senderProfile={messageSender}
                                     isGroupMessage={true}
                                     nextMessageSender={messages[i + 1]?.from}
-                                    key={m.id} message={m}
+                                    message={m}
                                     scrollDown={scrollDownHandler} replyedMessage={
                                         replyToMessage ? {
                                             ...replyToMessage,
                                             sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
                                         } : null
                                     } />
-                            </>
+                            </div>
                         )
                     })}
                     <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all`}></div>
                 </div>
-                <div className="px-3 md:px-5">
-                    <div className="mb-3 md:mb-5 mx-auto max-w-[810px]">
+                <div className="px-3 md:px-5 max-w-[810px] mx-auto w-full">
+                    <div className="mb-3 md:mb-5">
                         <ChatInput membersProfiles={membersProfiles} mode="group" groupId={groupId} />
                     </div>
                 </div>

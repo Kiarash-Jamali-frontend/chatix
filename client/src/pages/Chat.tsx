@@ -136,7 +136,7 @@ const Chat: React.FC = () => {
             const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
 
             return (
-              <>
+              <div key={m.id}>
                 {
                   (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
                   && (
@@ -147,13 +147,13 @@ const Chat: React.FC = () => {
                 }
                 <Message
                   increaseDecryptedMessagesCount={increaseDecryptedMessagesCount}
-                  key={m.id} message={m} scrollDown={scrollDownHandler} replyedMessage={
+                  message={m} scrollDown={scrollDownHandler} replyedMessage={
                     replyToMessage ? {
                       ...replyToMessage,
                       sender: replyToMessage.from === userData?.email ? userProfile : profile
                     } : null
                   } />
-              </>
+              </div>
             )
           })}
           <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all`}></div>
