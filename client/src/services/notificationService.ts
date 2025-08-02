@@ -249,7 +249,7 @@ export const sendMessageNotificationViaBackend = async (
   groupId?: string
 ) => {
   try {
-    const backendUrl = import.meta.env.VITE_NOTIFICATION_SERVICE_URL || 'http://localhost:3001';
+    const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
     
     const response = await fetch(`${backendUrl}/api/notifications/message`, {
       method: 'POST',
