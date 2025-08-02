@@ -57,8 +57,8 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   };
 
   const handleDecryption = async (message: any, isGroupMessage: boolean): Promise<string> => {
-    if (increaseDecryptedMessagesCount) increaseDecryptedMessagesCount();
     if (isEncryptedMessage(message) && !isGroupMessage) {
+      if (increaseDecryptedMessagesCount) increaseDecryptedMessagesCount();
       try {
         const chatSecret = getChatSecret(message.from, message.to);
         const decrypted = await decryptMessage(
@@ -93,7 +93,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   // Handle decryption of encrypted messages
   useEffect(() => {
     handleDecryptionMessage();
-  }, [message, isGroupMessage, getChatSecret, replyedMessage]);
+  }, [message, isGroupMessage, getChatSecret]);
 
   useEffect(() => {
     if (replyedMessage) {
