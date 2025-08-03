@@ -114,6 +114,7 @@ export const sendNotificationToUser = (userId: string, title: string, message: s
 // Subscribe to notifications
 export const subscribeToNotifications = async () => {
   try {
+    await OneSignal.User.PushSubscription.optIn();
     await OneSignal.Notifications.setDefaultUrl('/');
     console.log('Subscribed to notifications successfully');
     return true;
