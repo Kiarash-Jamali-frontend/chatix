@@ -277,14 +277,8 @@ const Layout: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isInitialized) {
-      OneSignal.User.addEventListener("change", (data) => {
-        console.log(data);
-      });
-
-      return () => {
-        OneSignal.User.removeEventListener("change", () => { });
-      }
+    if (isInitialized && !OneSignal.User.PushSubscription.id) {
+      OneSignal.logout();
     }
   }, [isInitialized])
 
