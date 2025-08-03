@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { redirect, useParams } from "react-router-dom"
 import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -160,7 +160,7 @@ export default function Group() {
                         const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
                         const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
                         return (
-                            <div key={m.id}>
+                            <React.Fragment key={m.id}>
                                 {
                                     (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
                                     && (
@@ -180,7 +180,7 @@ export default function Group() {
                                             sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
                                         } : null
                                     } />
-                            </div>
+                            </React.Fragment>
                         )
                     })}
                     <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all`}></div>

@@ -3,6 +3,7 @@
 
 import express from 'express';
 import cors from "cors";
+import dotenv from "dotenv";
 
 const app = express();
 app.use(cors({
@@ -13,6 +14,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(express.json());
+dotenv.config();
 
 // OneSignal configuration
 const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;

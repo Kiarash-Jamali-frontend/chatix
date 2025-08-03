@@ -151,6 +151,10 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     }
   }, [replyedMessage, isGroupMessage, getChatSecret]);
 
+  useEffect(() => {
+    scrollDown();
+  }, [decryptedContent, decryptedReplayedMessageContent]);
+
   if ((decryptedContent && !replyedMessage) || (decryptedContent && replyedMessage && decryptedReplayedMessageContent)) {
     return (
       <div id={message.id}
