@@ -11,6 +11,9 @@ const initializeOneSignal = async () => {
     await OneSignal.init({
       appId: ONESIGNAL_APP_ID,
       serviceWorkerPath: `push/onesignal/OneSignalSDKWorker.js`,
+      serviceWorkerParam: {
+        scope: "/push/onesignal"
+      },
       allowLocalhostAsSecureOrigin: true,
       notifyButton: undefined,
       autoRegister: true,
