@@ -16,7 +16,7 @@
             "headers": [
                 {
                     "key": "Service-Worker-Allowed",
-                    "value": "/"
+                    "value": "/push/onesignal"
                 }
             ]
         }
