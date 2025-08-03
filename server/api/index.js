@@ -1,9 +1,8 @@
 // Example backend service for sending OneSignal notifications
 // This is a Node.js/Express example - adapt for your backend framework
 
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import cors from "cors";
 
 const app = express();
 app.use(cors({
@@ -14,9 +13,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(express.json());
-
-console.log("x");
-
 
 // OneSignal configuration
 const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
@@ -228,12 +224,6 @@ app.use((error, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Notification service running on port ${PORT}`);
+app.listen(3000, () => {
+  console.log(`Notification service running on port ${3000}`);
 });
-
-module.exports = {
-  sendNotificationToUser,
-  sendNotificationToUsers
-}; 
