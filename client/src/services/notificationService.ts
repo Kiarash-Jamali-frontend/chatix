@@ -91,7 +91,7 @@ export const getNotificationSettings = async (userEmail: string) => {
 };
 
 // Store message notification data
-export const storeMessageNotification = async (messageId: string, notificationData: {
+export const storeMessageNotification = async (messageId: string, { content = "", chatId = "", groupId = "", ...notificationData }: {
   from: string;
   to: string;
   messageType: string;
@@ -106,7 +106,6 @@ export const storeMessageNotification = async (messageId: string, notificationDa
       ...notificationData,
       sent: false,
       createdAt: new Date(),
-      content: notificationData.content || ""
     });
 
     console.log('Message notification stored successfully');
