@@ -54,7 +54,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     setEmojiPickerIsOpen(false);
     setTextMessagePending(true);
     removeMessageSelectedForRelpy();
-    setMessageText("");
 
     try {
       let messageData: any = {
@@ -91,7 +90,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           from: messageData.from,
           to: messageData.to,
           type: messageData.type,
-          content: messageData.content,
+          content: messageText,
           timestamp: messageData.timestamp.toDate()
         });
       } else if (groupId) {
@@ -100,7 +99,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           from: messageData.from,
           to: messageData.to,
           type: messageData.type,
-          content: messageData.content,
+          content: messageText,
           timestamp: messageData.timestamp.toDate()
         }, groupId);
       }
@@ -120,6 +119,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       });
 
       setTextMessagePending(false);
+    } finally {
+      setMessageText("");
     }
   };
 
