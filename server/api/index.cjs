@@ -7,7 +7,9 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors({
-  origin: "https://chatix-blush.vercel.app"
+  origin: "https://chatix-blush.vercel.app",
+  allowedHeaders: ["Access-Control-Allow-Origin"],
+  preflightContinue: true
 }));
 app.use(express.json());
 
