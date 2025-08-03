@@ -46,7 +46,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                 unsubscribeUnreadMessagesCount();
             };
         }
-    }, [userEmail]);
+    }, [userEmail, chat.email]);
 
     useEffect(() => {
         if (userEmail) {
@@ -77,7 +77,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                 unsubscribeLastMessage();
             }
         }
-    }, [])
+    }, [chat.email])
 
     // Handle decryption of last message for preview
     useEffect(() => {
