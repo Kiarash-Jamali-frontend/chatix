@@ -19,8 +19,11 @@ import { changeTheme } from "./redux/slices/theme";
 import publicRoutes from "./constants/publicRoutes";
 import { Unsubscribe } from "firebase/firestore";
 import NotificationBanner from "./components/NotificationBanner";
+import { useOneSignal } from "./hooks/useOneSignal";
+import OneSignal from "react-onesignal";
 
 const Layout: React.FC = () => {
+  const { isInitialized } = useOneSignal();
   const dispatch = useAppDispatch();
   const location = useLocation();
   const user = useAppSelector((state: RootState) => state.user);
@@ -272,6 +275,18 @@ const Layout: React.FC = () => {
   useEffect(() => {
     getTheme();
   }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      OneSignal.User.addEventListener("change", (data) => {
+        console.log(data);
+      });
+
+      return () => {
+        OneSignal.User.removeEventListener("change", () => { });
+      }
+    }
+  }, [isInitialized])
 
   // if (!isOnline && user?.status == "unauthenticated") {
   //   return <OfflineModal />
