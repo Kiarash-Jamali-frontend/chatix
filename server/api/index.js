@@ -110,6 +110,29 @@ const sendNotificationToUsers = async (recipientIds, title, message, data = {}) 
   }
 };
 
+const deleteNotification = async (id) => {
+  try {
+    const response = await fetch(`https://api.onesignal.com/notifications/${id}?app_id=${ONESIGNAL_APP_ID}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Basic ${ONESIGNAL_REST_API_KEY}`
+      },
+    });
+
+    const result = await response.json();
+
+    if (result.errors) {
+      console.error('OneSignal API errors:', result.errors);
+      return { success: false, errors: result.errors };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete notification:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 // API Routes
 
 // Send notification to single user
@@ -220,6 +243,29 @@ app.get('/api/health', (req, res) => {
     message: 'Notification service is running',
     timestamp: new Date().toISOString()
   });
+});
+
+app.delete("/api/notifications/delete", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: id (string)'
+      });
+    }
+
+    const result =
+      await deleteNotification(id);
+
+    res.json(result);
+  } catch {
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error'
+    });
+  }
 });
 
 // Error handling middleware

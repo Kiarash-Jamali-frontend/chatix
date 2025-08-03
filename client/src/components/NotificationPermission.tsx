@@ -145,7 +145,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
                           height: "auto",
                           opacity: 1
                         }
-                      }} initial="closed" animate="open" exit="closed" className='space-y-4'>
+                      }} initial="open" animate="open" exit="closed" className='space-y-4'>
                         <div className="flex items-center justify-between pt-4"
                           onClick={() => handleSettingsChange('sound', !settings.sound)}>
                           <span>Sound</span>
