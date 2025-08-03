@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors({
-  origin: "https://chatix-server.vercel.app"
+  origin: "https://chatix-blush.vercel.app"
 }));
 app.use(express.json());
 

@@ -10,7 +10,7 @@ export const storeOneSignalUserId = async (userEmail: string, oneSignalUserId: s
       email: userEmail,
       updatedAt: new Date()
     }, { merge: true });
-    
+
     console.log('OneSignal user ID stored successfully');
     return true;
   } catch (error) {
@@ -24,7 +24,7 @@ export const getOneSignalUserIdFromFirebase = async (userEmail: string) => {
   try {
     const userDocRef = doc(db, 'users', userEmail);
     const userDoc = await getDoc(userDocRef);
-    
+
     if (userDoc.exists()) {
       return userDoc.data()?.oneSignalUserId;
     }
@@ -48,7 +48,7 @@ export const storeNotificationSettings = async (userEmail: string, settings: {
       notificationSettings: settings,
       updatedAt: new Date()
     });
-    
+
     console.log('Notification settings stored successfully');
     return true;
   } catch (error) {
@@ -62,7 +62,7 @@ export const getNotificationSettings = async (userEmail: string) => {
   try {
     const userDocRef = doc(db, 'users', userEmail);
     const userDoc = await getDoc(userDocRef);
-    
+
     if (userDoc.exists()) {
       return userDoc.data()?.notificationSettings || {
         enabled: true,
@@ -71,7 +71,7 @@ export const getNotificationSettings = async (userEmail: string) => {
         showPreview: true
       };
     }
-    
+
     // Return default settings if user doesn't exist
     return {
       enabled: true,
@@ -105,9 +105,10 @@ export const storeMessageNotification = async (messageId: string, notificationDa
     await setDoc(notificationDocRef, {
       ...notificationData,
       sent: false,
-      createdAt: new Date()
+      createdAt: new Date(),
+      content: notificationData.content || ""
     });
-    
+
     console.log('Message notification stored successfully');
     return true;
   } catch (error) {
@@ -124,7 +125,7 @@ export const markNotificationAsSent = async (messageId: string) => {
       sent: true,
       sentAt: new Date()
     });
-    
+
     console.log('Notification marked as sent');
     return true;
   } catch (error) {
@@ -177,9 +178,9 @@ export const sendOneSignalNotification = async (payload: any) => {
     // This is a placeholder for the actual OneSignal API call
     // In a real implementation, this would be done from your backend
     // to keep the REST API key secure
-    
+
     console.log('Sending OneSignal notification:', payload);
-    
+
     // Example of what the backend API call would look like:
     /*
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
@@ -194,7 +195,7 @@ export const sendOneSignalNotification = async (payload: any) => {
     const result = await response.json();
     return result;
     */
-    
+
     return { success: true, id: 'mock-notification-id' };
   } catch (error) {
     console.error('Failed to send OneSignal notification:', error);
@@ -211,7 +212,7 @@ export const sendNotificationViaBackend = async (
 ) => {
   try {
     const backendUrl = import.meta.env.REACT_APP_NOTIFICATION_SERVICE_URL || 'http://localhost:3001';
-    
+
     const response = await fetch(`${backendUrl}/api/notifications/send`, {
       method: 'POST',
       headers: {
@@ -250,7 +251,7 @@ export const sendMessageNotificationViaBackend = async (
 ) => {
   try {
     const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
-    
+
     const response = await fetch(`${backendUrl}/api/notifications/message`, {
       method: 'POST',
       headers: {
