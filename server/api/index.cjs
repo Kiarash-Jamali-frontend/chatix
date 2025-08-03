@@ -15,6 +15,9 @@ app.use(cors({
 }));
 app.use(express.json());
 
+console.log("x");
+
+
 // OneSignal configuration
 const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
 const ONESIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
