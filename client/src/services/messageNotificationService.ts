@@ -2,7 +2,7 @@ import {
   getOneSignalUserIdFromFirebase, 
   storeMessageNotification, 
   getNotificationSettings,
-  sendMessageNotificationViaBackend
+  sendNotificationViaBackend
 } from './notificationService';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
@@ -54,15 +54,10 @@ export const handleNewMessageNotification = async (
     });
 
     // Send notification using the backend service
-    const notificationResult = await sendMessageNotificationViaBackend(
+    const notificationResult = await sendNotificationViaBackend(
       oneSignalUserId,
       senderName,
-      messageData.type,
-      messageData.content || '',
-      isGroupMessage,
-      isGroupMessage && groupId ? (await getDoc(doc(db, 'group', groupId))).data()?.groupName : undefined,
-      isGroupMessage ? undefined : messageData.from,
-      isGroupMessage ? groupId : undefined
+      messageData.content || ''
     );
 
     if (notificationResult.success) {
