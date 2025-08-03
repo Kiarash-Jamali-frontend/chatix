@@ -278,7 +278,10 @@ const Layout: React.FC = () => {
 
   useEffect(() => {
     if (isInitialized && !OneSignal.User.PushSubscription.id) {
+      console.log("logged out from onesignal");
       OneSignal.logout();
+    } else {
+      console.log(isInitialized, OneSignal.User.PushSubscription.id);
     }
   }, [isInitialized])
 
