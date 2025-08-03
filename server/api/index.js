@@ -34,6 +34,7 @@ const sendNotificationToUser = async (recipientId, title, message, data = {}) =>
         include_aliases: {
           onesignal_id: [recipientId]
         },
+        target_channel: "push",
         headings: { en: title },
         contents: { en: message },
         data: data,
@@ -78,6 +79,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, data = {}) 
         include_aliases: {
           onesignal_id: recipientIds
         },
+        target_channel: "push",
         headings: { en: title },
         contents: { en: message },
         data: data,
