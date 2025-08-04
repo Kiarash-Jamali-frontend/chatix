@@ -15,10 +15,8 @@ export default function Modal({ isActive, setIsActive, children }: PropTypes) {
     useEffect(() => {
         if (!isActive) return;
 
-        // ذخیره موقعیت فعلی
         const currentState = location.state;
 
-        // جایگزینی تاریخچه با state جدید
         navigate(location, {
             state: { ...currentState, modalOpen: true }
         });
@@ -37,7 +35,6 @@ export default function Modal({ isActive, setIsActive, children }: PropTypes) {
 
         return () => {
             window.removeEventListener('popstate', handleBackButton);
-            // بازگرداندن state قبلی هنگام unmount
             if (location.state?.modalOpen) {
                 navigate(location, {
                     state: currentState
