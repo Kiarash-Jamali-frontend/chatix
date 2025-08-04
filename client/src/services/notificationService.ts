@@ -198,7 +198,7 @@ export const sendMessageNotificationViaBackend = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        recipientId: recipientIds,
+        recipientIds,
         senderName,
         messageType,
         messageContent,
