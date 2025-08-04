@@ -150,7 +150,7 @@ app.post('/api/notifications/message', async (req, res) => {
       groupId
     } = req.body;
 
-    if (!recipientIds || Array.isArray(recipientIds) || !senderName) {
+    if (!recipientIds || !Array.isArray(recipientIds) || !senderName) {
       return res.status(400).json({
         success: false,
         error: 'Missing required fields: recipientIds, senderName'
