@@ -17,7 +17,7 @@ import customFormatRelative from "../helpers/customFormatRelative";
 
 export type MemberProfile = (Profile & {
     id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
-    notSeenedMessagesCount: number
+    notSeenedMessagesCount: number, settings?: { enabled: boolean }, oneSignalUserId?: string
 });
 
 export default function Group() {
@@ -187,7 +187,7 @@ export default function Group() {
                 </div>
                 <div className="px-3 md:px-5 max-w-[810px] mx-auto w-full">
                     <div className="mb-3 md:mb-5">
-                        <ChatInput membersProfiles={membersProfiles} mode="group" groupId={groupId} />
+                        <ChatInput membersProfiles={membersProfiles} mode="group" groupId={groupId} groupName={groupData.groupName} />
                     </div>
                 </div>
             </div>

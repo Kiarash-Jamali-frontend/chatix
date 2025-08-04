@@ -1,8 +1,8 @@
-import { 
-  getOneSignalUserIdFromFirebase, 
-  storeMessageNotification, 
+import {
+  getOneSignalUserIdFromFirebase,
+  storeMessageNotification,
   getNotificationSettings,
-  sendNotificationViaBackend
+  sendMessageNotificationViaBackend
 } from './notificationService';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
@@ -18,13 +18,17 @@ export const handleNewMessageNotification = async (
     timestamp: Date;
   },
   isGroupMessage: boolean = false,
-  groupId?: string
-) => {
+  groupId?: string,
+  groupName?: string,
+  membersProfilesOneSignalIds?: string[]
+): Promise<void | { success: boolean, id?: string }> => {
   try {
     // Get recipient's OneSignal user ID
+    // مشکل ارسال نوتیف به گروه ها فردا درست بشه
+
     const recipientEmail = messageData.to;
     const oneSignalUserId = await getOneSignalUserIdFromFirebase(recipientEmail);
-    
+
     if (!oneSignalUserId) {
       console.log('Recipient not found or OneSignal not set up');
       return;
@@ -32,7 +36,7 @@ export const handleNewMessageNotification = async (
 
     // Get recipient's notification settings
     const notificationSettings = await getNotificationSettings(recipientEmail);
-    
+
     if (!notificationSettings.enabled) {
       console.log('Notifications disabled for recipient');
       return;
@@ -42,34 +46,40 @@ export const handleNewMessageNotification = async (
     const senderProfileDoc = await getDoc(doc(db, 'profile', messageData.from));
     const senderName = senderProfileDoc.exists() ? senderProfileDoc.data().name : messageData.from;
 
-    // Store notification data in Firebase
-    await storeMessageNotification(messageData.id, {
-      from: messageData.from,
-      to: messageData.to,
-      messageType: messageData.type,
-      content: messageData.content,
-      timestamp: messageData.timestamp,
-      chatId: isGroupMessage ? undefined : messageData.from,
-      groupId: isGroupMessage ? groupId : undefined
-    });
-
     // Send notification using the backend service
-    const notificationResult = await sendNotificationViaBackend(
-      oneSignalUserId,
+    const notificationResult = await sendMessageNotificationViaBackend(
+      isGroupMessage ? (membersProfilesOneSignalIds || []) : [oneSignalUserId],
       senderName,
-      messageData.content || ''
+      messageData.type,
+      getNotificationContent(messageData.type, messageData.content,) || '',
+      isGroupMessage,
+      groupName,
+      isGroupMessage ? undefined : messageData.from,
+      isGroupMessage ? groupId : undefined,
     );
 
     if (notificationResult.success) {
       console.log('Notification sent successfully:', notificationResult);
+
+      // Store notification data in Firebase
+      await storeMessageNotification(messageData.id, {
+        from: messageData.from,
+        to: messageData.to,
+        messageType: messageData.type,
+        content: messageData.content,
+        timestamp: messageData.timestamp,
+        chatId: isGroupMessage ? undefined : messageData.from,
+        groupId: isGroupMessage ? groupId : undefined,
+        notificationId: notificationResult.id
+      });
     } else {
       console.error('Failed to send notification:', notificationResult.error);
     }
 
-    return true;
+    return { id: notificationResult.id, success: true };
   } catch (error) {
     console.error('Failed to handle new message notification:', error);
-    return false;
+    return { success: false };
   }
 };
 
@@ -83,9 +93,11 @@ export const handleGroupMessageNotification = async (
     content?: string;
     timestamp: Date;
   },
-  groupId: string
+  groupId: string,
+  groupName: string,
+  membersProfilesOneSignalIds: string[]
 ) => {
-  return handleNewMessageNotification(messageData, true, groupId);
+  return handleNewMessageNotification(messageData, true, groupId, groupName, membersProfilesOneSignalIds);
 };
 
 // Handle notification for private messages
@@ -114,12 +126,12 @@ export const shouldSendNotification = async (recipientEmail: string): Promise<bo
 };
 
 // Get notification content based on message type
-export const getNotificationContent = (messageType: string, content?: string, showPreview: boolean = true): string => {
-  if (messageType === 'text' && showPreview && content) {
+export const getNotificationContent = (messageType: string, content?: string): string => {
+  if (messageType === 'text' && content) {
     // Truncate long messages
     return content.length > 100 ? content.substring(0, 100) + '...' : content;
   }
-  
+
   switch (messageType) {
     case 'image':
       return 'Sent an image';

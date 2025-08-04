@@ -1,15 +1,15 @@
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 
+const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
+
 // Store user's OneSignal ID in Firebase
 export const storeOneSignalUserId = async (userEmail: string, oneSignalUserId: string) => {
   try {
-    const userDocRef = doc(db, 'users', userEmail);
-    await setDoc(userDocRef, {
-      oneSignalUserId,
-      email: userEmail,
-      updatedAt: new Date()
-    }, { merge: true });
+    const userDocRef = doc(db, 'profile', userEmail);
+    await updateDoc(userDocRef, {
+      oneSignalUserId
+    });
 
     console.log('OneSignal user ID stored successfully');
     return true;
@@ -22,7 +22,7 @@ export const storeOneSignalUserId = async (userEmail: string, oneSignalUserId: s
 // Get user's OneSignal ID from Firebase
 export const getOneSignalUserIdFromFirebase = async (userEmail: string) => {
   try {
-    const userDocRef = doc(db, 'users', userEmail);
+    const userDocRef = doc(db, 'profile', userEmail);
     const userDoc = await getDoc(userDocRef);
 
     if (userDoc.exists()) {
@@ -38,12 +38,9 @@ export const getOneSignalUserIdFromFirebase = async (userEmail: string) => {
 // Store notification settings for a user
 export const storeNotificationSettings = async (userEmail: string, settings: {
   enabled: boolean;
-  sound: boolean;
-  vibration: boolean;
-  showPreview: boolean;
 }) => {
   try {
-    const userDocRef = doc(db, 'users', userEmail);
+    const userDocRef = doc(db, 'profile', userEmail);
     await updateDoc(userDocRef, {
       notificationSettings: settings,
       updatedAt: new Date()
@@ -60,32 +57,23 @@ export const storeNotificationSettings = async (userEmail: string, settings: {
 // Get notification settings for a user
 export const getNotificationSettings = async (userEmail: string) => {
   try {
-    const userDocRef = doc(db, 'users', userEmail);
+    const userDocRef = doc(db, 'profile', userEmail);
     const userDoc = await getDoc(userDocRef);
 
     if (userDoc.exists()) {
       return userDoc.data()?.notificationSettings || {
-        enabled: true,
-        sound: true,
-        vibration: true,
-        showPreview: true
+        enabled: true
       };
     }
 
     // Return default settings if user doesn't exist
     return {
-      enabled: true,
-      sound: true,
-      vibration: true,
-      showPreview: true
+      enabled: true
     };
   } catch (error) {
     console.error('Failed to get notification settings:', error);
     return {
-      enabled: true,
-      sound: true,
-      vibration: true,
-      showPreview: true
+      enabled: true
     };
   }
 };
@@ -99,6 +87,7 @@ export const storeMessageNotification = async (messageId: string, { content = ""
   timestamp: Date;
   chatId?: string;
   groupId?: string;
+  notificationId?: string;
 }) => {
   try {
     const notificationDocRef = doc(db, 'message_notifications', messageId);
@@ -112,23 +101,6 @@ export const storeMessageNotification = async (messageId: string, { content = ""
     return true;
   } catch (error) {
     console.error('Failed to store message notification:', error);
-    return false;
-  }
-};
-
-// Mark notification as sent
-export const markNotificationAsSent = async (messageId: string) => {
-  try {
-    const notificationDocRef = doc(db, 'message_notifications', messageId);
-    await updateDoc(notificationDocRef, {
-      sent: true,
-      sentAt: new Date()
-    });
-
-    console.log('Notification marked as sent');
-    return true;
-  } catch (error) {
-    console.error('Failed to mark notification as sent:', error);
     return false;
   }
 };
@@ -171,37 +143,6 @@ export const createNotificationPayload = (
   };
 };
 
-// Send notification via OneSignal REST API (this would be done from backend)
-export const sendOneSignalNotification = async (payload: any) => {
-  try {
-    // This is a placeholder for the actual OneSignal API call
-    // In a real implementation, this would be done from your backend
-    // to keep the REST API key secure
-
-    console.log('Sending OneSignal notification:', payload);
-
-    // Example of what the backend API call would look like:
-    /*
-    const response = await fetch('https://onesignal.com/api/v1/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${import.meta.env.ONESIGNAL_REST_API_KEY}`
-      },
-      body: JSON.stringify(payload)
-    });
-    
-    const result = await response.json();
-    return result;
-    */
-
-    return { success: true, id: 'mock-notification-id' };
-  } catch (error) {
-    console.error('Failed to send OneSignal notification:', error);
-    return { success: false, error };
-  }
-};
-
 // Send notification using notification-service.js backend
 export const sendNotificationViaBackend = async (
   recipientId: string,
@@ -210,8 +151,6 @@ export const sendNotificationViaBackend = async (
   data: any = {}
 ) => {
   try {
-    const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
-
     const response = await fetch(`${backendUrl}/api/notifications/send`, {
       method: 'POST',
       headers: {
@@ -239,7 +178,7 @@ export const sendNotificationViaBackend = async (
 
 // Send message notification using the specialized message endpoint
 export const sendMessageNotificationViaBackend = async (
-  recipientId: string,
+  recipientIds: string[],
   senderName: string,
   messageType: string,
   messageContent: string,
@@ -247,17 +186,19 @@ export const sendMessageNotificationViaBackend = async (
   groupName?: string,
   chatId?: string,
   groupId?: string
-) => {
+): Promise<{
+  success: boolean;
+  id?: string;
+  error?: string
+}> => {
   try {
-    const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
-
     const response = await fetch(`${backendUrl}/api/notifications/message`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        recipientId,
+        recipientId: recipientIds,
         senderName,
         messageType,
         messageContent,
@@ -272,10 +213,34 @@ export const sendMessageNotificationViaBackend = async (
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const result = await response.json();
-    return result;
+    const result: { id: string } = await response.json();
+    return { success: true, ...result };
   } catch (error) {
     console.error('Failed to send message notification via backend:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
-}; 
+};
+
+export const deleteNotification = async (id: string) => {
+  try {
+    const response = await fetch(`${backendUrl}/api/notifications/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result: { id: string } = await response.json();
+    return { success: true, ...result };
+  } catch (error) {
+    console.error('Failed to delete message notification via backend:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}

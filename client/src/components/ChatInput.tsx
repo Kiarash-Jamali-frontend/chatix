@@ -25,10 +25,11 @@ type PropTypes = {
   groupId?: string;
   oppositeProfile?: any;
   chatId?: string;
-  membersProfiles?: MemberProfile[]
+  membersProfiles?: MemberProfile[];
+  groupName?: string;
 };
 
-const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles }) => {
+const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
   const messageSelectedForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
@@ -53,6 +54,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const sendMessageHandler = async () => {
     setEmojiPickerIsOpen(false);
     setTextMessagePending(true);
+    setMessageText("");
     removeMessageSelectedForRelpy();
 
     try {
@@ -83,9 +85,10 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       setTextMessagePending(false);
 
+      let notificationId: string = "";
       // Trigger notification for new message
-      if (isPrivateChat) {
-        await handlePrivateMessageNotification({
+      if (isPrivateChat && oppositeProfile.notificationSettings?.enabled) {
+        const result = await handlePrivateMessageNotification({
           id: docRef.id,
           from: messageData.from,
           to: messageData.to,
@@ -93,15 +96,25 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           content: messageText,
           timestamp: messageData.timestamp.toDate()
         });
-      } else if (groupId) {
-        await handleGroupMessageNotification({
+        if (result?.success && result.id) notificationId = result.id;
+      } else if (groupId && groupName) {
+        const result = await handleGroupMessageNotification({
           id: docRef.id,
           from: messageData.from,
           to: messageData.to,
           type: messageData.type,
           content: messageText,
           timestamp: messageData.timestamp.toDate()
-        }, groupId);
+        }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).map((p) => p.oneSignalUserId).filter((p) => p != undefined) || []);
+        if (result?.success && result.id) notificationId = result.id;
+      }
+
+      if (notificationId) {
+        runTransaction(db, async (transaction) => {
+          transaction.set(doc(db, isPrivateChat ? "chat_message" : "group_message", docRef.id), {
+            notificationId
+          })
+        })
       }
 
       setNewNotSeenedMessageForAllGroupMembers();
@@ -119,8 +132,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       });
 
       setTextMessagePending(false);
-    } finally {
-      setMessageText("");
     }
   };
 
@@ -164,9 +175,10 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
         setFilePending(false);
 
+        let notificationId: string = "";
         // Trigger notification for file message
-        if (isPrivateChat) {
-          await handlePrivateMessageNotification({
+        if (isPrivateChat && oppositeProfile.notificationSettings?.enabled) {
+          const result = await handlePrivateMessageNotification({
             id: docRef.id,
             from: data.from,
             to: data.to,
@@ -174,15 +186,25 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             content: data.content,
             timestamp: data.timestamp.toDate()
           });
-        } else if (groupId) {
-          await handleGroupMessageNotification({
+          if (result?.success && result.id) notificationId = result.id;
+        } else if (groupId && groupName) {
+          const result = await handleGroupMessageNotification({
             id: docRef.id,
             from: data.from,
             to: data.to,
             type: data.type,
             content: data.content,
             timestamp: data.timestamp.toDate()
-          }, groupId);
+          }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).map((p) => p.oneSignalUserId!).filter((p) => p != undefined) || []);
+          if (result?.success && result.id) notificationId = result.id;
+        }
+
+        if (notificationId) {
+          runTransaction(db, async (transaction) => {
+            transaction.set(doc(db, isPrivateChat ? "chat_message" : "group_message", docRef.id), {
+              notificationId
+            })
+          })
         }
 
         i++;

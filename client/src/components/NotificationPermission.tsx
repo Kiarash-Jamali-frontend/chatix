@@ -4,17 +4,14 @@ import { useAppSelector } from '../redux/hooks';
 import { RootState } from '../redux/store';
 import { storeOneSignalUserId, storeNotificationSettings } from '../services/notificationService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faBellSlash, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faBellSlash } from '@fortawesome/free-solid-svg-icons';
 import button from '../cva/button';
-import { AnimatePresence, motion } from 'framer-motion';
 
 interface NotificationPermissionProps {
   onClose?: () => void;
 }
 
-const NotificationPermission: React.FC<NotificationPermissionProps> = ({
-  onClose,
-}) => {
+const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   const {
     isInitialized,
     permission,
@@ -28,9 +25,6 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [settings, setSettings] = useState({
     enabled: true,
-    sound: true,
-    vibration: true,
-    showPreview: true
   });
 
   useEffect(() => {
@@ -89,9 +83,6 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
     if (!settings.enabled && Object.values(settings).some((s) => s)) {
       setSettings({
         enabled: false,
-        showPreview: false,
-        sound: false,
-        vibration: false
       });
     }
   }, [settings])
@@ -106,22 +97,10 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
         isEnabled ?
           (
             <div className='text-sm'>
-              <div className="flex items-center justify-between mb-2">
-                <div>Notification Settings</div>
-                {onClose && (
-                  <button
-                    onClick={onClose}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  >
-                    <FontAwesomeIcon icon={faTimes} />
-                  </button>
-                )}
-              </div>
-
-              <div className="p-4 border rounded-lg overflow-hidden">
+              <div>
                 <div className="flex items-center justify-between"
                   onClick={() => handleSettingsChange('enabled', !settings.enabled)}>
-                  <span>Enable Notifications</span>
+                  <span>Notifications</span>
                   <button
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.enabled ? 'bg-primary' : 'bg-gray-300'
                       }`}
@@ -132,66 +111,6 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = ({
                     />
                   </button>
                 </div>
-
-                <AnimatePresence>
-                  {
-                    settings.enabled && (
-                      <motion.div variants={{
-                        closed: {
-                          height: "0",
-                          opacity: 0
-                        },
-                        open: {
-                          height: "auto",
-                          opacity: 1
-                        }
-                      }} initial="open" animate="open" exit="closed" className='space-y-4'>
-                        <div className="flex items-center justify-between pt-4"
-                          onClick={() => handleSettingsChange('sound', !settings.sound)}>
-                          <span>Sound</span>
-                          <button
-
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.sound ? 'bg-primary' : 'bg-gray-300'
-                              }`}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.sound ? 'translate-x-6' : 'translate-x-1'
-                                }`}
-                            />
-                          </button>
-                        </div>
-
-                        <div className="flex items-center justify-between"
-                          onClick={() => handleSettingsChange('vibration', !settings.vibration)}>
-                          <span>Vibration</span>
-                          <button
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.vibration ? 'bg-primary' : 'bg-gray-300'
-                              }`}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.vibration ? 'translate-x-6' : 'translate-x-1'
-                                }`}
-                            />
-                          </button>
-                        </div>
-
-                        <div className="flex items-center justify-between"
-                          onClick={() => handleSettingsChange('showPreview', !settings.showPreview)}>
-                          <span>Show Message Preview</span>
-                          <button
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.showPreview ? 'bg-primary' : 'bg-gray-300'
-                              }`}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.showPreview ? 'translate-x-6' : 'translate-x-1'
-                                }`}
-                            />
-                          </button>
-                        </div>
-                      </motion.div>
-                    )
-                  }
-                </AnimatePresence>
               </div>
             </div>
           ) : permission === 'denied' ? (

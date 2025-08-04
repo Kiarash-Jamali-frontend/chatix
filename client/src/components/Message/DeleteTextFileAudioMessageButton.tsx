@@ -26,7 +26,7 @@ export default function DeleteTextFileAudioMessageButton({ message, isGroupMessa
                             translateX: "1rem",
                         }}>
                             <button className={`px-2 h-full border border-e-transparent bg-secondary text-natural flex items-center ${message.replyTo && replayMessage ? "rounded-bl-xl border-t-transparent" : "rounded-l-xl"}`}
-                                onClick={() => deleteMessage(message.id, isGroupMessage)}>
+                                onClick={() => deleteMessage(message.id, message.notificationId, isGroupMessage)}>
                                 <FontAwesomeIcon icon={faTrashCan} />
                             </button>
                         </motion.div>
