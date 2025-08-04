@@ -21,7 +21,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
     getUserId
   } = useOneSignal();
 
-  const userProfile = useAppSelector((state:RootState) => state.user.profile)
+  const userProfile = useAppSelector((state: RootState) => state.user.profile)
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const [isLoading, setIsLoading] = useState(false);
   const [settings, setSettings] = useState({
@@ -43,7 +43,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
       // Get OneSignal user ID and store it in Firebase
       const oneSignalUserId = await getUserId();
-      if (oneSignalUserId) {
+      if (oneSignalUserId && !oneSignalUserIds?.find((id) => id == oneSignalUserId)) {
         await storeOneSignalUserId(userEmail, oneSignalUserId, oneSignalUserIds);
       }
     } catch (error) {
