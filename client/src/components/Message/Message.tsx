@@ -111,7 +111,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     }
     const params = new URLSearchParams();
     params.set("message", replyedMessage.id);
-    navigate(`?${params.toString()}`);
+    navigate(`?${params.toString()}`, { replace: true });
   }
 
   const urlParams = () => {

@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type PropTypes = {
     isActive: boolean;
@@ -8,6 +9,42 @@ type PropTypes = {
 }
 
 export default function Modal({ isActive, setIsActive, children }: PropTypes) {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isActive) return;
+
+        // ذخیره موقعیت فعلی
+        const currentState = location.state;
+
+        // جایگزینی تاریخچه با state جدید
+        navigate(location, {
+            state: { ...currentState, modalOpen: true }
+        });
+
+        const handleBackButton = (event: PopStateEvent) => {
+            if (location.state?.modalOpen) {
+                event.preventDefault();
+                setIsActive(false);
+                navigate(location, {
+                    state: currentState
+                });
+            }
+        };
+
+        window.addEventListener('popstate', handleBackButton);
+
+        return () => {
+            window.removeEventListener('popstate', handleBackButton);
+            // بازگرداندن state قبلی هنگام unmount
+            if (location.state?.modalOpen) {
+                navigate(location, {
+                    state: currentState
+                });
+            }
+        };
+    }, [isActive]);
 
     return (
         <AnimatePresence>
