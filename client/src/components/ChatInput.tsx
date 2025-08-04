@@ -111,7 +111,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
       if (notificationId) {
         runTransaction(db, async (transaction) => {
-          transaction.set(doc(db, isPrivateChat ? "chat_message" : "group_message", docRef.id), {
+          transaction.update(doc(db, isPrivateChat ? "chat_message" : "group_message", docRef.id), {
             notificationId
           })
         })
