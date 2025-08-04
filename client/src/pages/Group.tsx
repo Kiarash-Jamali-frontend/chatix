@@ -18,7 +18,7 @@ import { AnimatePresence } from "framer-motion";
 
 export type MemberProfile = (Profile & {
     id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
-    notSeenedMessagesCount: number, settings?: { enabled: boolean }, oneSignalUserId?: string
+    notSeenedMessagesCount: number
 });
 
 export default function Group() {

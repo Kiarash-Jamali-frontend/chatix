@@ -4,11 +4,11 @@ import { db } from '../../utils/firebase';
 const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
 
 // Store user's OneSignal ID in Firebase
-export const storeOneSignalUserId = async (userEmail: string, oneSignalUserId: string) => {
+export const storeOneSignalUserId = async (userEmail: string, newOneSignalUserId: string, oneSignalUserIds: string[] | undefined) => {
   try {
     const userDocRef = doc(db, 'profile', userEmail);
     await updateDoc(userDocRef, {
-      oneSignalUserId
+      oneSignalUserIds: oneSignalUserIds ? [...oneSignalUserIds, newOneSignalUserId] : [newOneSignalUserId]
     });
 
     console.log('OneSignal user ID stored successfully');
@@ -20,13 +20,13 @@ export const storeOneSignalUserId = async (userEmail: string, oneSignalUserId: s
 };
 
 // Get user's OneSignal ID from Firebase
-export const getOneSignalUserIdFromFirebase = async (userEmail: string) => {
+export const getOneSignalUserIdsFromFirebase = async (userEmail: string) => {
   try {
     const userDocRef = doc(db, 'profile', userEmail);
     const userDoc = await getDoc(userDocRef);
 
     if (userDoc.exists()) {
-      return userDoc.data()?.oneSignalUserId;
+      return userDoc.data()?.oneSignalUserIds;
     }
     return null;
   } catch (error) {

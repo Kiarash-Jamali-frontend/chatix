@@ -107,7 +107,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           type: messageData.type,
           content: messageText,
           timestamp: messageData.timestamp.toDate()
-        }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).map((p) => p.oneSignalUserId).filter((p) => p != undefined) || [],
+        }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined) || [],
           groupPhotoUrl);
         if (result?.success && result.id) notificationId = result.id;
       }
@@ -198,7 +198,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             type: data.type,
             content: data.content,
             timestamp: data.timestamp.toDate()
-          }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).map((p) => p.oneSignalUserId!).filter((p) => p != undefined) || [],
+          }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined) || [],
             groupPhotoUrl);
           if (result?.success && result.id) notificationId = result.id;
         }

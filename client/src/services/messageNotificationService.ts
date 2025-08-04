@@ -1,5 +1,5 @@
 import {
-  getOneSignalUserIdFromFirebase,
+  getOneSignalUserIdsFromFirebase,
   storeMessageNotification,
   getNotificationSettings,
   sendMessageNotificationViaBackend
@@ -28,9 +28,9 @@ export const handleNewMessageNotification = async (
     // مشکل ارسال نوتیف به گروه ها فردا درست بشه
 
     const recipientEmail = messageData.to;
-    const oneSignalUserId = await getOneSignalUserIdFromFirebase(recipientEmail);
+    const oneSignalUserIds = await getOneSignalUserIdsFromFirebase(recipientEmail);
 
-    if (!oneSignalUserId) {
+    if (!oneSignalUserIds || !oneSignalUserIds.length) {
       console.log('Recipient not found or OneSignal not set up');
       return;
     }
@@ -49,7 +49,7 @@ export const handleNewMessageNotification = async (
 
     // Send notification using the backend service
     const notificationResult = await sendMessageNotificationViaBackend(
-      isGroupMessage ? (membersProfilesOneSignalIds || []) : [oneSignalUserId],
+      isGroupMessage ? (membersProfilesOneSignalIds || []) : oneSignalUserIds,
       senderName,
       messageData.type,
       getNotificationContent(messageData.type, messageData.content,) || '',
@@ -133,7 +133,7 @@ export const shouldSendNotification = async (recipientEmail: string): Promise<bo
 export const getNotificationContent = (messageType: string, content?: string): string => {
   if (messageType === 'text' && content) {
     // Truncate long messages
-    return content.length > 100 ? content.substring(0, 100) + '...' : content;
+    return content.length > 100 ? content.substring(0, 100).split("<br>").join(" ") + '...' : content;
   }
 
   switch (messageType) {

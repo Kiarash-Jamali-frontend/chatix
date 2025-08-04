@@ -21,6 +21,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
     getUserId
   } = useOneSignal();
 
+  const userProfile = useAppSelector((state:RootState) => state.user.profile)
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const [isLoading, setIsLoading] = useState(false);
   const [settings, setSettings] = useState({
@@ -29,11 +30,11 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   useEffect(() => {
     if (isInitialized && userEmail) {
-      handleUserSetup();
+      handleUserSetup(userProfile?.oneSignalUserIds);
     }
   }, [isInitialized, userEmail]);
 
-  const handleUserSetup = async () => {
+  const handleUserSetup = async (oneSignalUserIds: string[] | undefined) => {
     if (!userEmail) return;
 
     try {
@@ -43,7 +44,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
       // Get OneSignal user ID and store it in Firebase
       const oneSignalUserId = await getUserId();
       if (oneSignalUserId) {
-        await storeOneSignalUserId(userEmail, oneSignalUserId);
+        await storeOneSignalUserId(userEmail, oneSignalUserId, oneSignalUserIds);
       }
     } catch (error) {
       console.error('Failed to setup user:', error);

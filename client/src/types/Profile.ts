@@ -3,6 +3,8 @@ type Profile = {
     photoUrl: string;
     lastActivity: any;
     biography: string;
+    settings?: { enabled: boolean };
+    oneSignalUserIds?: string[]
 }
 
 export default Profile;
