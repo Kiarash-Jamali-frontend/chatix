@@ -102,7 +102,7 @@ app.post('/api/notifications/send', async (req, res) => {
       });
     }
 
-    const result = await sendNotificationToUser(recipientId, title, message, data);
+    const result = await sendNotificationToUsers([recipientId], title, message, data);
     res.json(result);
   } catch (error) {
     console.error('Notification API error:', error);
@@ -140,7 +140,7 @@ app.post('/api/notifications/send-bulk', async (req, res) => {
 app.post('/api/notifications/message', async (req, res) => {
   try {
     const {
-      recipientId,
+      recipientIds,
       senderName,
       messageType,
       messageContent,
@@ -150,10 +150,10 @@ app.post('/api/notifications/message', async (req, res) => {
       groupId
     } = req.body;
 
-    if (!recipientId || !senderName) {
+    if (!recipientIds || Array.isArray(recipientIds) || !senderName) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: recipientId, senderName'
+        error: 'Missing required fields: recipientIds, senderName'
       });
     }
 
@@ -180,7 +180,7 @@ app.post('/api/notifications/message', async (req, res) => {
       };
     }
 
-    const result = await sendNotificationToUsers([recipientId], title, message, data);
+    const result = await sendNotificationToUsers(recipientIds, title, message, data);
     res.json(result);
   } catch (error) {
     console.error('Message notification API error:', error);
