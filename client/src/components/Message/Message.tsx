@@ -20,6 +20,7 @@ import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { useEncryption } from "../../hooks/useEncryption";
 import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
+import { motion } from "framer-motion";
 
 type PropTypes = {
   message: any;
@@ -155,9 +156,20 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     scrollDown();
   }, [decryptedContent, decryptedReplayedMessageContent]);
 
-  if ((decryptedContent && !replyedMessage) || (decryptedContent && replyedMessage && decryptedReplayedMessageContent)) {
-    return (
-      <div id={message.id}
+  return (
+    ((decryptedContent && !replyedMessage) || (decryptedContent && replyedMessage && decryptedReplayedMessageContent)) && (
+      <motion.div id={message.id}
+        variants={{
+          hide: {
+            opacity: 0,
+            transform: `translateX(${messageIsForCurrentUser ? "" : "-"}1rem)`,
+          },
+          open: {
+            opacity: 1,
+            transform: "translateX(0px)",
+          }
+        }}
+        exit="hide" initial="hide" animate="open"
         className={`flex relative ${messageIsForCurrentUser ? "flex-row-reverse" : ""} ${(selectedMessage?.id == message.id && !isGroupMessage) ? "z-50" : ""} transition-all rounded-xl mt-1 ${message.id === urlParams().get("message") ? "bg-natural/10" : ""}`}
         onDoubleClick={selectMessageForReply}>
         {
@@ -239,9 +251,9 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
             <MessageReaction message={message} />
           )
         }
-      </div>
-    );
-  }
+      </motion.div>
+    )
+  )
 };
 
 export default Message;

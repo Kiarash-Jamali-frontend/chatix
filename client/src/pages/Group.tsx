@@ -14,6 +14,7 @@ import GroupMember from "../types/GroupMember";
 import ImageModal from "../components/ImageModal";
 import { isSameDay } from "date-fns";
 import customFormatRelative from "../helpers/customFormatRelative";
+import { AnimatePresence } from "framer-motion";
 
 export type MemberProfile = (Profile & {
     id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
@@ -154,35 +155,37 @@ export default function Group() {
                     ref={messagesListRef}
                     id="messagesList"
                 >
-                    {messages.map((m, i) => {
-                        const replyToMessage = messages.find((message) => m.replyTo === message.id);
-                        const messageSender = membersProfiles.find((p) => p.email == m.from);
-                        const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
-                        const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
-                        return (
-                            <React.Fragment key={m.id}>
-                                {
-                                    (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
-                                    && (
-                                        <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} z-40 sticky top-0 text-xs text-natural/60 bg-secondary border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
-                                            {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
-                                        </div>
-                                    )
-                                }
+                    <AnimatePresence>
+                        {messages.map((m, i) => {
+                            const replyToMessage = messages.find((message) => m.replyTo === message.id);
+                            const messageSender = membersProfiles.find((p) => p.email == m.from);
+                            const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
+                            const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
+                            return (
+                                <React.Fragment key={m.id}>
+                                    {
+                                        (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
+                                        && (
+                                            <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} z-40 sticky top-0 text-xs text-natural/60 bg-secondary border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
+                                                {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
+                                            </div>
+                                        )
+                                    }
 
-                                <Message senderProfile={messageSender}
-                                    isGroupMessage={true}
-                                    nextMessageSender={messages[i + 1]?.from}
-                                    message={m}
-                                    scrollDown={scrollDownHandler} replyedMessage={
-                                        replyToMessage ? {
-                                            ...replyToMessage,
-                                            sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
-                                        } : null
-                                    } />
-                            </React.Fragment>
-                        )
-                    })}
+                                    <Message senderProfile={messageSender}
+                                        isGroupMessage={true}
+                                        nextMessageSender={messages[i + 1]?.from}
+                                        message={m}
+                                        scrollDown={scrollDownHandler} replyedMessage={
+                                            replyToMessage ? {
+                                                ...replyToMessage,
+                                                sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
+                                            } : null
+                                        } />
+                                </React.Fragment>
+                            )
+                        })}
+                    </AnimatePresence>
                     <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all`}></div>
                 </div>
                 <div className="px-3 md:px-5 max-w-[810px] mx-auto w-full">

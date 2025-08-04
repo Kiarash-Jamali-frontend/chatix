@@ -22,6 +22,7 @@ import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup
 import ChatInput from "../components/ChatInput";
 import { isSameDay } from "date-fns";
 import customFormatRelative from "../helpers/customFormatRelative";
+import { AnimatePresence } from "framer-motion";
 
 const Chat: React.FC = () => {
   const userData = useAppSelector((state: RootState) => state.user.data);
@@ -125,31 +126,33 @@ const Chat: React.FC = () => {
         <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}
           id="messagesList"
           ref={messagesListRef}>
-          {messages.map((m, i) => {
-            const replyToMessage = messages.find((message) => m.replyTo === message.id);
-            const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
-            const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
+          <AnimatePresence>
+            {messages.map((m, i) => {
+              const replyToMessage = messages.find((message) => m.replyTo === message.id);
+              const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
+              const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
 
-            return (
-              <React.Fragment key={m.id}>
-                {
-                  (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
-                  && (
-                    <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} z-40 sticky top-0 text-xs text-natural/60 bg-secondary border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
-                      {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
-                    </div>
-                  )
-                }
-                <Message
-                  message={m} scrollDown={scrollDownHandler} replyedMessage={
-                    replyToMessage ? {
-                      ...replyToMessage,
-                      sender: replyToMessage.from === userData?.email ? userProfile : profile
-                    } : null
-                  } />
-              </React.Fragment>
-            )
-          })}
+              return (
+                <React.Fragment key={m.id}>
+                  {
+                    (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
+                    && (
+                      <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} z-40 sticky top-0 text-xs text-natural/60 bg-secondary border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
+                        {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
+                      </div>
+                    )
+                  }
+                  <Message
+                    message={m} scrollDown={scrollDownHandler} replyedMessage={
+                      replyToMessage ? {
+                        ...replyToMessage,
+                        sender: replyToMessage.from === userData?.email ? userProfile : profile
+                      } : null
+                    } />
+                </React.Fragment>
+              )
+            })}
+          </AnimatePresence>
           <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all`}></div>
         </div>
         <div>
