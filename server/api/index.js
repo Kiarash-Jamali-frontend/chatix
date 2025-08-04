@@ -21,7 +21,7 @@ const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
 const ONESIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
 
 // Send notification to multiple users
-const sendNotificationToUsers = async (recipientIds, title, message, data = {}) => {
+const sendNotificationToUsers = async (recipientIds, title, message, icon, data = {}) => {
   try {
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
@@ -39,8 +39,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, data = {}) 
         contents: { en: message },
         data: data,
         url: data.url || '/',
-        chrome_web_icon: '/pwa-192x192.png',
-        chrome_web_image: '/pwa-512x512.png',
+        chrome_web_icon: icon,
         priority: 10,
         android_channel_id: '3489aa56-b217-4fd8-a818-f83be9ba9309',
         android_accent_color: '#4F46E5',
@@ -93,7 +92,7 @@ const deleteNotification = async (id) => {
 // Send notification to single user
 app.post('/api/notifications/send', async (req, res) => {
   try {
-    const { recipientId, title, message, data } = req.body;
+    const { recipientId, title, message, icon, data } = req.body;
 
     if (!recipientId || !title || !message) {
       return res.status(400).json({
@@ -102,7 +101,7 @@ app.post('/api/notifications/send', async (req, res) => {
       });
     }
 
-    const result = await sendNotificationToUsers([recipientId], title, message, data);
+    const result = await sendNotificationToUsers([recipientId], title, message, icon, data);
     res.json(result);
   } catch (error) {
     console.error('Notification API error:', error);
@@ -116,7 +115,7 @@ app.post('/api/notifications/send', async (req, res) => {
 // Send notification to multiple users
 app.post('/api/notifications/send-bulk', async (req, res) => {
   try {
-    const { recipientIds, title, message, data } = req.body;
+    const { recipientIds, title, message, icon, data } = req.body;
 
     if (!recipientIds || !Array.isArray(recipientIds) || !title || !message) {
       return res.status(400).json({
@@ -125,7 +124,7 @@ app.post('/api/notifications/send-bulk', async (req, res) => {
       });
     }
 
-    const result = await sendNotificationToUsers(recipientIds, title, message, data);
+    const result = await sendNotificationToUsers(recipientIds, title, message, icon, data);
     res.json(result);
   } catch (error) {
     console.error('Bulk notification API error:', error);
@@ -147,7 +146,8 @@ app.post('/api/notifications/message', async (req, res) => {
       isGroupMessage,
       groupName,
       chatId,
-      groupId
+      groupId,
+      icon
     } = req.body;
 
     if (!recipientIds || !Array.isArray(recipientIds) || !senderName) {
@@ -180,7 +180,7 @@ app.post('/api/notifications/message', async (req, res) => {
       };
     }
 
-    const result = await sendNotificationToUsers(recipientIds, title, message, data);
+    const result = await sendNotificationToUsers(recipientIds, title, message, icon, data);
     res.json(result);
   } catch (error) {
     console.error('Message notification API error:', error);

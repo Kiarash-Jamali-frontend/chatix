@@ -27,9 +27,10 @@ type PropTypes = {
   chatId?: string;
   membersProfiles?: MemberProfile[];
   groupName?: string;
+  groupPhotoUrl?: string;
 };
 
-const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName }) => {
+const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName, groupPhotoUrl }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
   const messageSelectedForReply = useAppSelector((state: RootState) => state.messageSelectedForReply.data);
@@ -95,7 +96,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           type: messageData.type,
           content: messageText,
           timestamp: messageData.timestamp.toDate()
-        });
+        }, oppositeProfile.photoUrl);
         if (result?.success && result.id) notificationId = result.id;
       } else if (groupId && groupName) {
         const result = await handleGroupMessageNotification({
@@ -105,7 +106,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           type: messageData.type,
           content: messageText,
           timestamp: messageData.timestamp.toDate()
-        }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).map((p) => p.oneSignalUserId).filter((p) => p != undefined) || []);
+        }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).map((p) => p.oneSignalUserId).filter((p) => p != undefined) || [],
+          groupPhotoUrl);
         if (result?.success && result.id) notificationId = result.id;
       }
 
@@ -185,7 +187,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             type: data.type,
             content: data.content,
             timestamp: data.timestamp.toDate()
-          });
+          }, oppositeProfile.photoUrl);
           if (result?.success && result.id) notificationId = result.id;
         } else if (groupId && groupName) {
           const result = await handleGroupMessageNotification({
@@ -195,7 +197,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             type: data.type,
             content: data.content,
             timestamp: data.timestamp.toDate()
-          }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).map((p) => p.oneSignalUserId!).filter((p) => p != undefined) || []);
+          }, groupId, groupName, membersProfiles?.filter((p) => p.settings?.enabled).map((p) => p.oneSignalUserId!).filter((p) => p != undefined) || [],
+            groupPhotoUrl);
           if (result?.success && result.id) notificationId = result.id;
         }
 

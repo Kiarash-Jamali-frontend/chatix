@@ -20,7 +20,8 @@ export const handleNewMessageNotification = async (
   isGroupMessage: boolean = false,
   groupId?: string,
   groupName?: string,
-  membersProfilesOneSignalIds?: string[]
+  membersProfilesOneSignalIds?: string[],
+  icon?: string
 ): Promise<void | { success: boolean, id?: string }> => {
   try {
     // Get recipient's OneSignal user ID
@@ -56,6 +57,7 @@ export const handleNewMessageNotification = async (
       groupName,
       isGroupMessage ? undefined : messageData.from,
       isGroupMessage ? groupId : undefined,
+      icon
     );
 
     if (notificationResult.success) {
@@ -95,9 +97,10 @@ export const handleGroupMessageNotification = async (
   },
   groupId: string,
   groupName: string,
-  membersProfilesOneSignalIds: string[]
+  membersProfilesOneSignalIds: string[],
+  icon?: string
 ) => {
-  return handleNewMessageNotification(messageData, true, groupId, groupName, membersProfilesOneSignalIds);
+  return handleNewMessageNotification(messageData, true, groupId, groupName, membersProfilesOneSignalIds, icon);
 };
 
 // Handle notification for private messages
@@ -109,9 +112,10 @@ export const handlePrivateMessageNotification = async (
     type: string;
     content?: string;
     timestamp: Date;
-  }
+  },
+  icon?: string
 ) => {
-  return handleNewMessageNotification(messageData, false);
+  return handleNewMessageNotification(messageData, false, undefined, undefined, undefined, icon);
 };
 
 // Check if user should receive notifications

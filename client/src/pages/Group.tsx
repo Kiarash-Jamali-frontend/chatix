@@ -190,7 +190,7 @@ export default function Group() {
                 </div>
                 <div className="px-3 md:px-5 max-w-[810px] mx-auto w-full">
                     <div className="mb-3 md:mb-5">
-                        <ChatInput membersProfiles={membersProfiles} mode="group" groupId={groupId} groupName={groupData.groupName} />
+                        <ChatInput groupPhotoUrl={groupData.groupPhotoUrl} membersProfiles={membersProfiles} mode="group" groupId={groupId} groupName={groupData.groupName} />
                     </div>
                 </div>
             </div>

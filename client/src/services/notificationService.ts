@@ -148,7 +148,8 @@ export const sendNotificationViaBackend = async (
   recipientId: string,
   title: string,
   message: string,
-  data: any = {}
+  data: any = {},
+  icon?: string,
 ) => {
   try {
     const response = await fetch(`${backendUrl}/api/notifications/send`, {
@@ -160,6 +161,7 @@ export const sendNotificationViaBackend = async (
         recipientId,
         title,
         message,
+        icon,
         data
       })
     });
@@ -185,7 +187,8 @@ export const sendMessageNotificationViaBackend = async (
   isGroupMessage: boolean = false,
   groupName?: string,
   chatId?: string,
-  groupId?: string
+  groupId?: string,
+  icon?: string,
 ): Promise<{
   success: boolean;
   id?: string;
@@ -202,6 +205,7 @@ export const sendMessageNotificationViaBackend = async (
         senderName,
         messageType,
         messageContent,
+        icon,
         isGroupMessage,
         groupName,
         chatId,
