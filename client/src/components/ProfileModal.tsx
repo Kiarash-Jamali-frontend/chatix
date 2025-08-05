@@ -50,6 +50,12 @@ export default function ProfileModal() {
         }
     }
 
+    const handleHideModal = () => {
+        dispatch(removeOpenedProfile());
+        hideCallback();
+        resetHideCallback();
+    }
+
     return (
         <>
             <ToastContainer />
@@ -67,11 +73,7 @@ export default function ProfileModal() {
                                     transform: "translateY(0px)"
                                 }
                             }} initial="hide" animate="open" exit="hide">
-                            <div className="fixed inset-0" onClick={() => {
-                                dispatch(removeOpenedProfile());
-                                hideCallback();
-                                resetHideCallback();
-                            }}>
+                            <div className="fixed inset-0" onClick={handleHideModal}>
 
                             </div>
                             <div className="relative max-w-svw px-4">

@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, ReactNode, SetStateAction, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 
 type PropTypes = {
     isActive: boolean;
@@ -9,40 +8,6 @@ type PropTypes = {
 }
 
 export default function Modal({ isActive, setIsActive, children }: PropTypes) {
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!isActive) return;
-
-        const currentState = location.state;
-
-        navigate(location, {
-            state: { ...currentState, modalOpen: true }
-        });
-
-        const handleBackButton = (event: PopStateEvent) => {
-            if (location.state?.modalOpen) {
-                event.preventDefault();
-                setIsActive(false);
-                navigate(location, {
-                    state: currentState
-                });
-            }
-        };
-
-        window.addEventListener('popstate', handleBackButton);
-
-        return () => {
-            window.removeEventListener('popstate', handleBackButton);
-            if (location.state?.modalOpen) {
-                navigate(location, {
-                    state: currentState
-                });
-            }
-        };
-    }, [isActive]);
-
     return (
         <AnimatePresence>
             {

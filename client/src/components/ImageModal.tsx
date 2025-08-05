@@ -34,7 +34,7 @@ export default function ImageModal() {
         if (openedImageMessage.isGroupMessage) {
             deleteMessage(openedImageMessage.id, openedImageMessage.notificationId, openedImageMessage.isGroupMessage);
         } else {
-            deleteMessage(openedImageMessage.id, openedImageMessage.notificationId,);
+            deleteMessage(openedImageMessage.id, openedImageMessage.notificationId);
         }
         dispatch(hideImage());
     }

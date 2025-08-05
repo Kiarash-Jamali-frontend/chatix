@@ -26,7 +26,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   const userProfile = useAppSelector((state: RootState) => state.user.profile)
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const [isLoading, setIsLoading] = useState(false);
-  const [settings, setSettings] = useState<SettingsType | null>(null);
+  const [settings, setSettings] = useState<SettingsType | null>(userProfile?.settings || null);
 
   useEffect(() => {
     if (isInitialized && userEmail) {
