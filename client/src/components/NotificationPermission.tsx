@@ -28,12 +28,6 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [settings, setSettings] = useState<SettingsType | null>(null);
 
-  useEffect(() => {
-    if (isInitialized && userEmail) {
-      handleUserSetup(userProfile?.oneSignalUserIds);
-    }
-  }, [isInitialized, userEmail]);
-
   const handleUserSetup = async (oneSignalUserIds: string[] | undefined) => {
     if (!userEmail) return;
 
@@ -94,7 +88,13 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   useEffect(() => {
     setSettings(userProfile?.notificationSettings || null);
-  }, [userProfile])
+  }, [userProfile]);
+
+  useEffect(() => {
+    if (isInitialized && userEmail) {
+      handleUserSetup(userProfile?.oneSignalUserIds);
+    }
+  }, [isInitialized, userEmail, userProfile]);
 
   if (isInitialized && settings) {
     return (
