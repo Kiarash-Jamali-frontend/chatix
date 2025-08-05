@@ -93,7 +93,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   }, [settings]);
 
   useEffect(() => {
-    setSettings(userProfile?.settings || null);
+    setSettings(userProfile?.notificationSettings || null);
   }, [userProfile])
 
   if (isInitialized && settings) {

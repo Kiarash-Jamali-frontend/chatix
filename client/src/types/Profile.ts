@@ -3,7 +3,7 @@ type Profile = {
     photoUrl: string;
     lastActivity: any;
     biography: string;
-    settings?: { enabled: boolean };
+    notificationSettings?: { enabled: boolean };
     oneSignalUserIds?: string[]
 }
 
