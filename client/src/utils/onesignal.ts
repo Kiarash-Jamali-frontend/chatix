@@ -23,6 +23,8 @@ const initializeOneSignal = async () => {
         title: 'Welcome to Chatix!',
         message: 'You will now receive notifications for new messages.',
       },
+      notificationClickHandlerAction: "focus",
+      notificationClickHandlerMatch: "origin"
     });
 
     console.log('OneSignal initialized successfully');
