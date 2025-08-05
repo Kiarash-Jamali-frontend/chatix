@@ -46,6 +46,10 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
       if (oneSignalUserId && !oneSignalUserIds?.find((id) => id == oneSignalUserId)) {
         await storeOneSignalUserId(userEmail, oneSignalUserId, oneSignalUserIds);
       }
+
+      if (!settings && userProfile) {
+        await storeNotificationSettings(userEmail, { enabled: true });
+      }
     } catch (error) {
       console.error('Failed to setup user:', error);
     }
