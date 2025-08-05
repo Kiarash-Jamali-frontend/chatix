@@ -19,6 +19,7 @@ dotenv.config();
 // OneSignal configuration
 const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
 const ONESIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
+const ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID = process.env.ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID;
 
 // Send notification to multiple users
 const sendNotificationToUsers = async (recipientIds, title, message, icon, data = {}) => {
@@ -44,7 +45,8 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, data 
         huawei_small_icon: icon,
         firefox_icon: icon,
         priority: 10,
-        android_channel_id: '3489aa56-b217-4fd8-a818-f83be9ba9309',
+        android_channel_id: ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID,
+        huawei_channel_id: ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID,
         android_accent_color: '#4F46E5',
         huawei_accent_color: '#4F46E5',
         ios_sound: 'notification.wav',
