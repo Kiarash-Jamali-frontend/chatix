@@ -4,8 +4,6 @@ import {
   getNotificationSettings,
   sendMessageNotificationViaBackend
 } from './notificationService';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../utils/firebase';
 
 // Handle notification when a new message is sent
 export const handleNewMessageNotification = async (
@@ -17,6 +15,7 @@ export const handleNewMessageNotification = async (
     content?: string;
     timestamp: Date;
   },
+  senderName: string,
   isGroupMessage: boolean = false,
   groupId?: string,
   groupName?: string,
@@ -25,7 +24,6 @@ export const handleNewMessageNotification = async (
 ): Promise<void | { success: boolean, id?: string }> => {
   try {
     // Get recipient's OneSignal user ID
-    // مشکل ارسال نوتیف به گروه ها فردا درست بشه
 
     const recipientEmail = messageData.to;
     const oneSignalUserIds = await getOneSignalUserIdsFromFirebase(recipientEmail);
@@ -42,10 +40,6 @@ export const handleNewMessageNotification = async (
       console.log('Notifications disabled for recipient');
       return;
     }
-
-    // Get sender's profile for notification title
-    const senderProfileDoc = await getDoc(doc(db, 'profile', messageData.from));
-    const senderName = senderProfileDoc.exists() ? senderProfileDoc.data().name : messageData.from;
 
     // Send notification using the backend service
     const notificationResult = await sendMessageNotificationViaBackend(
@@ -95,12 +89,13 @@ export const handleGroupMessageNotification = async (
     content?: string;
     timestamp: Date;
   },
+  senderName: string,
   groupId: string,
   groupName: string,
   membersProfilesOneSignalIds: string[],
   icon?: string
 ) => {
-  return handleNewMessageNotification(messageData, true, groupId, groupName, membersProfilesOneSignalIds, icon);
+  return handleNewMessageNotification(messageData, senderName, true, groupId, groupName, membersProfilesOneSignalIds, icon);
 };
 
 // Handle notification for private messages
@@ -113,9 +108,10 @@ export const handlePrivateMessageNotification = async (
     content?: string;
     timestamp: Date;
   },
+  senderName: string,
   icon?: string
 ) => {
-  return handleNewMessageNotification(messageData, false, undefined, undefined, undefined, icon);
+  return handleNewMessageNotification(messageData, senderName, false, undefined, undefined, undefined, icon);
 };
 
 // Check if user should receive notifications
