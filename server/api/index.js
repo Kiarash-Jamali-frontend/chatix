@@ -20,7 +20,6 @@ dotenv.config();
 const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
 const ONESIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
 const ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID = process.env.ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID;
-const SMALL_ICON_FULL_ADDRESS = process.env.APP_URL + process.env.SMALL_ICON_PATH;
 
 // Send notification to multiple users
 const sendNotificationToUsers = async (recipientIds, title, message, icon, collapseId, channelId, group, data = {}) => {
@@ -43,9 +42,6 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, colla
         url: data.url || '/',
         chrome_web_icon: icon,
         firefox_icon: icon,
-        small_icon: SMALL_ICON_FULL_ADDRESS,
-        huawei_small_icon: SMALL_ICON_FULL_ADDRESS,
-        adm_small_icon: SMALL_ICON_FULL_ADDRESS,
         priority: 10,
         adm_group: group,
         android_group: group,
