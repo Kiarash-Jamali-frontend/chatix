@@ -41,7 +41,6 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, colla
         data: data,
         url: data.url || '/',
         chrome_web_icon: icon,
-        small_icon: icon,
         huawei_small_icon: icon,
         firefox_icon: icon,
         priority: 10,
