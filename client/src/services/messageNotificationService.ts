@@ -48,6 +48,7 @@ export const handleNewMessageNotification = async (
       messageData.type,
       getNotificationContent(messageData.type, messageData.content,) || '',
       isGroupMessage,
+      messageData.id,
       groupName,
       isGroupMessage ? undefined : messageData.from,
       isGroupMessage ? groupId : undefined,
