@@ -46,6 +46,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, colla
         firefox_icon: icon,
         priority: 10,
         collapse_id: collapseId ? collapseId.slice(0, 64) : undefined,
+        web_push_topic: collapseId ? collapseId.slice(0, 64) : undefined,
         android_channel_id: ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID,
         huawei_channel_id: ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID,
         android_accent_color: '#4F46E5',
