@@ -20,9 +20,10 @@ dotenv.config();
 const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
 const ONESIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
 const ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID = process.env.ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID;
+const APP_URL = process.env.APP_URL;
 
 // Send notification to multiple users
-const sendNotificationToUsers = async (recipientIds, title, message, icon, collapseId, channelId, group, data = {}) => {
+const sendNotificationToUsers = async (recipientIds, title, message, icon, webPushTopic, channelId, group, data = {}) => {
   try {
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
@@ -43,14 +44,9 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, colla
         chrome_web_icon: icon,
         firefox_icon: icon,
         priority: 10,
-        adm_group: group,
-        android_group: group,
-        collapse_id: collapseId ? collapseId.slice(0, 64) : undefined,
-        web_push_topic: collapseId ? collapseId.slice(0, 64) : undefined,
+        web_push_topic: webPushTopic ? webPushTopic.slice(0, 64) : undefined,
         android_channel_id: channelId,
         huawei_channel_id: channelId,
-        android_accent_color: "#2b7fff",
-        huawei_accent_color: "#2b7fff",
         ios_sound: 'notification.wav',
         android_sound: 'notification',
         adm_sound: 'notification',
@@ -189,7 +185,7 @@ app.post('/api/notifications/message', async (req, res) => {
       };
     }
 
-    const result = await sendNotificationToUsers(recipientIds, title, message, icon, messageId, ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID, "chatix", data);
+    const result = await sendNotificationToUsers(recipientIds, title, message, icon || `${APP_URL}/profile.png`, messageId, ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID, "messages", data);
     res.json(result);
   } catch (error) {
     console.error('Message notification API error:', error);
