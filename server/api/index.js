@@ -22,7 +22,7 @@ const ONESIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
 const ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID = process.env.ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID;
 
 // Send notification to multiple users
-const sendNotificationToUsers = async (recipientIds, title, message, icon, collapseId, data = {}) => {
+const sendNotificationToUsers = async (recipientIds, title, message, icon, collapseId, channelId, group, data = {}) => {
   try {
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
@@ -45,10 +45,11 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, colla
         huawei_small_icon: icon,
         firefox_icon: icon,
         priority: 10,
+        android_group: group,
         collapse_id: collapseId ? collapseId.slice(0, 64) : undefined,
         web_push_topic: collapseId ? collapseId.slice(0, 64) : undefined,
-        android_channel_id: ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID,
-        huawei_channel_id: ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID,
+        android_channel_id: channelId,
+        huawei_channel_id: channelId,
         android_accent_color: '#4F46E5',
         huawei_accent_color: '#4F46E5',
         ios_sound: 'notification.wav',
@@ -100,7 +101,7 @@ const deleteNotification = async (id) => {
 // Send notification to single user
 app.post('/api/notifications/send', async (req, res) => {
   try {
-    const { recipientId, title, message, icon, data } = req.body;
+    const { recipientId, title, message, icon, data, channelId, group } = req.body;
 
     if (!recipientId || !title || !message) {
       return res.status(400).json({
@@ -109,7 +110,7 @@ app.post('/api/notifications/send', async (req, res) => {
       });
     }
 
-    const result = await sendNotificationToUsers([recipientId], title, message, icon, undefined, data);
+    const result = await sendNotificationToUsers([recipientId], title, message, icon, undefined, channelId, group, data);
     res.json(result);
   } catch (error) {
     console.error('Notification API error:', error);
@@ -123,7 +124,7 @@ app.post('/api/notifications/send', async (req, res) => {
 // Send notification to multiple users
 app.post('/api/notifications/send-bulk', async (req, res) => {
   try {
-    const { recipientIds, title, message, icon, data } = req.body;
+    const { recipientIds, title, message, icon, data, channelId, group } = req.body;
 
     if (!recipientIds || !Array.isArray(recipientIds) || !title || !message) {
       return res.status(400).json({
@@ -132,7 +133,7 @@ app.post('/api/notifications/send-bulk', async (req, res) => {
       });
     }
 
-    const result = await sendNotificationToUsers(recipientIds, title, message, icon, undefined, data);
+    const result = await sendNotificationToUsers(recipientIds, title, message, icon, undefined, channelId, group, data);
     res.json(result);
   } catch (error) {
     console.error('Bulk notification API error:', error);
@@ -189,7 +190,7 @@ app.post('/api/notifications/message', async (req, res) => {
       };
     }
 
-    const result = await sendNotificationToUsers(recipientIds, title, message, icon, messageId, data);
+    const result = await sendNotificationToUsers(recipientIds, title, message, icon, messageId, ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID, "messages", data);
     res.json(result);
   } catch (error) {
     console.error('Message notification API error:', error);
