@@ -23,7 +23,7 @@ const ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID = process.env.ONESIGNAL_ANDROID_HUAWEI
 const APP_URL = process.env.APP_URL;
 
 // Send notification to multiple users
-const sendNotificationToUsers = async (recipientIds, title, message, icon, webPushTopic, channelId, group, data = {}) => {
+const sendNotificationToUsers = async (recipientIds, title, message, icon, webPushTopic, channelId, data = {}) => {
   try {
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
@@ -41,7 +41,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
         contents: { en: message },
         data: data,
         url: data.url || '/',
-        threadId: "chatix",
+        thread_id: "chatix",
         chrome_web_icon: icon,
         firefox_icon: icon,
         priority: 10,
@@ -186,7 +186,7 @@ app.post('/api/notifications/message', async (req, res) => {
       };
     }
 
-    const result = await sendNotificationToUsers(recipientIds, title, message, icon || `${APP_URL}/profile.png`, messageId, ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID, "messages", data);
+    const result = await sendNotificationToUsers(recipientIds, title, message, icon || `${APP_URL}/profile.png`, messageId, ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID, data);
     res.json(result);
   } catch (error) {
     console.error('Message notification API error:', error);
