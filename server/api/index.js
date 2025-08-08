@@ -165,43 +165,27 @@ app.post('/api/notifications/message', async (req, res) => {
     // Create notification content
     let title = '';
     let message = '';
-    // let data = {};
-    let tag = '';
-    const notificationIcon = icon || `${APP_URL}/profile.png`;
+    let data = {};
 
     if (isGroupMessage && groupName) {
       title = `${senderName} in ${groupName}`;
       message = messageType === 'text' ? messageContent : `Sent a ${messageType}`;
-      // data = {
-      //   type: 'group_message',
-      //   groupId,
-      //   url: `/group/${groupId}`
-      // };
-      tag = groupId;
+      data = {
+        type: 'group_message',
+        groupId,
+        url: `/group/${groupId}`
+      };
     } else {
       title = senderName;
       message = messageType === 'text' ? messageContent : `Sent a ${messageType}`;
-      // data = {
-      //   type: 'private_message',
-      //   chatId,
-      //   url: `/chat/${chatId}`
-      // };
-      tag = chatId;
+      data = {
+        type: 'private_message',
+        chatId,
+        url: `/chat/${chatId}`
+      };
     }
 
-    const result = await sendNotificationToUsers(
-      recipientIds,
-      title,
-      message,
-      notificationIcon,
-      messageId,
-      ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID,
-      {
-        title,
-        message,
-        icon: notificationIcon,
-        tag
-      });
+    const result = await sendNotificationToUsers(recipientIds, title, message, icon || `${APP_URL}/profile.png`, messageId, ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID, data);
     res.json(result);
   } catch (error) {
     console.error('Message notification API error:', error);

@@ -4,12 +4,10 @@ import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 
 const manifestForPlugIn: Partial<VitePWAOptions> = {
   registerType: 'prompt',
-  strategies: 'injectManifest',
-  srcDir: 'src',
-  filename: 'sw.ts',
   injectManifest: {
     maximumFileSizeToCacheInBytes: 5000000,
   },
+  injectRegister: "auto",
   workbox: {
     maximumFileSizeToCacheInBytes: 5000000,
     globPatterns: ["**/*"],
@@ -46,7 +44,7 @@ const manifestForPlugIn: Partial<VitePWAOptions> = {
       }
     ]
   },
-  includeAssets: ["**/*",],
+  includeAssets: ["**/*"],
   manifest: {
     name: "Chatix",
     short_name: "Chatix",
