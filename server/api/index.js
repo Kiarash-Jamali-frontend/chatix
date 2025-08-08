@@ -23,7 +23,7 @@ const ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID = process.env.ONESIGNAL_ANDROID_HUAWEI
 const APP_URL = process.env.APP_URL;
 
 // Send notification to multiple users
-const sendNotificationToUsers = async (recipientIds, title, message, icon, webPushTopic, channelId, data = {}) => {
+const sendNotificationToUsers = async (recipientIds, title, message, icon, webPushTopic, channelId, threadId, data = {}) => {
   try {
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
@@ -41,7 +41,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
         contents: { en: message },
         data: data,
         url: data.url || '/',
-        thread_id: "chatix",
+        thread_id: threadId,
         chrome_web_icon: icon,
         firefox_icon: icon,
         priority: 10,
@@ -167,6 +167,7 @@ app.post('/api/notifications/message', async (req, res) => {
     let title = '';
     let message = '';
     let data = {};
+    let threadId = '';
 
     if (isGroupMessage && groupName) {
       title = `${senderName} in ${groupName}`;
@@ -176,6 +177,7 @@ app.post('/api/notifications/message', async (req, res) => {
         groupId,
         url: `/group/${groupId}`
       };
+      threadId = groupId;
     } else {
       title = senderName;
       message = messageType === 'text' ? messageContent : `Sent a ${messageType}`;
@@ -184,9 +186,10 @@ app.post('/api/notifications/message', async (req, res) => {
         chatId,
         url: `/chat/${chatId}`
       };
+      threadId = chatId;
     }
 
-    const result = await sendNotificationToUsers(recipientIds, title, message, icon || `${APP_URL}/profile.png`, messageId, ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID, data);
+    const result = await sendNotificationToUsers(recipientIds, title, message, icon || `${APP_URL}/profile.png`, messageId, ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID, threadId, data);
     res.json(result);
   } catch (error) {
     console.error('Message notification API error:', error);
