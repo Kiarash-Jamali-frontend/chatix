@@ -4,8 +4,11 @@ import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 
 const manifestForPlugIn: Partial<VitePWAOptions> = {
   registerType: 'prompt',
+  strategies: 'injectManifest',
+  srcDir: 'src',
+  filename: 'sw.ts',
   injectManifest: {
-    maximumFileSizeToCacheInBytes: 5000000
+    maximumFileSizeToCacheInBytes: 5000000,
   },
   workbox: {
     maximumFileSizeToCacheInBytes: 5000000,
