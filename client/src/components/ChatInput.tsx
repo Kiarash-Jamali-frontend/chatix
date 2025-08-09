@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker, { SuggestionMode, Theme } from "emoji-picker-react";
 import { faClose, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
-import ContentEditable from 'react-contenteditable'
+import ContentEditable, { ContentEditableEvent } from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
 import { AnimatePresence, motion } from "framer-motion";
@@ -44,7 +44,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const dispatch = useAppDispatch();
   const { getChatSecret } = useEncryption();
   const draft = useAppSelector((state: RootState) => getDraft(state, messageTo));
-  const draftValue = Object.values(draft || [])[0];
+  const draftValue = Object.values(draft || [])[0] || "";
 
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>(draftValue);
@@ -237,25 +237,27 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     dispatch(changeMessageSelectedForReply(null));
   }
 
-  useEffect(() => {
-    removeMessageSelectedForRelpy();
-    setMessageText(draftValue);
-  }, [messageTo]);
-
-  useEffect(() => {
-    if (!messageText || messageText == "<br>") {
+  const handleChangeMessageText = (e: ContentEditableEvent) => {
+    const { value } = e.target;
+    if (!value || value == "<br>") {
       dispatch(removeDraft(messageTo));
       setMessageText("");
       return;
     }
-    if (!draftValue || messageText != draftValue) {
+    if (!draftValue || value != draftValue) {
       const newDraft = {
-        [messageTo]: messageText
+        [messageTo]: value
       };
 
       dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
     }
-  }, [messageText, draftValue, messageTo])
+    setMessageText(value);
+  }
+
+  useEffect(() => {
+    removeMessageSelectedForRelpy();
+    setMessageText(draftValue);
+  }, [messageTo]);
 
   useEffect(() => {
     let newChildNodes: Element[] = [];
@@ -263,7 +265,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       newChildNodes = [...newChildNodes, messageTextHtmlBody.children.item(i)!];
     }
     setChildsNodes(newChildNodes);
-  }, [messageText])
+  }, [messageText]);
 
   return (
     <div className={`relative flex items-stretch max-h-12`}
@@ -361,7 +363,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           <div dir="auto" className="w-full">
             <ContentEditable
               html={messageText ? messageText : ""}
-              onChange={(e) => setMessageText(e.target.value)}
+              onChange={handleChangeMessageText}
               className={`focus:outline-hidden relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-natural/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
             />
           </div>
