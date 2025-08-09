@@ -243,9 +243,9 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   }, [messageTo]);
 
   useEffect(() => {
-    if (messageText == "<br>") {
-      setMessageText("");
+    if (!messageText || messageText == "<br>") {
       dispatch(removeDraft(messageTo));
+      setMessageText("");
       return;
     }
     if (!draftValue || messageText != draftValue) {
