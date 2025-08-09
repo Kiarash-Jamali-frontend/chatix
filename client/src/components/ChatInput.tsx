@@ -19,6 +19,7 @@ import useThemeDetector from "../hooks/useThemeDetector";
 import { encryptMessage } from "../utils/crypto";
 import { useEncryption } from "../hooks/useEncryption";
 import { handlePrivateMessageNotification, handleGroupMessageNotification } from "../services/messageNotificationService";
+import { addDraft, changeDraft, getDraft, removeDraft } from "../redux/slices/drafts";
 
 type PropTypes = {
   mode: "group" | "private";
@@ -31,6 +32,9 @@ type PropTypes = {
 };
 
 const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName, groupPhotoUrl }) => {
+  const isPrivateChat = (mode == "private" || !mode);
+  const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
+
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
   const userProfile = useAppSelector((state: RootState) => state.user.profile);
@@ -39,15 +43,15 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const systemThemeIsDark = useThemeDetector();
   const dispatch = useAppDispatch();
   const { getChatSecret } = useEncryption();
+  const draft = useAppSelector((state: RootState) => getDraft(state, messageTo));
+  const draftValue = Object.values(draft || [])[0];
 
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
-  const [messageText, setMessageText] = useState<string>("");
+  const [messageText, setMessageText] = useState<string>(draftValue);
   const [filePending, setFilePending] = useState<boolean>(false);
   const [childNodes, setChildsNodes] = useState<Element[]>([]);
   const [textMessagePending, setTextMessagePending] = useState<boolean>(false);
 
-  const isPrivateChat = (mode == "private" || !mode);
-  const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
   const messageTextHtmlBody = new DOMParser().parseFromString(messageText, "text/html").body;
   const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false);
 
@@ -58,6 +62,8 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     setTextMessagePending(true);
     setMessageText("");
     removeMessageSelectedForRelpy();
+
+    if (draft) dispatch(removeDraft(messageTo));
 
     try {
       let messageData: any = {
@@ -233,7 +239,23 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
   useEffect(() => {
     removeMessageSelectedForRelpy();
-  }, [chatId, groupId])
+    setMessageText(draftValue);
+  }, [messageTo]);
+
+  useEffect(() => {
+    if (messageText == "<br>") {
+      setMessageText("");
+      dispatch(removeDraft(messageTo));
+      return;
+    }
+    if (!draftValue || messageText != draftValue) {
+      const newDraft = {
+        [messageTo]: messageText
+      };
+
+      dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
+    }
+  }, [messageText, draftValue, messageTo])
 
   useEffect(() => {
     let newChildNodes: Element[] = [];

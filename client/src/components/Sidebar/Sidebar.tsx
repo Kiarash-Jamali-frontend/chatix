@@ -42,6 +42,7 @@ const Sidebar: React.FC = () => {
     setLogoutPending(true);
     // Clear encryption keys before logout
     clearAllSecrets();
+    localStorage.removeItem("chatix_drafts");
     signOut(auth).then(() => {
       setLogoutPending(false);
       navigate("/login");

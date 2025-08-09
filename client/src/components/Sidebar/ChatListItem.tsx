@@ -14,6 +14,7 @@ import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
 import { useEncryption } from "../../hooks/useEncryption";
+import { getDraft } from "../../redux/slices/drafts";
 
 type PropTypes = {
     chat: ChatData;
@@ -29,6 +30,8 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     const [decryptedLastMessage, setDecryptedLastMessage] = useState<string>("");
     const chatIsSelected = selectedChatOrGroupID === chat.email;
     const { getChatSecret } = useEncryption();
+    const draft = useAppSelector((state: RootState) => getDraft(state, chat.email));
+    const draftValue = Object.values(draft || [])[0];
 
     useEffect(() => {
         if (userEmail) {
@@ -141,18 +144,26 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                                 </div>
                                 <div dir="auto" className={`text-left last-message text-xs min-w-0 w-full ${chatIsSelected ? "text-white/80" : "text-natural/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                     {
-                                        lastMessage && (
-                                            lastMessage?.type !== "text" && (
-                                                <div className="flex capitalize">
-                                                    <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
-                                                        className="me-1" />
-                                                    {lastMessage?.type}
-                                                </div>
+                                        draftValue ? (
+                                            <span className={`${chatIsSelected ? "text-white" : "text-natural"} font-medium`}>
+                                                Draft:{" "}
+                                            </span>
+                                        ) : (
+                                            lastMessage && (
+                                                lastMessage?.type !== "text" && (
+                                                    <div className="flex capitalize">
+                                                        <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
+                                                            className="me-1" />
+                                                        {lastMessage?.type}
+                                                    </div>
+                                                )
                                             )
                                         )
                                     }
                                     {
-                                        lastMessage?.type === "text" && parse(decryptedLastMessage?.split("<br>").join(" "))
+                                        draftValue ? parse(draftValue?.split("<br>").join(" ")) : (
+                                            lastMessage?.type === "text" && parse(decryptedLastMessage?.split("<br>").join(" "))
+                                        )
                                     }
                                 </div>
                             </div>

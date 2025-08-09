@@ -19,6 +19,7 @@ import { changeTheme } from "./redux/slices/theme";
 import publicRoutes from "./constants/publicRoutes";
 import { Unsubscribe } from "firebase/firestore";
 import NotificationBanner from "./components/NotificationBanner";
+import { setDraftsList } from "./redux/slices/drafts";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -60,6 +61,12 @@ const Layout: React.FC = () => {
       }
       redirect("/");
     }
+  }
+
+  const getDrafts = () => {
+    const drafts = localStorage.getItem("chatix_drafts");
+    const parsedDrafts: Record<string, string>[] = drafts ? JSON.parse(drafts) : [];
+    dispatch(setDraftsList(parsedDrafts));
   }
 
   useEffect(() => {
@@ -271,6 +278,8 @@ const Layout: React.FC = () => {
 
   useEffect(() => {
     getTheme();
+
+    getDrafts();
   }, []);
 
   // if (!isOnline && user?.status == "unauthenticated") {

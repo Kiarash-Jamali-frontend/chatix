@@ -12,6 +12,7 @@ import { Parser } from "html-to-react";
 import customFormatRelative from "../../helpers/customFormatRelative";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
+import { getDraft } from "../../redux/slices/drafts";
 
 type PropTypes = {
     group: SidebarGroupData;
@@ -25,6 +26,8 @@ export default function GroupListItem({ group, search }: PropTypes) {
     const groupIsSelected = selectedChatOrGroupID === group.id;
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
     const [notSeenedMessagesCount, setNotSeenedMessagesCount] = useState<number>(0);
+    const draft = useAppSelector((state: RootState) => getDraft(state, group.id));
+    const draftValue = Object.values(draft || [])[0];
 
     useEffect(() => {
         if (userEmail) {
@@ -101,25 +104,37 @@ export default function GroupListItem({ group, search }: PropTypes) {
                                     </div>
                                     <div className={`last-message text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-natural/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                         {
-                                            lastMessage && (
+                                            draftValue ? (
                                                 <span className={`${groupIsSelected ? "text-white" : "text-natural"} font-medium`}>
-                                                    {lastMessage?.senderProfile.email == userEmail ? "You: " : `${lastMessage?.senderProfile.name}: `}
+                                                    Draft:{" "}
                                                 </span>
+                                            ) : (
+                                                <>
+                                                    {
+                                                        lastMessage && (
+                                                            <span className={`${groupIsSelected ? "text-white" : "text-natural"} font-medium`}>
+                                                                {lastMessage?.senderProfile.email == userEmail ? "You: " : `${lastMessage?.senderProfile.name}: `}
+                                                            </span>
+                                                        )
+                                                    }
+                                                    {
+                                                        lastMessage && (
+                                                            lastMessage?.type !== "text" && (
+                                                                <span className="capitalize">
+                                                                    <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
+                                                                        className="me-1" />
+                                                                    {lastMessage?.type}
+                                                                </span>
+                                                            )
+                                                        )
+                                                    }
+                                                </>
                                             )
                                         }
                                         {
-                                            lastMessage && (
-                                                lastMessage?.type !== "text" && (
-                                                    <span className="capitalize">
-                                                        <FontAwesomeIcon icon={lastMessage?.type === "image" ? faImage : lastMessage?.type === "video" ? faVideo : faFile}
-                                                            className="me-1" />
-                                                        {lastMessage?.type}
-                                                    </span>
-                                                )
+                                            draftValue ? parse(draftValue?.split("<br>").join(" ")) : (
+                                                lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
                                             )
-                                        }
-                                        {
-                                            lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
                                         }
                                     </div>
                                 </div>
