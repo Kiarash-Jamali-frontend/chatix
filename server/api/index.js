@@ -68,7 +68,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
   }
 };
 
-const deleteNotification = async (id) => {
+const deleteNotification = async (id, msgId) => {
   try {
     const response = await fetch(`https://api.onesignal.com/notifications/${id}?app_id=${ONESIGNAL_APP_ID}`, {
       method: 'DELETE',
@@ -77,9 +77,18 @@ const deleteNotification = async (id) => {
       },
     });
 
+    const removedNotificationResult = await sendNotificationToUsers(
+      [id],
+      "Message has been deleted.",
+      "Message deleted by an anonymous user.",
+      `${APP_URL}/profile.png`,
+      msgId,
+      ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID,
+      {});
+
     const result = await response.json();
 
-    if (result.errors) {
+    if (result.errors || removedNotificationResult.errors) {
       console.error('OneSignal API errors:', result.errors);
       return { success: false, errors: result.errors };
     }
@@ -207,9 +216,9 @@ app.get('/api/health', (req, res) => {
 
 app.delete("/api/notifications/delete", async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id, msgId } = req.body;
 
-    if (!id) {
+    if (!id || !msgId) {
       return res.status(400).json({
         success: false,
         error: 'Missing required fields: id (string)'
@@ -217,7 +226,7 @@ app.delete("/api/notifications/delete", async (req, res) => {
     }
 
     const result =
-      await deleteNotification(id);
+      await deleteNotification(id, msgId);
 
     res.json(result);
   } catch {

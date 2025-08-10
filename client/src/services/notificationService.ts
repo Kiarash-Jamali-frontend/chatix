@@ -227,7 +227,7 @@ export const sendMessageNotificationViaBackend = async (
   }
 };
 
-export const deleteNotification = async (id: string) => {
+export const deleteNotification = async (id: string, msgId: string) => {
   try {
     const response = await fetch(`${backendUrl}/api/notifications/delete`, {
       method: 'DELETE',
@@ -235,7 +235,8 @@ export const deleteNotification = async (id: string) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id
+        id,
+        msgId
       })
     });
 
