@@ -46,7 +46,7 @@ const Chat: React.FC = () => {
   const getOneSignalUserIdsHandler = async () => {
     const newOneSignalUserIds = await getOneSignalUserIdsFromFirebase(profile.email);
     if (Array.isArray(newOneSignalUserIds)) {
-      setOneSignalUserIds(oneSignalUserIds);
+      setOneSignalUserIds(newOneSignalUserIds);
     }
   }
 
