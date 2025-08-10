@@ -81,7 +81,7 @@ export default function AddMemberForm({ groupData, setModalContentType, membersE
                 )
             }
             <div className={`grid ${chatsNotAddedInGroup.length ? "grid-cols-2" : "grid-cols-1"} gap-3 mt-4`}>
-                <button className={button({ intent: "dark" })}
+                <button className={button()}
                     onClick={() => setModalContentType(ModalContentType.DEFAULT)}>
                     <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
                     Back
