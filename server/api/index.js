@@ -218,10 +218,10 @@ app.delete("/api/notifications/delete", async (req, res) => {
   try {
     const { id, msgId, recipientIds } = req.body;
 
-    if (!id || !msgId) {
+    if (!id || !msgId || !recipientIds) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: id (string)'
+        error: 'Missing required fields: id (string), msgId: (string), recipientIds: (string[])'
       });
     }
 
