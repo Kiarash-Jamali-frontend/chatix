@@ -32,9 +32,9 @@ export default function ImageModal() {
 
     const deleteMessageHandler = () => {
         if (openedImageMessage.isGroupMessage) {
-            deleteMessage(openedImageMessage.id, openedImageMessage.notificationId, openedImageMessage.isGroupMessage);
+            deleteMessage(openedImageMessage.id, openedImageMessage.notificationId, openedImageMessage.recipients, openedImageMessage.isGroupMessage, openedImageMessage.content);
         } else {
-            deleteMessage(openedImageMessage.id, openedImageMessage.notificationId);
+            deleteMessage(openedImageMessage.id, openedImageMessage.notificationId, openedImageMessage.recipients, false, openedImageMessage.content);
         }
         dispatch(hideImage());
     }

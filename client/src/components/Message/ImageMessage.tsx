@@ -10,7 +10,7 @@ type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
 }
 
-export default function ImageMessage({ message, scrollDown, isGroupMessage }: PropTypes) {
+export default function ImageMessage({ message, scrollDown, isGroupMessage, recipients }: PropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
 
@@ -29,7 +29,7 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage }: Pr
             >
                 <div className="relative">
                     <div className="relative rounded-lg overflow-hidden cursor-pointer"
-                        onClick={() => dispatch(changeImage({ ...message, isGroupMessage }))}>
+                        onClick={() => dispatch(changeImage({ ...message, isGroupMessage, recipients }))}>
                         <img
                             crossOrigin="anonymous" onLoad={scrollDown} src={message.content} className="object-cover max-w-[400px] max-h-[275px] w-full" />
                     </div>

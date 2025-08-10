@@ -25,20 +25,23 @@ export const handleNewMessageNotification = async (
   try {
     // Get recipient's OneSignal user ID
 
-    const recipientEmail = messageData.to;
-    const oneSignalUserIds = await getOneSignalUserIdsFromFirebase(recipientEmail);
+    let oneSignalUserIds = [];
 
-    if (!oneSignalUserIds || !oneSignalUserIds.length) {
-      console.log('Recipient not found or OneSignal not set up');
-      return;
-    }
+    if (!isGroupMessage) {
+      const recipientEmail = messageData.to;
+      oneSignalUserIds = await getOneSignalUserIdsFromFirebase(recipientEmail);
 
-    // Get recipient's notification settings
-    const notificationSettings = await getNotificationSettings(recipientEmail);
+      if (!oneSignalUserIds || !oneSignalUserIds.length) {
+        console.log('Recipient not found or OneSignal not set up');
+        return;
+      }
+      // Get recipient's notification settings
+      const notificationSettings = await getNotificationSettings(recipientEmail);
 
-    if (!notificationSettings.enabled) {
-      console.log('Notifications disabled for recipient');
-      return;
+      if (!notificationSettings.enabled) {
+        console.log('Notifications disabled for recipient');
+        return;
+      }
     }
 
     // Send notification using the backend service

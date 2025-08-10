@@ -29,9 +29,10 @@ type PropTypes = {
   membersProfiles?: MemberProfile[];
   groupName?: string;
   groupPhotoUrl?: string;
+  groupMembersRecipients?: string[]
 };
 
-const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName, groupPhotoUrl }) => {
+const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName, groupPhotoUrl, groupMembersRecipients }) => {
   const isPrivateChat = (mode == "private" || !mode);
   const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
 
@@ -105,7 +106,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           timestamp: messageData.timestamp.toDate()
         }, userProfile.name, userProfile?.photoUrl);
         if (result?.success && result.id) notificationId = result.id;
-      } else if (groupId && groupName && userProfile) {
+      } else if (groupId && groupName && userProfile && groupMembersRecipients) {
         const result = await handleGroupMessageNotification({
           id: docRef.id,
           from: messageData.from,
@@ -113,7 +114,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           type: messageData.type,
           content: messageText,
           timestamp: messageData.timestamp.toDate()
-        }, userProfile.name, groupId, groupName, membersProfiles?.filter((p) => p.notificationSettings?.enabled).flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined) || [],
+        }, userProfile.name, groupId, groupName, groupMembersRecipients,
           groupPhotoUrl);
         if (result?.success && result.id) notificationId = result.id;
       }
@@ -196,7 +197,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             timestamp: data.timestamp.toDate()
           }, userProfile.name, userProfile?.photoUrl);
           if (result?.success && result.id) notificationId = result.id;
-        } else if (groupId && groupName && userProfile) {
+        } else if (groupId && groupName && userProfile && groupMembersRecipients) {
           const result = await handleGroupMessageNotification({
             id: docRef.id,
             from: data.from,
@@ -204,7 +205,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
             type: data.type,
             content: data.content,
             timestamp: data.timestamp.toDate()
-          }, userProfile.name, groupId, groupName, membersProfiles?.filter((p) => p.notificationSettings?.enabled).flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined) || [],
+          }, userProfile.name, groupId, groupName, groupMembersRecipients,
             groupPhotoUrl);
           if (result?.success && result.id) notificationId = result.id;
         }

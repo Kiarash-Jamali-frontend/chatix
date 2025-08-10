@@ -68,9 +68,9 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
   }
 };
 
-const deleteNotification = async (id, msgId) => {
+const deleteNotification = async (notificationId, msgId, recipientIds) => {
   try {
-    const response = await fetch(`https://api.onesignal.com/notifications/${id}?app_id=${ONESIGNAL_APP_ID}`, {
+    const response = await fetch(`https://api.onesignal.com/notifications/${notificationId}?app_id=${ONESIGNAL_APP_ID}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Basic ${ONESIGNAL_REST_API_KEY}`
@@ -78,7 +78,7 @@ const deleteNotification = async (id, msgId) => {
     });
 
     const removedNotificationResult = await sendNotificationToUsers(
-      [id],
+      recipientIds,
       "Message has been deleted.",
       "Message deleted by an anonymous user.",
       `${APP_URL}/profile.png`,
@@ -216,7 +216,7 @@ app.get('/api/health', (req, res) => {
 
 app.delete("/api/notifications/delete", async (req, res) => {
   try {
-    const { id, msgId } = req.body;
+    const { id, msgId, recipientIds } = req.body;
 
     if (!id || !msgId) {
       return res.status(400).json({
@@ -226,7 +226,7 @@ app.delete("/api/notifications/delete", async (req, res) => {
     }
 
     const result =
-      await deleteNotification(id, msgId);
+      await deleteNotification(id, msgId, recipientIds);
 
     res.json(result);
   } catch {

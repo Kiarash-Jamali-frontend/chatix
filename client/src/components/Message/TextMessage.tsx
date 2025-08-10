@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import urlify from "../../helpers/urlify";
 
-const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, replayMessage }) => {
+const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, replayMessage, recipients }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
@@ -54,7 +54,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, repl
 
   return (
     <div className="flex">
-      <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} isGroupMessage={isGroupMessage} />
+      <DeleteTextFileAudioMessageButton recipients={recipients} replayMessage={replayMessage} message={message} isGroupMessage={isGroupMessage} />
       <button
         onBlur={() => dispatch(changeSelectedMessage(null))}
         onFocus={(e) => {

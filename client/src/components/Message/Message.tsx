@@ -31,9 +31,10 @@ type PropTypes = {
   };
   isGroupMessage?: boolean;
   nextMessageSender?: string | null;
+  recipients: string[]
 };
 
-const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage = false, senderProfile, nextMessageSender }) => {
+const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage = false, senderProfile, nextMessageSender, recipients }) => {
   const { parse } = Parser();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsList = useAppSelector((state: RootState) => state.chats.list);
@@ -218,30 +219,30 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
               )
             }
             {
-              message.type === "image" && <ImageMessage key={message.id}
+              message.type === "image" && <ImageMessage recipients={recipients} key={message.id}
                 replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
                 senderProfile={senderProfile}
                 scrollDown={scrollDown} />
             }
             {
-              message.type === "video" && <VideoMessage key={message.id}
+              message.type === "video" && <VideoMessage recipients={recipients} key={message.id}
                 replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
                 senderProfile={senderProfile}
                 scrollDown={scrollDown} />
             }
             {
-              message.type === "file" && <FileMessage key={message.id}
+              message.type === "file" && <FileMessage recipients={recipients} key={message.id}
                 replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
                 senderProfile={senderProfile} />
             }
             {
-              message.type === "audio" && <AudioMessage
+              message.type === "audio" && <AudioMessage recipients={recipients}
                 replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage}
                 senderProfile={senderProfile} />
             }
             {
               message.type === "text" &&
-              <TextMessage replayMessage={replyedMessage} key={message.id}
+              <TextMessage recipients={recipients} replayMessage={replyedMessage} key={message.id}
                 message={{ ...message, content: decryptedContent }} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
             }
           </div>

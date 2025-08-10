@@ -6,7 +6,7 @@ import { RootState } from "../../redux/store";
 import deleteMessage from "../../helpers/messages/deleteMessage";
 import MessagePropTypes from "../../types/MessagePropTypes";
 
-export default function DeleteTextFileAudioMessageButton({ message, isGroupMessage, replayMessage }: MessagePropTypes) {
+export default function DeleteTextFileAudioMessageButton({ message, isGroupMessage, replayMessage, recipients, isFile = false }: MessagePropTypes) {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessageID = useAppSelector((state: RootState) => state.selectedMessage.data?.id);
     const messageIsForCurrentUser = userEmail === message.from;
@@ -26,7 +26,7 @@ export default function DeleteTextFileAudioMessageButton({ message, isGroupMessa
                             translateX: "1rem",
                         }}>
                             <button className={`px-2 h-full border border-e-transparent bg-secondary text-natural flex items-center ${message.replyTo && replayMessage ? "rounded-bl-xl border-t-transparent" : "rounded-l-xl"}`}
-                                onClick={() => deleteMessage(message.id, message.notificationId, isGroupMessage)}>
+                                onClick={() => deleteMessage(message.id, message.notificationId, recipients, isGroupMessage, isFile ? message.content : undefined)}>
                                 <FontAwesomeIcon icon={faTrashCan} />
                             </button>
                         </motion.div>

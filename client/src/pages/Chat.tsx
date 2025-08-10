@@ -23,6 +23,7 @@ import ChatInput from "../components/ChatInput";
 import { isSameDay } from "date-fns";
 import customFormatRelative from "../helpers/customFormatRelative";
 import { AnimatePresence } from "framer-motion";
+import { getOneSignalUserIdsFromFirebase } from "../services/notificationService";
 
 const Chat: React.FC = () => {
   const userData = useAppSelector((state: RootState) => state.user.data);
@@ -34,10 +35,19 @@ const Chat: React.FC = () => {
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
   const [roomData, setRoomData] = useState<any>();
+  const [oneSignalUserIds, setOneSignalUserIds] = useState<string[]>([]);
   const messagesListRef = useRef<HTMLDivElement>(null);
+
 
   const scrollDownHandler = () => {
     messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
+  }
+
+  const getOneSignalUserIdsHandler = async () => {
+    const newOneSignalUserIds = await getOneSignalUserIdsFromFirebase(profile);
+    if (Array.isArray(newOneSignalUserIds)) {
+      setOneSignalUserIds(oneSignalUserIds);
+    }
   }
 
   useEffect(() => {
@@ -82,6 +92,7 @@ const Chat: React.FC = () => {
   useEffect(() => {
     // if profile is seted get room data
     if (profile) {
+      getOneSignalUserIdsHandler();
       const q = query(
         collection(db, "chat_room"),
         or(
@@ -142,7 +153,7 @@ const Chat: React.FC = () => {
                       </div>
                     )
                   }
-                  <Message
+                  <Message recipients={oneSignalUserIds}
                     message={m} scrollDown={scrollDownHandler} replyedMessage={
                       replyToMessage ? {
                         ...replyToMessage,

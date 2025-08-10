@@ -36,6 +36,9 @@ export default function Group() {
     const myMemberProfile = membersProfiles.find((mp) => mp.email == userEmail);
     const messagesListRef = useRef<HTMLDivElement>(null);
 
+    const groupMembersRecipients: string[]
+        = membersProfiles?.filter((p) => p.notificationSettings?.enabled).flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined) || [];
+
     const scrollDownHandler = () => {
         messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
     }
@@ -176,10 +179,14 @@ export default function Group() {
                                         isGroupMessage={true}
                                         nextMessageSender={messages[i + 1]?.from}
                                         message={m}
-                                        scrollDown={scrollDownHandler} replyedMessage={
+                                        scrollDown={scrollDownHandler}
+                                        recipients={groupMembersRecipients}
+                                        replyedMessage={
                                             replyToMessage ? {
                                                 ...replyToMessage,
-                                                sender: replyToMessage.from === userEmail ? userProfile : membersProfiles.find((p) => p.id == replyToMessage.from)
+                                                sender: replyToMessage.from === userEmail ?
+                                                    userProfile :
+                                                    membersProfiles.find((p) => p.id == replyToMessage.from)
                                             } : null
                                         } />
                                 </React.Fragment>
@@ -190,7 +197,13 @@ export default function Group() {
                 </div>
                 <div className="px-3 md:px-5 max-w-[810px] mx-auto w-full">
                     <div className="mb-3 md:mb-5">
-                        <ChatInput groupPhotoUrl={groupData.groupPhotoUrl} membersProfiles={membersProfiles} mode="group" groupId={groupId} groupName={groupData.groupName} />
+                        <ChatInput
+                            groupPhotoUrl={groupData.groupPhotoUrl}
+                            membersProfiles={membersProfiles}
+                            mode="group"
+                            groupId={groupId}
+                            groupMembersRecipients={groupMembersRecipients}
+                            groupName={groupData.groupName} />
                     </div>
                 </div>
             </div>
