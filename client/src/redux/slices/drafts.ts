@@ -1,7 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-type Draft = Record<string, {
+export type Draft = Record<string, {
     value: string,
     timestamp: number
 }>;
