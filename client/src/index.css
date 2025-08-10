@@ -47,6 +47,10 @@ layer(base);
     @apply dark:border-white/10;
   }
 
+  html, body {
+    overscroll-behavior: none;
+  }
+
   .dark {
     color: #fff;
   --color-base: #000;
