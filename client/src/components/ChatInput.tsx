@@ -45,7 +45,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const dispatch = useAppDispatch();
   const { getChatSecret } = useEncryption();
   const draft = useAppSelector((state: RootState) => getDraft(state, messageTo));
-  const draftValue = Object.values(draft || [])[0] || "";
+  const { value: draftValue } = Object.values(draft || [])[0] || { value: "", timestamp: undefined };
 
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>(draftValue);
@@ -247,7 +247,10 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     }
     if (!draftValue || value != draftValue) {
       const newDraft = {
-        [messageTo]: value
+        [messageTo]: {
+          value,
+          timestamp: +(Date.now() / 1000).toFixed(0)
+        },
       };
 
       dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));

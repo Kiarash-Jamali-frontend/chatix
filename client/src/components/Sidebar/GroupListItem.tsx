@@ -27,7 +27,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
     const [notSeenedMessagesCount, setNotSeenedMessagesCount] = useState<number>(0);
     const draft = useAppSelector((state: RootState) => getDraft(state, group.id));
-    const draftValue = Object.values(draft || [])[0];
+    const { value: draftValue, timestamp } = Object.values(draft || [])[0] || { value: "", timestamp: undefined };
 
     useEffect(() => {
         if (userEmail) {
@@ -73,7 +73,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
     return (
         <>
             <div className={`lg:px-2 lg:mb-1 ${(!group.groupName.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`} style={{
-                order: `-${lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0}`
+                order: `-${draftValue ? timestamp : (lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0)}`
             }}>
                 <Link viewTransition
                     to={`/group/${group.id}`}
@@ -105,7 +105,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
                                     <div className={`last-message text-xs min-w-0 w-full font-Vazir ${groupIsSelected ? "text-white/80" : "text-natural/80"} mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap break-all`}>
                                         {
                                             draftValue ? (
-                                                <span className={`${groupIsSelected ? "text-white" : "text-natural"} font-medium`}>
+                                                <span className={`${groupIsSelected ? "text-white" : "text-red-500"} font-medium`}>
                                                     Draft:{" "}
                                                 </span>
                                             ) : (
