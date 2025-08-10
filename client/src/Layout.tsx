@@ -187,7 +187,10 @@ const Layout: React.FC = () => {
       collection(db, "group_member"),
       and(
         where("memberEmail", "==", user.data?.email),
-        where("removedFromGroup", "==", false)
+        or(
+          where("removedFromGroup", "==", false),
+          where("removedFromGroup", "!=", true),
+        )
       ),
     );
 
