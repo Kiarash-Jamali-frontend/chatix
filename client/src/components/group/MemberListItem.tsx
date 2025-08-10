@@ -44,7 +44,7 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
             </Link>
 
             {
-                profile.email != userEmail && profile.email != groupData.creator && (
+                (profile.email != userEmail && profile.email != groupData.creator && groupData.creator == userEmail) && (
                     <button
                         disabled={pending}
                         onClick={() => removeUserFromGroupHandler(profile.groupMemberDocId)}
