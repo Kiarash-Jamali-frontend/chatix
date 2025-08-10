@@ -14,7 +14,7 @@ type DeleteMessage = {
 export default function deleteMessage(
     { id, fileAddress, isGroupMessage = false, notificationId, recipientIds }: DeleteMessage
 ) {
-    if (notificationId && recipientIds) {
+    if (notificationId && recipientIds?.length) {
         deleteNotification(notificationId, id, recipientIds);
     }
     if (fileAddress) {
