@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
 import AudioDownloadButton from "./AudioDownloadButton";
 
-export default function AudioMessage({ message, isGroupMessage, replayMessage }: MessagePropTypes) {
+export default function AudioMessage({ message, isGroupMessage, replayMessage, recipients }: MessagePropTypes) {
 
     const [isStopped, setIsStopped] = useState<boolean>(true);
     const [duration, setDuration] = useState<number>(0);
@@ -111,7 +111,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage }:
 
     return (
         <div className="flex">
-            <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
+            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} replayMessage={replayMessage} message={message} />
             <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata}
                 onPlay={() => setIsStopped(false)}
                 onPause={() => setIsStopped(true)}

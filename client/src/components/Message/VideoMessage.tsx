@@ -75,7 +75,13 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage, reci
                         {
                             messageIsForCurrentUser && (
                                 <button
-                                    onClick={() => deleteMessage(message.id, message.notificationId, recipients, isGroupMessage, message.content)}
+                                    onClick={() => deleteMessage({
+                                        id: message.id,
+                                        notificationId: message.notificationId,
+                                        recipientIds: recipients,
+                                        isGroupMessage,
+                                        fileAddress: message.content
+                                    })}
                                     className={`font-Inter ${!messageIsSelected ? "pointer-events-none" : ""} me-2 text-xs font-medium shadow-md border py-1.5 px-2 flex items-center justify-center bg-secondary hover:bg-zinc-50 text-natural rounded-full`}>
                                     <FontAwesomeIcon icon={faTrashCan} className="me-1" />
                                     Delete

@@ -13,7 +13,7 @@ import downloadFile from "../../helpers/downloadFile";
 import { toast } from "react-toastify";
 import toastConf from "../../../utils/toastConfig";
 
-export default function FileMessage({ message, isGroupMessage, replayMessage }: MessagePropTypes) {
+export default function FileMessage({ message, isGroupMessage, replayMessage, recipients }: MessagePropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
@@ -36,7 +36,7 @@ export default function FileMessage({ message, isGroupMessage, replayMessage }: 
 
     return (
         <div className="flex">
-            <DeleteTextFileAudioMessageButton replayMessage={replayMessage} message={message} />
+            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} replayMessage={replayMessage} message={message} />
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={({ target }) => {

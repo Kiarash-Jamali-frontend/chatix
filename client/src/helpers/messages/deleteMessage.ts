@@ -3,7 +3,17 @@ import { db, storage } from "../../../utils/firebase";
 import { deleteNotification } from "../../services/notificationService";
 import { deleteObject, ref } from "firebase/storage";
 
-export default function deleteMessage(id: string, notificationId?: string, recipientIds?: string[], isGroupMessage?: boolean, fileAddress?: string) {
+type DeleteMessage = {
+    id: string;
+    notificationId?: string;
+    recipientIds?: string[];
+    isGroupMessage?: boolean;
+    fileAddress?: string;
+}
+
+export default function deleteMessage(
+    { id, fileAddress, isGroupMessage = false, notificationId, recipientIds }: DeleteMessage
+) {
     if (notificationId && recipientIds) {
         deleteNotification(notificationId, id, recipientIds);
     }
