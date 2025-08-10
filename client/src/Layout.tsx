@@ -186,7 +186,8 @@ const Layout: React.FC = () => {
     const q = query(
       collection(db, "group_member"),
       and(
-        where("memberEmail", "==", user.data?.email)
+        where("memberEmail", "==", user.data?.email),
+        where("removedFromGroup", "!=", true)
       ),
     );
 
@@ -199,9 +200,7 @@ const Layout: React.FC = () => {
 
       querySnapshot.forEach((docSnap) => {
         const groupMemberData = docSnap.data() as GroupMember;
-        if (!groupMemberData.removedFromGroup) {
-          groupIds.push(groupMemberData.groupId);
-        }
+        groupIds.push(groupMemberData.groupId);
       });
 
       if (!querySnapshot.size) {
