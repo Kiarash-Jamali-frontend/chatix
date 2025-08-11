@@ -128,10 +128,10 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
                       Notifications are blocked. Click the Retry button to reactivate.
                     </span>
                   </div>
-                  <button onClick={handleRequestPermission} className={button({ intent: "danger", size: "small", className: "lg:hidden" })}>
+                  <button onClick={handleRequestPermission} disabled={isLoading} className={button({ intent: "danger", size: "small", className: "lg:hidden" })}>
                     Retry
                   </button>
-                  <button onClick={handleRequestPermission} className={button({ intent: "danger", size: "extraSmall", className: "max-lg:hidden" })}>
+                  <button onClick={handleRequestPermission} disabled={isLoading} className={button({ intent: "danger", size: "extraSmall", className: "max-lg:hidden" })}>
                     Retry
                   </button>
                 </div>
