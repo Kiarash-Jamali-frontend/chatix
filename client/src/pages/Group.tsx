@@ -36,8 +36,12 @@ export default function Group() {
     const myMemberProfile = membersProfiles.find((mp) => mp.email == userEmail);
     const messagesListRef = useRef<HTMLDivElement>(null);
 
-    const groupMembersRecipients: string[]
-        = membersProfiles?.filter((p) => p.notificationSettings?.enabled && p.email != userEmail && !p.removedFromGroup).flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined) || [];
+    const getGroupMembersRecipients
+        = (removedFromGroup: boolean): string[] => {
+            return membersProfiles?.filter((p) => p.notificationSettings?.enabled && p.email != userEmail && removedFromGroup ? true : !p.removedFromGroup)
+                .flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined)
+                || []
+        };
 
     const scrollDownHandler = () => {
         messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
@@ -180,7 +184,7 @@ export default function Group() {
                                         nextMessageSender={messages[i + 1]?.from}
                                         message={m}
                                         scrollDown={scrollDownHandler}
-                                        recipients={groupMembersRecipients}
+                                        recipients={getGroupMembersRecipients(true)}
                                         replyedMessage={
                                             replyToMessage ? {
                                                 ...replyToMessage,
@@ -202,7 +206,7 @@ export default function Group() {
                             membersProfiles={membersProfiles}
                             mode="group"
                             groupId={groupId}
-                            groupMembersRecipients={groupMembersRecipients}
+                            groupMembersRecipients={getGroupMembersRecipients(false)}
                             groupName={groupData.groupName} />
                     </div>
                 </div>
