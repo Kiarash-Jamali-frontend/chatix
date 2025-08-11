@@ -18,7 +18,7 @@ import useThemeDetector from "./hooks/useThemeDetector";
 import { changeTheme } from "./redux/slices/theme";
 import publicRoutes from "./constants/publicRoutes";
 import { Unsubscribe } from "firebase/firestore";
-import NotificationBanner from "./components/NotificationBanner";
+// import NotificationBanner from "./components/NotificationBanner";
 import { Draft, setDraftsList } from "./redux/slices/drafts";
 
 const Layout: React.FC = () => {
@@ -292,7 +292,7 @@ const Layout: React.FC = () => {
 
   return (
     <>
-      <NotificationBanner />
+      {/* <NotificationBanner /> */}
       <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
         <div className="relative z-10 w-full h-full flex">
           <ProfileModal />

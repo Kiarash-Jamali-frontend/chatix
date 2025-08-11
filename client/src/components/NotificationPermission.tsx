@@ -121,11 +121,19 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
               </div>
             ) : permission === 'denied' ? (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg p-4">
-                <div className="flex items-center gap-2">
-                  <FontAwesomeIcon icon={faBellSlash} className="dark:text-red-600 text-red-800" />
-                  <span className="text-sm text-red-800 dark:text-red-200">
-                    Notifications are blocked. Please enable them in your browser settings.
-                  </span>
+                <div className="flex items-end lg:justify-between lg:items-center lg:flex-row flex-col">
+                  <div className="flex items-center gap-2 w-full lg:w-fit">
+                    <FontAwesomeIcon icon={faBellSlash} className="dark:text-red-600 text-red-800" />
+                    <span className="text-sm text-red-800 dark:text-red-200">
+                      Notifications are blocked. Click the Retry button to reactivate.
+                    </span>
+                  </div>
+                  <button onClick={handleRequestPermission} className={button({ intent: "danger", size: "small", className: "lg:hidden" })}>
+                    Retry
+                  </button>
+                  <button onClick={handleRequestPermission} className={button({ intent: "danger", size: "extraSmall", className: "max-lg:hidden" })}>
+                    Retry
+                  </button>
                 </div>
               </div>
             ) : (
