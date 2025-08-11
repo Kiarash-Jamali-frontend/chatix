@@ -37,7 +37,7 @@ export default function Group() {
     const messagesListRef = useRef<HTMLDivElement>(null);
 
     const groupMembersRecipients: string[]
-        = membersProfiles?.filter((p) => p.notificationSettings?.enabled).flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined) || [];
+        = membersProfiles?.filter((p) => p.notificationSettings?.enabled && p.email != userEmail).flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined) || [];
 
     const scrollDownHandler = () => {
         messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
