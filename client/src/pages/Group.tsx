@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { redirect, useParams } from "react-router-dom"
 import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -36,12 +36,11 @@ export default function Group() {
     const myMemberProfile = membersProfiles.find((mp) => mp.email == userEmail);
     const messagesListRef = useRef<HTMLDivElement>(null);
 
-    const getGroupMembersRecipients
-        = (removedFromGroup: boolean): string[] => {
-            return membersProfiles?.filter((p) => p.notificationSettings?.enabled && p.email != userEmail && removedFromGroup ? true : !p.removedFromGroup)
-                .flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined)
-                || []
-        };
+    const getGroupMembersRecipients = useCallback((removedFromGroup: boolean): string[] => {
+        return membersProfiles?.filter((p) => p.notificationSettings?.enabled && p.email != userEmail && (removedFromGroup ? true : !p.removedFromGroup))
+            .flatMap(obj => obj.oneSignalUserIds!).filter((p) => p != undefined)
+            || []
+    }, [userEmail, membersProfiles])
 
     const scrollDownHandler = () => {
         messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
