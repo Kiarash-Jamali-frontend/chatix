@@ -44,6 +44,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
       if (!settings && userProfile) {
         await storeNotificationSettings(userEmail, { enabled: true });
+        setSettings({ enabled: true });
       }
     } catch (error) {
       console.error('Failed to setup user:', error);
