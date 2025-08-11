@@ -144,7 +144,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                                                 transform: "scale(1)"
                                             }
                                         }} initial="hide" animate="open" exit="hide"
-                                        className={`${chatIsSelected ? "bg-white" : "bg-green-500"} absolute right-0 bottom-2.5 lg:right-1 lg:bottom-0 size-2.5 rounded-full`}>
+                                        className={`${chatIsSelected ? "bg-white" : "bg-green-500 shadow shadow-green-500/25"} absolute right-0 bottom-2.5 lg:right-1 lg:bottom-0 size-2.5 rounded-full`}>
                                     </motion.div>
                                 ) : null
                             }
