@@ -48,7 +48,8 @@ const CreateAccount: React.FC = () => {
             biography: "",
             name: "New user",
             lastActivity: Timestamp.now(),
-            photoUrl: ""
+            photoUrl: "",
+            showOnlineStatus: false
         }).then(() => {
             createUserWithEmailAndPassword(auth, email, password)
                 .then(() => {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import input from "../cva/input";
 import { useAppDispatch, useAppSelector } from "../redux/hooks"
 import { RootState } from "../redux/store"
@@ -12,9 +12,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import toastConf from "../../utils/toastConfig";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, validatePassword } from "firebase/auth";
-import { auth } from "../../utils/firebase";
+import { auth, db } from "../../utils/firebase";
 import { changeTheme, changeToSystemDefaultTheme, ThemeType } from "../redux/slices/theme";
 import NotificationPermission from "../components/NotificationPermission";
+import SwitchButton from "../components/common/SwitchButton";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function Settings() {
     const [pending, setPending] = useState<boolean>(false);
@@ -22,6 +24,7 @@ export default function Settings() {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const profile = useAppSelector((state: RootState) => state.user.profile);
     const [profileData, setProfileData] = useState<Profile | null>(profile);
+    const [showOnlineStatus, setShowOnlineStatus] = useState<boolean>(!!profile?.showOnlineStatus);
     const [profileImage, setProfileImage] = useState<File | null>(null);
     const [oldPassword, setOldPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
@@ -29,6 +32,15 @@ export default function Settings() {
     const profileImageInput = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
     const { value: theme } = useAppSelector((state: RootState) => state.theme);
+
+    const changeShowLastSeenAndOnlineStatusHandler = useCallback(async () => {
+        if (userEmail) {
+            setShowOnlineStatus((prev) => !prev);
+            await updateDoc(doc(db, "profile", userEmail), {
+                showOnlineStatus: !showOnlineStatus
+            });
+        }
+    }, [showOnlineStatus, userEmail])
 
     const removeProfileImageHandler = () => {
         if (profileImageInput.current) {
@@ -95,6 +107,7 @@ export default function Settings() {
 
     useEffect(() => {
         setProfileData(profile);
+        setShowOnlineStatus(!!profile?.showOnlineStatus);
     }, [profile])
 
     if (profileData) {
@@ -188,7 +201,14 @@ export default function Settings() {
                         </div>
                     </div>
 
-                    <NotificationPermission />
+                    <div className="border-t pt-4 mt-6 text-sm space-y-3">
+                        <NotificationPermission />
+                        <div className="flex items-center justify-between"
+                            onClick={changeShowLastSeenAndOnlineStatusHandler}>
+                            <span>Show last seen and online status</span>
+                            <SwitchButton enabled={showOnlineStatus} />
+                        </div>
+                    </div>
 
                     <div className="pt-4 mt-4 border-t">
                         <label htmlFor="oldPassword" className="text-sm inline-block mb-1">Old password</label>

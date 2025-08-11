@@ -73,12 +73,12 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
             <div className="flex items-center cursor-pointer grow" onClick={() => setUserInfoModalIsActive(true)}>
               {/*Profile image*/}
               <ProfileImage size={ProfileImageSizes.MEDIUM} name={profile.name} photoUrl={profile.photoUrl} />
-                             <div className="ps-2 flex flex-col">
-                 <div className="font-semibold mb-0.5 font-Vazir">
-                   {profile.name}
-                 </div>
-                 <UserLastActivity profile={profile} />
-               </div>
+              <div className="ps-2 flex flex-col space-y-0.5">
+                <div className="font-semibold font-Vazir">
+                  {profile.name}
+                </div>
+                <UserLastActivity profile={profile} />
+              </div>
             </div>
             {
               chatRoom && (

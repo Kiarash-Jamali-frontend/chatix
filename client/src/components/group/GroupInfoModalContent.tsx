@@ -53,7 +53,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
     const getOnlineMembersCount = useCallback(() => {
         let onlineMembersCount = 0;
         membersProfiles.forEach((p) => {
-            userEmail != p.email && !p.removedFromGroup && userIsOnline(p.lastActivity) && (onlineMembersCount = onlineMembersCount + 1);
+            userEmail != p.email && !p.removedFromGroup && userIsOnline(p.lastActivity) && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
         });
         setOnlineMembersCount(onlineMembersCount);
     }, [membersProfiles])

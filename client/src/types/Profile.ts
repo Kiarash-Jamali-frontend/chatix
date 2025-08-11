@@ -5,6 +5,7 @@ type Profile = {
     biography: string;
     notificationSettings?: { enabled: boolean };
     oneSignalUserIds?: string[]
+    showOnlineStatus?: boolean;
 }
 
 export default Profile;

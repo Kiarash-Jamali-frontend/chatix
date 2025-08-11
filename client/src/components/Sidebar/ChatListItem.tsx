@@ -132,7 +132,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                             size={ProfileImageSizes.MEDIUM} />
                         <AnimatePresence>
                             {
-                                userIsOnline ? (
+                                userIsOnline && chat.showOnlineStatus ? (
                                     <motion.div
                                         variants={{
                                             hide: {

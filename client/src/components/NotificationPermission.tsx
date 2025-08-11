@@ -6,6 +6,7 @@ import { storeOneSignalUserId, storeNotificationSettings } from '../services/not
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faBellSlash } from '@fortawesome/free-solid-svg-icons';
 import button from '../cva/button';
+import SwitchButton from './common/SwitchButton';
 
 interface NotificationPermissionProps {
   onClose?: () => void;
@@ -98,68 +99,52 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   if (isInitialized && settings) {
     return (
-      <div className="border-t pt-4 mt-6">
-        {
-          isEnabled ?
-            (
-              <div className='text-sm'>
-                <div>
-                  <div className="flex items-center justify-between"
-                    onClick={() => handleSettingsChange('enabled', !settings.enabled)}>
-                    <span>Notifications</span>
-                    <button
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.enabled ? 'bg-primary' : 'bg-gray-300'
-                        }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.enabled ? 'translate-x-6' : 'translate-x-1'
-                          }`}
-                      />
-                    </button>
-                  </div>
-                </div>
+      isEnabled ?
+        (
+          <div className="flex items-center justify-between"
+            onClick={() => handleSettingsChange('enabled', !settings.enabled)}>
+            <span>Notifications</span>
+            <SwitchButton enabled={settings.enabled} />
+          </div>
+        ) : permission === 'denied' ? (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg p-4">
+            <div className="flex items-end lg:justify-between lg:items-center lg:flex-row flex-col">
+              <div className="flex items-center gap-2 w-full lg:w-fit">
+                <FontAwesomeIcon icon={faBellSlash} className="dark:text-red-600 text-red-800" />
+                <span className="text-sm text-red-800 dark:text-red-200">
+                  Notifications are blocked. Click the Retry button to reactivate.
+                </span>
               </div>
-            ) : permission === 'denied' ? (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg p-4">
-                <div className="flex items-end lg:justify-between lg:items-center lg:flex-row flex-col">
-                  <div className="flex items-center gap-2 w-full lg:w-fit">
-                    <FontAwesomeIcon icon={faBellSlash} className="dark:text-red-600 text-red-800" />
-                    <span className="text-sm text-red-800 dark:text-red-200">
-                      Notifications are blocked. Click the Retry button to reactivate.
-                    </span>
-                  </div>
-                  <button onClick={handleRequestPermission} disabled={isLoading} className={button({ intent: "danger", size: "small", className: "lg:hidden" })}>
-                    Retry
-                  </button>
-                  <button onClick={handleRequestPermission} disabled={isLoading} className={button({ intent: "danger", size: "extraSmall", className: "max-lg:hidden" })}>
-                    Retry
-                  </button>
-                </div>
+              <button onClick={handleRequestPermission} disabled={isLoading} className={button({ intent: "danger", size: "small", className: "lg:hidden" })}>
+                Retry
+              </button>
+              <button onClick={handleRequestPermission} disabled={isLoading} className={button({ intent: "danger", size: "extraSmall", className: "max-lg:hidden" })}>
+                Retry
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-primary-50 dark:bg-blue-900/20 border border-primary-200 dark:border-primary-200/10 dark:border-primary-60/5 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <FontAwesomeIcon icon={faBell} className="text-primary mt-1" />
+              <div className="flex-1">
+                <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-1">
+                  Enable Notifications
+                </h3>
+                <p className="text-sm text-primary-500 dark:text-primary-300 mb-3">
+                  Get notified when you receive new messages, even when the app is closed.
+                </p>
+                <button
+                  onClick={handleRequestPermission}
+                  disabled={isLoading}
+                  className={button({ intent: "primary" })}
+                >
+                  {isLoading ? 'Enabling...' : 'Enable Notifications'}
+                </button>
               </div>
-            ) : (
-              <div className="bg-primary-50 dark:bg-blue-900/20 border border-primary-200 dark:border-primary-200/10 dark:border-primary-60/5 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <FontAwesomeIcon icon={faBell} className="text-primary mt-1" />
-                  <div className="flex-1">
-                    <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-1">
-                      Enable Notifications
-                    </h3>
-                    <p className="text-sm text-primary-500 dark:text-primary-300 mb-3">
-                      Get notified when you receive new messages, even when the app is closed.
-                    </p>
-                    <button
-                      onClick={handleRequestPermission}
-                      disabled={isLoading}
-                      className={button({ intent: "primary" })}
-                    >
-                      {isLoading ? 'Enabling...' : 'Enable Notifications'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )
-        }
-      </div>
+            </div>
+          </div>
+        )
     )
   }
 };

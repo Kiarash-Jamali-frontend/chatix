@@ -56,7 +56,8 @@ const Layout: React.FC = () => {
           biography: "",
           lastActivity: Timestamp.now(),
           name: `New user`,
-          photoUrl: ""
+          photoUrl: "",
+          showOnlineStatus: false
         });
       }
       redirect("/");
@@ -156,7 +157,8 @@ const Layout: React.FC = () => {
                       biography: profile.biography || "",
                       email: oppositeUserEmail,
                       notSeenedMessages: notSeenedMessagesCount,
-                      createdAt: chatData.createdAt
+                      createdAt: chatData.createdAt,
+                      showOnlineStatus: profile.showOnlineStatus
                     }
                   ];
 
