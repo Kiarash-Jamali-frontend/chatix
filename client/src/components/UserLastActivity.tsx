@@ -5,7 +5,7 @@ import { Timestamp } from "firebase/firestore";
 
 export default function UserLastActivity({ profile }: { profile: Profile }) {
     const userIsOnline = useUserIsOnline(profile.lastActivity);
-    if (profile.showOnlineStatus) {
+    if (profile.showOnlineStatus == false) {
         return (
             userIsOnline ? (
                 <span className="text-primary-500 text-xs font-medium inline-block">
