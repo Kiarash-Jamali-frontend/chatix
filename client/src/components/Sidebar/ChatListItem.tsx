@@ -15,6 +15,8 @@ import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
 import { useEncryption } from "../../hooks/useEncryption";
 import { getDraft } from "../../redux/slices/drafts";
+import useUserIsOnline from "../../hooks/useUserIsOnline";
+import { AnimatePresence, motion } from "framer-motion";
 
 type PropTypes = {
     chat: ChatData;
@@ -32,6 +34,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     const { getChatSecret } = useEncryption();
     const draft = useAppSelector((state: RootState) => getDraft(state, chat.email));
     const { value: draftValue, timestamp } = Object.values(draft || [])[0] || { value: "", timestamp: undefined };
+    const userIsOnline = useUserIsOnline(chat.lastActivity);
 
     useEffect(() => {
         if (userEmail) {
@@ -123,10 +126,29 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
             >
                 <div className="flex items-stretch w-full grow">
                     {/*Profile image*/}
-                    <div className="basis-12 py-2 lg:py-0">
+                    <div className="basis-12 py-2 lg:py-0 relative">
                         <ProfileImage name={chat.name}
                             photoUrl={chat.photoUrl}
                             size={ProfileImageSizes.MEDIUM} />
+                        <AnimatePresence>
+                            {
+                                userIsOnline ? (
+                                    <motion.div
+                                        variants={{
+                                            hide: {
+                                                opacity: 0,
+                                                transform: "scale(0)"
+                                            },
+                                            open: {
+                                                opacity: 1,
+                                                transform: "scale(1)"
+                                            }
+                                        }} initial="hide" animate="open" exit="hide"
+                                        className={`${chatIsSelected ? "bg-white" : "bg-green-500"} absolute right-0 bottom-2.5 lg:right-1 lg:bottom-0 size-2.5 rounded-full`}>
+                                    </motion.div>
+                                ) : null
+                            }
+                        </AnimatePresence>
                     </div>
                     <div className="border-b py-2 lg:py-0 lg:border-b-0 border-natural/8 ps-2 min-w-0 grow flex items-center justify-between">
                         <div className="min-w-0 grow flex items-end justify-between pe-4 lg:pe-0">
