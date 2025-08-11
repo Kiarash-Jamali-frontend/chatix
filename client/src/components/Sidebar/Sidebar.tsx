@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { auth } from "../../../utils/firebase";
+import { auth, db } from "../../../utils/firebase";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -22,6 +22,7 @@ import SearchBox from "./SearchBox";
 import AppUpdateMessage from "./AppUpdateMessage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { useEncryption } from "../../hooks/useEncryption";
+import { clearIndexedDbPersistence } from "firebase/firestore";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -42,6 +43,7 @@ const Sidebar: React.FC = () => {
     setLogoutPending(true);
     // Clear encryption keys before logout
     clearAllSecrets();
+    clearIndexedDbPersistence(db);
     localStorage.removeItem("chatix_drafts");
     signOut(auth).then(() => {
       setLogoutPending(false);
