@@ -158,7 +158,7 @@ const Layout: React.FC = () => {
                       email: oppositeUserEmail,
                       notSeenedMessages: notSeenedMessagesCount,
                       createdAt: chatData.createdAt,
-                      showOnlineStatus: profile.showOnlineStatus
+                      showOnlineStatus: profile.showOnlineStatus || true
                     }
                   ];
 
