@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
-import { auth } from "../../../utils/firebase";
+import { app, auth, db, getNewFirestore } from "../../../utils/firebase";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { faGear, faPlus, faShareNodes, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { RootState } from "../../redux/store";
 import ChatListItem from "./ChatListItem";
-import { useAppSelector } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import SidebarProfileImage from "./SidebarProfileImage";
 import { signOut } from "firebase/auth";
 import { toast, ToastContainer } from "react-toastify";
@@ -22,9 +22,13 @@ import SearchBox from "./SearchBox";
 import AppUpdateMessage from "./AppUpdateMessage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { useEncryption } from "../../hooks/useEncryption";
+import { clearIndexedDbPersistence, terminate } from "firebase/firestore";
+import { changeChatsList } from "../../redux/slices/chats";
+import { changeGroupsList } from "../../redux/slices/groups";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
+  const dispatch = useAppDispatch();
   const [logoutPending, setLogoutPending] = useState<boolean>(false);
   const [createMenuIsOpen, setCreateMenuIsOpen] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
@@ -40,10 +44,14 @@ const Sidebar: React.FC = () => {
 
   const signoutFromChatix = async () => {
     setLogoutPending(true);
-    // Clear encryption keys before logout
+    dispatch(changeChatsList([]));
+    dispatch(changeGroupsList([]));
     clearAllSecrets();
-    localStorage.removeItem("chatix_drafts");
-    signOut(auth).then(() => {
+    localStorage.clear();
+    await signOut(auth);
+    await terminate(db);
+    await clearIndexedDbPersistence(db).then(() => {
+      getNewFirestore(app);
       setLogoutPending(false);
       navigate("/login");
     });

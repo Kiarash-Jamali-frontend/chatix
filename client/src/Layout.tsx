@@ -246,7 +246,7 @@ const Layout: React.FC = () => {
         dispatch(changeUserStatus("unauthenticated"));
         dispatch(changeChatsStatus("userUnauthenticated"));
         dispatch(changeGroupsStatus("userUnauthenticated"));
-        localStorage.removeItem("chatix_has_cache_data");
+        localStorage.clear();
       }
       user && dispatch(getUserProfile(user.email!)).then(() => {
         dispatch(changeUserStatus("authenticated"));
