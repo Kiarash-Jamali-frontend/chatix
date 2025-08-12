@@ -183,8 +183,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         }
         const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
 
-        setFilePending(false);
-
         let notificationId: string = "";
         // Trigger notification for file message
         if (isPrivateChat && oppositeProfile.notificationSettings?.enabled && userProfile) {
@@ -220,6 +218,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
 
         i++;
       }
+      setFilePending(false);
     }
     setNewNotSeenedMessageForAllGroupMembers();
   }
@@ -392,7 +391,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         </div>
       </div>
 
-      <input type="file" id="fileInput" hidden ref={fileInputRef} multiple={false} onChange={sendFileHandler} />
+      <input type="file" id="fileInput" hidden ref={fileInputRef} multiple onChange={sendFileHandler} />
 
       <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
         onClick={sendMessageHandler} disabled={textMessagePending || filePending || !showSendButton}>
