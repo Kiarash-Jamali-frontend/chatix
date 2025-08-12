@@ -5,7 +5,7 @@ import { RootState } from "../redux/store"
 import Profile from "../types/Profile";
 import button from "../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faGear, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faGear, faMinus, faPlus, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { faMoon, faSun, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { changeUserProfile } from "../redux/slices/user";
 import { Link, useNavigate } from "react-router-dom";
@@ -217,14 +217,14 @@ export default function Settings() {
                                     disabled={fontSize <= minFontSize}
                                     onClick={() => dispatch(decreaseFontSize())}
                                     className={button({ size: "extraSmall" })}>
-                                    -
+                                    <FontAwesomeIcon icon={faMinus} />
                                 </button>
                                 <span className="mx-2">{fontSize}</span>
                                 <button
                                     disabled={fontSize >= maxFontSize}
                                     onClick={() => dispatch(increaseFontSize())}
                                     className={button({ size: "extraSmall" })}>
-                                    +
+                                    <FontAwesomeIcon icon={faPlus} />
                                 </button>
                             </div>
                         </div>
