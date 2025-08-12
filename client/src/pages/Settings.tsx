@@ -17,12 +17,14 @@ import { changeTheme, changeToSystemDefaultTheme, ThemeType } from "../redux/sli
 import NotificationPermission from "../components/NotificationPermission";
 import SwitchButton from "../components/common/SwitchButton";
 import { doc, updateDoc } from "firebase/firestore";
+import { decreaseFontSize, increaseFontSize } from "../redux/slices/fontSize";
 
 export default function Settings() {
     const [pending, setPending] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const profile = useAppSelector((state: RootState) => state.user.profile);
+    const { size: fontSize, max: maxFontSize, min: minFontSize } = useAppSelector((state: RootState) => state.fontSize);
     const [profileData, setProfileData] = useState<Profile | null>(profile);
     const [showOnlineStatus, setShowOnlineStatus] = useState<boolean>(!!profile?.showOnlineStatus);
     const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -207,6 +209,24 @@ export default function Settings() {
                             onClick={changeShowLastSeenAndOnlineStatusHandler}>
                             <span>Show last seen and online status</span>
                             <SwitchButton enabled={showOnlineStatus} />
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span>Font size</span>
+                            <div className="flex items-center">
+                                <button
+                                    disabled={fontSize <= minFontSize}
+                                    onClick={() => dispatch(decreaseFontSize())}
+                                    className={button({ size: "extraSmall" })}>
+                                    -
+                                </button>
+                                <span className="mx-2">{fontSize}</span>
+                                <button
+                                    disabled={fontSize >= maxFontSize}
+                                    onClick={() => dispatch(increaseFontSize())}
+                                    className={button({ size: "extraSmall" })}>
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
 

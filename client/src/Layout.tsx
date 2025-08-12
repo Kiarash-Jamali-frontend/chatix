@@ -20,12 +20,14 @@ import publicRoutes from "./constants/publicRoutes";
 import { Unsubscribe } from "firebase/firestore";
 // import NotificationBanner from "./components/NotificationBanner";
 import { Draft, setDraftsList } from "./redux/slices/drafts";
+import { changeFontSize } from "./redux/slices/fontSize";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const user = useAppSelector((state: RootState) => state.user);
   const { value: theme } = useAppSelector((state: RootState) => state.theme);
+  const { size: fontSize } = useAppSelector((state: RootState) => state.fontSize);
   const systemThemeIsDark = useThemeDetector();
   const isPublicRoute = publicRoutes.some((v) => v == location.pathname);
   const { status: chatsStatus } = useAppSelector((state: RootState) => state.chats);
@@ -44,6 +46,13 @@ const Layout: React.FC = () => {
     return setInterval(() => {
       updateLastActivity();
     }, 30000);
+  }
+
+  const getFontSize = () => {
+    const fontSize = localStorage.getItem("chatix_font_size");
+    if (fontSize && typeof fontSize == 'number') {
+      dispatch(changeFontSize(fontSize));
+    }
   }
 
   const getGoogleSigninRedirectResult = async () => {
@@ -280,9 +289,13 @@ const Layout: React.FC = () => {
 
   useEffect(() => {
     getTheme();
-
+    getFontSize();
     getDrafts();
   }, []);
+
+  useEffect(() => {
+    document.documentElement.style.fontSize = `${String(fontSize)}px`;
+  }, [fontSize])
 
   // if (!isOnline && user?.status == "unauthenticated") {
   //   return <OfflineModal />
@@ -295,7 +308,8 @@ const Layout: React.FC = () => {
   return (
     <>
       {/* <NotificationBanner /> */}
-      <div className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
+      <div
+        className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
         <div className="relative z-10 w-full h-full flex">
           <ProfileModal />
           {

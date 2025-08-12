@@ -10,6 +10,7 @@ import groupsReducer from "./slices/groups";
 import openedProfileReducer from "./slices/openedProfile";
 import themeReducer from "./slices/theme";
 import draftsReducer from "./slices/drafts";
+import fontSizeReducer from "./slices/fontSize";
 
 export const store = configureStore({
     reducer: {
@@ -23,7 +24,8 @@ export const store = configureStore({
         groups: groupsReducer,
         openedProfile: openedProfileReducer,
         theme: themeReducer,
-        drafts: draftsReducer
+        drafts: draftsReducer,
+        fontSize: fontSizeReducer
     },
 })
 
