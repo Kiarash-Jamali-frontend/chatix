@@ -216,14 +216,14 @@ export default function Settings() {
                                 <button
                                     disabled={fontSize <= minFontSize}
                                     onClick={() => dispatch(decreaseFontSize())}
-                                    className={button({ size: "extraSmall" })}>
+                                    className={button({ size: "extraSmall", className: "disabled:!opacity-50" })}>
                                     <FontAwesomeIcon icon={faMinus} />
                                 </button>
                                 <span className="mx-2">{fontSize}</span>
                                 <button
                                     disabled={fontSize >= maxFontSize}
                                     onClick={() => dispatch(increaseFontSize())}
-                                    className={button({ size: "extraSmall" })}>
+                                    className={button({ size: "extraSmall", className: "disabled:!opacity-50" })}>
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
                             </div>

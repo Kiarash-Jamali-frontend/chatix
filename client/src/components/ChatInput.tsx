@@ -6,8 +6,8 @@ import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker, { SuggestionMode, Theme } from "emoji-picker-react";
-import { faClose, faPaperclip, faPaperPlane, faReply } from "@fortawesome/free-solid-svg-icons";
-import ContentEditable, { ContentEditableEvent } from 'react-contenteditable'
+import { faClose, faMicrophone, faPaperclip, faPaperPlane, faReply, faSquare } from "@fortawesome/free-solid-svg-icons";
+import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
 import { AnimatePresence, motion } from "framer-motion";
@@ -20,8 +20,11 @@ import { encryptMessage } from "../utils/crypto";
 import { useEncryption } from "../hooks/useEncryption";
 import { handlePrivateMessageNotification, handleGroupMessageNotification } from "../services/messageNotificationService";
 import { addDraft, changeDraft, getDraft, removeDraft } from "../redux/slices/drafts";
+import { useReactMediaRecorder } from "react-media-recorder";
+import { toast, ToastContainer } from "react-toastify";
+import toastConf from "../../utils/toastConfig";
 
-type PropTypes = {
+export type ChatInputPropTypes = {
   mode: "group" | "private";
   groupId?: string;
   oppositeProfile?: any;
@@ -32,7 +35,7 @@ type PropTypes = {
   groupMembersRecipients?: string[]
 };
 
-const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName, groupPhotoUrl, groupMembersRecipients }) => {
+const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName, groupPhotoUrl, groupMembersRecipients }) => {
   const isPrivateChat = (mode == "private" || !mode);
   const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
 
@@ -47,18 +50,85 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
   const draft = useAppSelector((state: RootState) => getDraft(state, messageTo));
   const { value: draftValue } = Object.values(draft || [])[0] || { value: "", timestamp: undefined };
 
+  const getSupportedAudioFormat = () => {
+    if (MediaRecorder.isTypeSupported("audio/webm")) return "audio/webm";
+    if (MediaRecorder.isTypeSupported("audio/ogg")) return "audio/ogg";
+    if (MediaRecorder.isTypeSupported("audio/wav")) return "audio/wav";
+    return "audio/webm";
+  };
+
+  const { startRecording, stopRecording, mediaBlobUrl, status } = useReactMediaRecorder({
+    audio: true,
+    mediaRecorderOptions: {
+      mimeType: getSupportedAudioFormat(),
+      bitsPerSecond: 128000
+    }
+  });
+
   const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>(draftValue);
   const [filePending, setFilePending] = useState<boolean>(false);
+  const [voiceMessagePending, setVoiceMessagePending] = useState<boolean>(false);
   const [childNodes, setChildsNodes] = useState<Element[]>([]);
   const [textMessagePending, setTextMessagePending] = useState<boolean>(false);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [recordingDuration, setRecordingDuration] = useState<number>(0);
+  const [recordingTimer, setRecordingTimer] = useState<NodeJS.Timeout | null>(null);
+  const [dragDistance, setDragDistance] = useState<number>(0);
+  const [hasMicrophonePermission, setHasMicrophonePermission] = useState<boolean | null>(null);
 
   const messageTextHtmlBody = new DOMParser().parseFromString(messageText, "text/html").body;
   const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sendButtonRef = useRef<HTMLButtonElement>(null);
+  const touchStartXRef = useRef<number>(0);
+  const touchMoveXRef = useRef<number>(0);
+  const dragStartXRef = useRef<number>(0);
+
+  const pending = textMessagePending || filePending || voiceMessagePending;
+  const uploadPending = filePending || voiceMessagePending;
+
+  const checkMicrophonePermission = async () => {
+    if (!window.MediaRecorder) {
+      setHasMicrophonePermission(false);
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      setHasMicrophonePermission(true);
+    } catch (error) {
+      setHasMicrophonePermission(false);
+    }
+  };
+
+  const requestMicrophonePermission = async (): Promise<boolean> => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      setHasMicrophonePermission(true);
+      return true;
+    } catch (error) {
+      console.error("Failed to get microphone permission:", error);
+      setHasMicrophonePermission(false);
+      return false;
+    }
+  };
+
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
 
   const sendMessageHandler = async () => {
+    if (isRecording) {
+      handleStopRecording();
+      return;
+    }
+
     setEmojiPickerIsOpen(false);
     setTextMessagePending(true);
     setMessageText("");
@@ -77,7 +147,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       };
 
       if (isPrivateChat) {
-        // Encrypt text messages for private chats
         const chatSecret = getChatSecret(userEmail, oppositeProfile.email);
         const encryptedData = await encryptMessage(messageText.trim(), chatSecret);
         messageData = {
@@ -86,7 +155,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
           isEncrypted: true
         };
       } else {
-        // For group messages, keep as plain text for now
         messageData.content = messageText.trim();
       }
 
@@ -95,7 +163,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       setTextMessagePending(false);
 
       let notificationId: string = "";
-      // Trigger notification for new message
       if (isPrivateChat && oppositeProfile.notificationSettings?.enabled && userProfile) {
         const result = await handlePrivateMessageNotification({
           id: docRef.id,
@@ -130,7 +197,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
       setNewNotSeenedMessageForAllGroupMembers();
     } catch (error) {
       console.error('Failed to send encrypted message:', error);
-      // Fallback to plain text if encryption fails
       await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), {
         content: messageText.trim(),
         from: userEmail,
@@ -184,7 +250,6 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
         const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
 
         let notificationId: string = "";
-        // Trigger notification for file message
         if (isPrivateChat && oppositeProfile.notificationSettings?.enabled && userProfile) {
           const result = await handlePrivateMessageNotification({
             id: docRef.id,
@@ -237,8 +302,7 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     dispatch(changeMessageSelectedForReply(null));
   }
 
-  const handleChangeMessageText = (e: ContentEditableEvent) => {
-    const { value } = e.target;
+  const handleChangeMessageText = (value: string) => {
     if (!value || value == "<br>") {
       dispatch(removeDraft(messageTo));
       setMessageText("");
@@ -257,10 +321,208 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     setMessageText(value);
   }
 
+  const handleStartRecording = async () => {
+    setEmojiPickerIsOpen(false);
+    if (isRecording) {
+      return;
+    }
+
+    if (!window.MediaRecorder) {
+      return;
+    }
+
+    if (hasMicrophonePermission === false) {
+      const permissionGranted = await requestMicrophonePermission();
+      if (!permissionGranted) {
+        toast.warn("Microphone permission is required to record voice messages", toastConf);
+        return;
+      }
+    }
+
+    try {
+      startRecording();
+    } catch (error) {
+      console.error("Failed to start recording:", error);
+      setIsRecording(false);
+    }
+  };
+
+  const handleStopRecording = () => {
+    stopRecording();
+    setIsRecording(false);
+    setRecordingDuration(0);
+    setDragDistance(0);
+    if (recordingTimer) {
+      clearInterval(recordingTimer);
+      setRecordingTimer(null);
+    }
+  };
+
+  const handleCancelRecording = () => {
+    handleStopRecording();
+  };
+
+  const handleSendVoiceMessage = async () => {
+    setVoiceMessagePending(true);
+    if (!mediaBlobUrl) {
+      setVoiceMessagePending(false);
+      return;
+    }
+
+    try {
+      const audioFormat = getSupportedAudioFormat();
+      const fileExtension = audioFormat.split('/')[1];
+      const fileName = uuidv4() + "." + fileExtension;
+      const response = await fetch(mediaBlobUrl);
+      const blob = await response.blob();
+      const file = new File([blob], fileName, { type: audioFormat });
+
+      const fileStorageRef = ref(storage,
+        `${isPrivateChat ? `chats/${chatId}` : `groups/${groupId}`}/${fileName}`);
+      await uploadBytes(fileStorageRef, file);
+      const fileUrl = await getDownloadURL(fileStorageRef);
+
+      if (recordingDuration <= 0) {
+        console.error("Invalid recording duration:", recordingDuration);
+        setVoiceMessagePending(false);
+        return;
+      }
+
+      const data = {
+        content: fileUrl,
+        from: userEmail,
+        seen: false,
+        timestamp: Timestamp.now(),
+        to: messageTo,
+        type: "voice",
+        fileName: fileName,
+        fileSize: file.size,
+        duration: recordingDuration,
+        replyTo: messageSelectedForReply?.id || null
+      };
+
+      const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
+      setVoiceMessagePending(false);
+
+      let notificationId: string = "";
+      if (isPrivateChat && oppositeProfile.notificationSettings?.enabled && userProfile) {
+        const result = await handlePrivateMessageNotification({
+          id: docRef.id,
+          from: data.from,
+          to: data.to,
+          type: data.type,
+          content: "Voice message",
+          timestamp: data.timestamp.toDate()
+        }, userProfile.name, userProfile?.photoUrl);
+        if (result?.success && result.id) notificationId = result.id;
+      } else if (groupId && groupName && userProfile && groupMembersRecipients) {
+        const result = await handleGroupMessageNotification({
+          id: docRef.id,
+          from: data.from,
+          to: data.to,
+          type: data.type,
+          content: "Voice message",
+          timestamp: data.timestamp.toDate()
+        }, userProfile.name, groupId, groupName, groupMembersRecipients,
+          groupPhotoUrl);
+        if (result?.success && result.id) notificationId = result.id;
+      }
+
+      if (notificationId) {
+        runTransaction(db, async (transaction) => {
+          transaction.update(doc(db, isPrivateChat ? "chat_message" : "group_message", docRef.id), {
+            notificationId
+          })
+        })
+      }
+
+      setNewNotSeenedMessageForAllGroupMembers();
+    } catch (error) {
+      console.error('Failed to send voice message:', error);
+      setVoiceMessagePending(false);
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    dragStartXRef.current = e.touches[0].clientX;
+    if (!messageText) {
+      handleStartRecording();
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isRecording) return;
+
+    touchMoveXRef.current = e.touches[0].clientX;
+    const diff = touchMoveXRef.current - dragStartXRef.current;
+    setDragDistance(diff);
+
+    if (diff > 300) {
+      handleCancelRecording();
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isRecording) return;
+
+    handleCancelRecording();
+    handleStopRecording();
+    handleSendVoiceMessage();
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    dragStartXRef.current = e.clientX;
+    if (!messageText) {
+      handleStartRecording();
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isRecording) return;
+
+    console.log(e.clientX, dragStartXRef.current);
+    
+    const diff = e.clientX - dragStartXRef.current;
+    setDragDistance(diff);
+
+    if (diff > 300) {
+      handleCancelRecording();
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!isRecording) return;
+
+    handleStopRecording();
+    handleSendVoiceMessage();
+  };
+
+  const handleMouseLeave = () => {
+    if (isRecording) {
+      handleStopRecording();
+      handleSendVoiceMessage();
+    }
+  };
+
+  useEffect(() => {
+    if (mediaBlobUrl && !isRecording) {
+      handleSendVoiceMessage();
+    }
+  }, [mediaBlobUrl, isRecording]);
+
   useEffect(() => {
     removeMessageSelectedForRelpy();
     setMessageText(draftValue);
   }, [messageTo]);
+
+  useEffect(() => {
+    return () => {
+      if (recordingTimer) {
+        clearInterval(recordingTimer);
+      }
+    };
+  }, [recordingTimer]);
 
   useEffect(() => {
     let newChildNodes: Element[] = [];
@@ -270,17 +532,57 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
     setChildsNodes(newChildNodes);
   }, [messageText]);
 
-  return (
-    <div className={`relative flex items-stretch max-h-12`}
-      onKeyDown={(e) => {
-        if (e.key == "Enter" && !e.shiftKey && showSendButton) {
-          e.preventDefault();
-          sendMessageHandler();
+  useEffect(() => {
+    if (status === "idle" && isRecording) {
+      setIsRecording(false);
+      setRecordingDuration(0);
+      if (recordingTimer) {
+        clearInterval(recordingTimer);
+        setRecordingTimer(null);
+      }
+    }
+  }, [status, isRecording, recordingTimer]);
+
+  useEffect(() => {
+    const newRecordingStartTime = Date.now();
+
+    if (status !== "idle" && status !== "acquiring_media") {
+      setIsRecording(true);
+      setDragDistance(0);
+
+      const timer = setInterval(() => {
+        const currentDuration = Math.floor((Date.now() - newRecordingStartTime) / 1000);
+        setRecordingDuration(currentDuration);
+
+        if (currentDuration >= 1800) {
+          handleStopRecording();
+          handleSendVoiceMessage();
         }
-      }}>
-      <AnimatePresence>
-        {
-          emojiPickerIsOpen && (
+      }, 1000);
+      setRecordingTimer(timer);
+    }
+  }, [status])
+
+  useEffect(() => {
+    checkMicrophonePermission();
+  }, []);
+
+  useEffect(() => {
+    console.log(dragDistance);
+  }, [dragDistance])
+
+  return (
+    <>
+      <ToastContainer />
+      <div className={`relative flex items-stretch max-h-12`}
+        onKeyDown={(e) => {
+          if (e.key == "Enter" && !e.shiftKey && showSendButton) {
+            e.preventDefault();
+            sendMessageHandler();
+          }
+        }}>
+        <AnimatePresence>
+          {emojiPickerIsOpen && (
             <motion.div variants={{
               hide: {
                 opacity: 0,
@@ -297,18 +599,16 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 theme={theme == "dark" || (!theme && systemThemeIsDark) ? Theme.DARK : Theme.LIGHT}
                 height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
                 suggestedEmojisMode={SuggestionMode.FREQUENT}
-                onEmojiClick={(e) => setMessageText((prev) =>
-                  prev += `<img src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`
+                onEmojiClick={(e) => handleChangeMessageText(
+                  `${messageText}<img src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`
                 )} />
             </motion.div>
-          )
-        }
-      </AnimatePresence>
-      <AnimatePresence>
-        {
-          messageSelectedForReply && (
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {messageSelectedForReply && (
             <motion.div
-              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-49 shadow-lg rounded-full bg-linear-to-br from-[#68666E] to-[#3B3A3D]"
+              className="ps-3 pe-1 py-1 overflow-hidden absolute w-full z-40 shadow-lg rounded-full bg-linear-to-br from-[#68666E] to-[#3B3A3D]"
               variants={{
                 hide: {
                   opacity: 0,
@@ -349,56 +649,82 @@ const ChatInput: React.FC<PropTypes> = ({ oppositeProfile, chatId, mode, groupId
                 </button>
               </div>
             </motion.div>
-          )
-        }
-      </AnimatePresence>
-      <div className="grow flex flex-col me-2 relative">
-        <div className="px-3 shadow-xs rounded-full border bg-secondary flex items-center grow">
-          <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
-            onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
-            <span className={`absolute transition-all size-5 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
-              <FontAwesomeIcon icon={faClose} className="!size-5" />
-            </span>
-            <span className={`absolute transition-all size-5 ${emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
-              <FontAwesomeIcon icon={faFaceSmile} className="!size-5" />
-            </span>
-          </button>
-          <div dir="auto" className="w-full">
-            <ContentEditable
-              html={messageText ? messageText : ""}
-              onChange={handleChangeMessageText}
-              className={`focus:outline-hidden relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-natural/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
-            />
-          </div>
-          <div className="ms-2 flex items-center relative size-7">
-            {
-              filePending ? (
+          )}
+        </AnimatePresence>
+        <div className="grow flex flex-col me-2 relative">
+          <div className="px-3 shadow-xs rounded-full border bg-secondary flex items-center grow">
+            <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
+              onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
+              <span className={`absolute transition-all size-5 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
+                <FontAwesomeIcon icon={faClose} className="!size-5" />
+              </span>
+              <span className={`absolute transition-all size-5 ${emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
+                <FontAwesomeIcon icon={faFaceSmile} className="!size-5" />
+              </span>
+            </button>
+            <div dir="auto" className="w-full">
+              {
+                isRecording ? (
+                  <div className="text-sm text-natural/40">Recording: {formatTime(recordingDuration)}</div>
+                ) : (
+                  <ContentEditable
+                    html={messageText ? messageText : ""}
+                    onChange={({ target }) => handleChangeMessageText(target.value)}
+                    className={`focus:outline-hidden relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-natural/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
+                  />
+                )
+              }
+            </div>
+            <div className="ms-2 flex items-center relative size-7">
+              {uploadPending ? (
                 <div>
                   <div className="size-7 rounded-full border-4 border-r-transparent animate-spin">
                   </div>
                 </div>
-                // <span className="text-sm text-black/60 min-w-24">
-                // Sending file ...
-                // </span>
               ) : (
                 <button
-                  onClick={chooseFileHandler} disabled={filePending} className="absolute text-natural/50 right-2">
+                  onClick={chooseFileHandler} disabled={uploadPending} className="absolute text-natural/50 right-2">
                   <FontAwesomeIcon icon={faPaperclip} size="lg" />
                 </button>
-              )
-            }
+              )}
+            </div>
           </div>
         </div>
+
+        <input type="file" id="fileInput" hidden ref={fileInputRef} multiple onChange={sendFileHandler} />
+
+        <button
+          ref={sendButtonRef}
+          style={{
+            transform: (isRecording) ? `translateX(-${dragDistance}px)` : "none"
+          }}
+          className="size-12 min-w-12 disabled:opacity-75 transition-all border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
+          onClick={() => {
+            (!isRecording && messageText) &&
+              sendMessageHandler();
+          }}
+          disabled={pending}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+        >
+
+          <FontAwesomeIcon icon={faSquare} size="lg"
+            className={`absolute ${(isRecording) ? "scale-100 opacity-100" : "scale-0 opacity-0"} transition-all duration-300`} />
+
+          <FontAwesomeIcon icon={faPaperPlane} size="lg"
+            className={`absolute ${!isRecording && messageText ? "scale-100 opacity-100" : "scale-0 opacity-0"} transition-all duration-300`} />
+
+          <FontAwesomeIcon icon={faMicrophone} size="lg"
+            className={`absolute ${!isRecording && !messageText ? "scale-100 opacity-100" : "scale-0 opacity-0"} transition-all duration-300`} />
+
+        </button>
       </div>
-
-      <input type="file" id="fileInput" hidden ref={fileInputRef} multiple onChange={sendFileHandler} />
-
-      <button className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
-        onClick={sendMessageHandler} disabled={textMessagePending || filePending || !showSendButton}>
-        <FontAwesomeIcon icon={faPaperPlane} size="lg"
-          className={`absolute transition-all`} />
-      </button>
-    </div >
+    </>
   );
 };
 

@@ -143,9 +143,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
                                         <div className="size-4 text-[11px] rounded-full bg-red-500 text-white text-center font-Inter flex items-center justify-center ms-auto mb-1">
                                             {notSeenedMessagesCount}
                                         </div>
-                                    ) : (
-                                        ""
-                                    )}
+                                    ) : null}
                                     {
                                         lastMessage && (
                                             <div className="flex items-center justify-between w-fit">

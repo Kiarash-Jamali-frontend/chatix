@@ -9,7 +9,7 @@ export default function MessageTime({ message }: { message: any }) {
 
     return (
         <div
-            className={`text-[10px] ${messageIsForCurrentUser
+            className={`text-[0.65rem] ${messageIsForCurrentUser
                 ? "text-white/50"
                 : "text-natural/50"
                 }`}

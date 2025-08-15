@@ -142,7 +142,9 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage, r
                     </button>
                     <div className="ms-2">
                         <div className="flex items-center">
-                            <div className="font-light break-words max-w-52 me-1 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">{message.fileName}</div>
+                            <div className="font-light break-words max-w-52 me-1 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">
+                                {message.type == "voice" ? "Voice" : message.fileName}
+                            </div>
                             <AudioDownloadButton message={message} />
                         </div>
                         <div className={`flex items-center mt-1 ${messageIsForCurrentUser ? "text-white/60" : "text-natural/60"}`}>

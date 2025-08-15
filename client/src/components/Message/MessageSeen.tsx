@@ -9,16 +9,14 @@ export default function MessageSeen({ message }: { message: any }) {
     const messageIsForCurrentUser = userEmail === message.from;
 
     return (
-        <>
-            <div className={`${messageIsForCurrentUser
-                ? "text-white/50"
-                : "text-natural/50"
-                } relative flex items-center`}>
-                {message.seen && (
-                    <FontAwesomeIcon icon={faCheck} width={10} height={10} className="translate-x-[5px]" />
-                )}
-                <FontAwesomeIcon icon={faCheck} width={10} height={10} className={!message.seen ? "ms-[5px]" : ""} />
-            </div>
-        </>
+        <div className={`${messageIsForCurrentUser
+            ? "text-white/50"
+            : "text-natural/50"
+            } relative flex items-center`}>
+            {message.seen && (
+                <FontAwesomeIcon icon={faCheck} className="size-[0.65rem] translate-x-[0.3rem]" />
+            )}
+            <FontAwesomeIcon icon={faCheck} className={`size-[0.65rem] ${!message.seen ? "ms-[0.3rem]" : ""}`} />
+        </div>
     )
 }
