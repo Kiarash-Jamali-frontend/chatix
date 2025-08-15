@@ -57,7 +57,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
     return "audio/webm";
   };
 
-  const { startRecording, stopRecording, mediaBlobUrl, status } = useReactMediaRecorder({
+  const { startRecording, stopRecording, mediaBlobUrl, status, clearBlobUrl } = useReactMediaRecorder({
     audio: true,
     mediaRecorderOptions: {
       mimeType: getSupportedAudioFormat(),
@@ -339,6 +339,10 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
       }
     }
 
+    setRecordingDuration(0);
+    setDragDistance(0);
+    setVoiceMessagePending(false);
+
     try {
       startRecording();
     } catch (error) {
@@ -360,6 +364,9 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
 
   const handleCancelRecording = () => {
     handleStopRecording();
+    if (clearBlobUrl) {
+      clearBlobUrl();
+    }
   };
 
   const handleSendVoiceMessage = async () => {
@@ -383,7 +390,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
       const fileUrl = await getDownloadURL(fileStorageRef);
 
       if (recordingDuration <= 0) {
-        console.error("Invalid recording duration:", recordingDuration);
         setVoiceMessagePending(false);
         return;
       }
@@ -437,6 +443,13 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
       }
 
       setNewNotSeenedMessageForAllGroupMembers();
+
+      setRecordingDuration(0);
+      setDragDistance(0);
+
+      if (clearBlobUrl) {
+        clearBlobUrl();
+      }
     } catch (error) {
       console.error('Failed to send voice message:', error);
       setVoiceMessagePending(false);
@@ -456,7 +469,9 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
 
     touchMoveXRef.current = e.touches[0].clientX;
     const diff = touchMoveXRef.current - dragStartXRef.current;
-    setDragDistance(diff);
+    if (diff < 0) {
+      setDragDistance(diff);
+    }
 
     if (diff > 300) {
       handleCancelRecording();
@@ -466,9 +481,12 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   const handleTouchEnd = () => {
     if (!isRecording) return;
 
-    handleCancelRecording();
+    const finalDragDistance = dragDistance;
     handleStopRecording();
-    handleSendVoiceMessage();
+
+    if (finalDragDistance <= 300) {
+      handleSendVoiceMessage();
+    }
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -481,10 +499,10 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isRecording) return;
 
-    console.log(e.clientX, dragStartXRef.current);
-    
     const diff = e.clientX - dragStartXRef.current;
-    setDragDistance(diff);
+    if (diff < 0) {
+      setDragDistance(diff);
+    }
 
     if (diff > 300) {
       handleCancelRecording();
@@ -494,22 +512,38 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   const handleMouseUp = () => {
     if (!isRecording) return;
 
+    const finalDragDistance = dragDistance;
     handleStopRecording();
-    handleSendVoiceMessage();
+
+    if (finalDragDistance <= 300) {
+      handleSendVoiceMessage();
+    }
   };
 
   const handleMouseLeave = () => {
     if (isRecording) {
+      const finalDragDistance = dragDistance;
       handleStopRecording();
-      handleSendVoiceMessage();
+
+      if (finalDragDistance <= 300) {
+        handleSendVoiceMessage();
+      }
     }
   };
 
   useEffect(() => {
-    if (mediaBlobUrl && !isRecording) {
-      handleSendVoiceMessage();
+    if (mediaBlobUrl && !isRecording && status === "stopped") {
+      if (!voiceMessagePending) {
+        handleSendVoiceMessage();
+      }
     }
-  }, [mediaBlobUrl, isRecording]);
+  }, [mediaBlobUrl, isRecording, status, voiceMessagePending]);
+
+  useEffect(() => {
+    if (!isRecording) {
+      setDragDistance(0);
+    }
+  }, [isRecording]);
 
   useEffect(() => {
     removeMessageSelectedForRelpy();
@@ -536,6 +570,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
     if (status === "idle" && isRecording) {
       setIsRecording(false);
       setRecordingDuration(0);
+      setDragDistance(0);
       if (recordingTimer) {
         clearInterval(recordingTimer);
         setRecordingTimer(null);
@@ -566,10 +601,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   useEffect(() => {
     checkMicrophonePermission();
   }, []);
-
-  useEffect(() => {
-    console.log(dragDistance);
-  }, [dragDistance])
 
   return (
     <>
@@ -665,7 +696,9 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
             <div dir="auto" className="w-full">
               {
                 isRecording ? (
-                  <div className="text-sm text-natural/40">Recording: {formatTime(recordingDuration)}</div>
+                  <div className="text-sm text-natural/40">
+                    Recording: {formatTime(recordingDuration)}
+                  </div>
                 ) : (
                   <ContentEditable
                     html={messageText ? messageText : ""}
@@ -696,20 +729,20 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
         <button
           ref={sendButtonRef}
           style={{
-            transform: (isRecording) ? `translateX(-${dragDistance}px)` : "none"
+            transform: `translateX(${dragDistance}px)`,
           }}
-          className="size-12 min-w-12 disabled:opacity-75 transition-all border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
+          className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
           onClick={() => {
             (!isRecording && messageText) &&
               sendMessageHandler();
           }}
           disabled={pending}
-          onTouchStart={handleTouchStart}
+          onMouseMove={handleMouseMove}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
         >
 
