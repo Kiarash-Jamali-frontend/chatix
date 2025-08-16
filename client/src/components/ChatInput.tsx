@@ -119,11 +119,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   };
 
   const sendMessageHandler = async () => {
-    if (isRecording) {
-      handleStopRecording();
-      return;
-    }
-
     setEmojiPickerIsOpen(false);
     setTextMessagePending(true);
     setMessageText("");
@@ -317,6 +312,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   }
 
   const handleStartRecording = async () => {
+    setIsRecording(true);
     setEmojiPickerIsOpen(false);
     if (isRecording) {
       return;
@@ -345,7 +341,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
     }
   };
 
-  const handleStopRecording = () => {
+  const handleCancelRecording = () => {
     stopRecording();
     setIsRecording(false);
     setRecordingDuration(0);
@@ -353,17 +349,10 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
       clearInterval(recordingTimer);
       setRecordingTimer(null);
     }
-  };
-
-  const handleCancelRecording = () => {
-    handleStopRecording();
-    if (clearBlobUrl) {
-      clearBlobUrl();
-    }
+    clearBlobUrl();
   };
 
   const handleSendVoiceMessage = async () => {
-    handleStopRecording();
     setVoiceMessagePending(true);
     if (!mediaBlobUrl) {
       setVoiceMessagePending(false);
@@ -440,23 +429,12 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
 
       setRecordingDuration(0);
 
-      if (clearBlobUrl) {
-        clearBlobUrl();
-      }
+      clearBlobUrl();
     } catch (error) {
       console.error('Failed to send voice message:', error);
       setVoiceMessagePending(false);
     }
   };
-
-  useEffect(() => {
-    if (mediaBlobUrl && !isRecording && status === "stopped") {
-      if (!voiceMessagePending) {
-        handleSendVoiceMessage();
-      }
-    }
-  }, [mediaBlobUrl, isRecording, status, voiceMessagePending]);
-
 
   useEffect(() => {
     removeMessageSelectedForRelpy();
@@ -481,22 +459,20 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
 
   useEffect(() => {
     const newRecordingStartTime = Date.now();
+    console.log(status, isRecording);
 
-    if (status !== "idle" && status !== "acquiring_media") {
-      setIsRecording(true);
-
+    if (status == "recording" && isRecording) {
       const timer = setInterval(() => {
         const currentDuration = Math.floor((Date.now() - newRecordingStartTime) / 1000);
         setRecordingDuration(currentDuration);
 
         if (currentDuration >= 1800) {
-          handleStopRecording();
           handleSendVoiceMessage();
         }
       }, 1000);
       setRecordingTimer(timer);
     }
-  }, [status])
+  }, [status, isRecording])
 
   useEffect(() => {
     checkMicrophonePermission();
@@ -616,7 +592,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
                 </div>
               ) : (
                 <button
-                  onClick={chooseFileHandler} disabled={uploadPending} className="absolute text-natural/50 right-2">
+                  onClick={chooseFileHandler} disabled={uploadPending || isRecording} className="absolute text-natural/50 right-2">
                   <FontAwesomeIcon icon={faPaperclip} size="lg" />
                 </button>
               )}
