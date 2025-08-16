@@ -48,7 +48,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage, r
     }
 
     const onLoadedMetadata = () => {
-        const seconds = audioRef.current?.duration;
+        const seconds = message.duration || audioRef.current?.duration;
         if (seconds) {
             setDuration(seconds);
             if (audioProgressBarRef.current) {
@@ -114,8 +114,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage, r
             <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} replayMessage={replayMessage} message={message} />
             <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata}
                 onPlay={() => setIsStopped(false)}
-                onPause={() => setIsStopped(true)}
-                crossOrigin="anonymous"></audio>
+                onPause={() => setIsStopped(true)}></audio>
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={({ target }) => {
