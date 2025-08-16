@@ -352,18 +352,20 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
     clearBlobUrl();
   };
 
-  const handleSendVoiceMessage = async () => {
+  const handleStopRecordingBeforeSendVoiceMessage = () => {
     stopRecording();
-    setRecordingDuration(0);
     setIsRecording(false);
     setVoiceMessagePending(true);
+  }
+
+  const handleSendVoiceMessage = async (mediaBlobUrl: string) => {
 
     if (recordingTimer) {
       clearInterval(recordingTimer);
       setRecordingTimer(null);
     }
 
-    if (!mediaBlobUrl || recordingDuration <= 0) {
+    if (recordingDuration <= 0) {
       setVoiceMessagePending(false);
       return;
     }
@@ -460,6 +462,12 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   }, [messageText]);
 
   useEffect(() => {
+    
+    if (voiceMessagePending && mediaBlobUrl) {
+      handleSendVoiceMessage(mediaBlobUrl);
+      return;
+    }
+
     const newRecordingStartTime = Date.now();
 
     if (status == "recording" && isRecording) {
@@ -468,12 +476,12 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
         setRecordingDuration(currentDuration);
 
         if (currentDuration >= 1800) {
-          handleSendVoiceMessage();
+          handleStopRecordingBeforeSendVoiceMessage();
         }
       }, 1000);
       setRecordingTimer(timer);
     }
-  }, [status, isRecording])
+  }, [status, isRecording, voiceMessagePending, mediaBlobUrl])
 
   useEffect(() => {
     checkMicrophonePermission();
@@ -607,7 +615,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
           className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
           onClick={() => {
             (messageText) ?
-              sendMessageHandler() : !isRecording ? handleStartRecording() : handleSendVoiceMessage()
+              sendMessageHandler() : !isRecording ? handleStartRecording() : handleStopRecordingBeforeSendVoiceMessage()
           }}
           disabled={pending}
         >
