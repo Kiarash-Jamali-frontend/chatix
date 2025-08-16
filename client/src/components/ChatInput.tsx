@@ -74,17 +74,12 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordingDuration, setRecordingDuration] = useState<number>(0);
   const [recordingTimer, setRecordingTimer] = useState<NodeJS.Timeout | null>(null);
-  const [dragDistance, setDragDistance] = useState<number>(0);
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState<boolean | null>(null);
 
   const messageTextHtmlBody = new DOMParser().parseFromString(messageText, "text/html").body;
   const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const sendButtonRef = useRef<HTMLButtonElement>(null);
-  const touchStartXRef = useRef<number>(0);
-  const touchMoveXRef = useRef<number>(0);
-  const dragStartXRef = useRef<number>(0);
 
   const pending = textMessagePending || filePending || voiceMessagePending;
   const uploadPending = filePending || voiceMessagePending;
@@ -340,7 +335,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
     }
 
     setRecordingDuration(0);
-    setDragDistance(0);
     setVoiceMessagePending(false);
 
     try {
@@ -355,7 +349,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
     stopRecording();
     setIsRecording(false);
     setRecordingDuration(0);
-    setDragDistance(0);
     if (recordingTimer) {
       clearInterval(recordingTimer);
       setRecordingTimer(null);
@@ -370,6 +363,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   };
 
   const handleSendVoiceMessage = async () => {
+    handleStopRecording();
     setVoiceMessagePending(true);
     if (!mediaBlobUrl) {
       setVoiceMessagePending(false);
@@ -445,7 +439,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
       setNewNotSeenedMessageForAllGroupMembers();
 
       setRecordingDuration(0);
-      setDragDistance(0);
 
       if (clearBlobUrl) {
         clearBlobUrl();
@@ -453,81 +446,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
     } catch (error) {
       console.error('Failed to send voice message:', error);
       setVoiceMessagePending(false);
-    }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartXRef.current = e.touches[0].clientX;
-    dragStartXRef.current = e.touches[0].clientX;
-    if (!messageText) {
-      handleStartRecording();
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isRecording) return;
-
-    touchMoveXRef.current = e.touches[0].clientX;
-    const diff = touchMoveXRef.current - dragStartXRef.current;
-    if (diff < 0) {
-      setDragDistance(diff);
-    }
-
-    if (diff > 300) {
-      handleCancelRecording();
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (!isRecording) return;
-
-    const finalDragDistance = dragDistance;
-    handleStopRecording();
-
-    if (finalDragDistance <= 300) {
-      handleSendVoiceMessage();
-    }
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    dragStartXRef.current = e.clientX;
-    if (!messageText) {
-      handleStartRecording();
-    }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isRecording) return;
-
-    const diff = e.clientX - dragStartXRef.current;
-    if (diff < 0) {
-      setDragDistance(diff);
-    }
-
-    if (diff > 300) {
-      handleCancelRecording();
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (!isRecording) return;
-
-    const finalDragDistance = dragDistance;
-    handleStopRecording();
-
-    if (finalDragDistance <= 300) {
-      handleSendVoiceMessage();
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (isRecording) {
-      const finalDragDistance = dragDistance;
-      handleStopRecording();
-
-      if (finalDragDistance <= 300) {
-        handleSendVoiceMessage();
-      }
     }
   };
 
@@ -539,11 +457,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
     }
   }, [mediaBlobUrl, isRecording, status, voiceMessagePending]);
 
-  useEffect(() => {
-    if (!isRecording) {
-      setDragDistance(0);
-    }
-  }, [isRecording]);
 
   useEffect(() => {
     removeMessageSelectedForRelpy();
@@ -567,23 +480,10 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   }, [messageText]);
 
   useEffect(() => {
-    if (status === "idle" && isRecording) {
-      setIsRecording(false);
-      setRecordingDuration(0);
-      setDragDistance(0);
-      if (recordingTimer) {
-        clearInterval(recordingTimer);
-        setRecordingTimer(null);
-      }
-    }
-  }, [status, isRecording, recordingTimer]);
-
-  useEffect(() => {
     const newRecordingStartTime = Date.now();
 
     if (status !== "idle" && status !== "acquiring_media") {
       setIsRecording(true);
-      setDragDistance(0);
 
       const timer = setInterval(() => {
         const currentDuration = Math.floor((Date.now() - newRecordingStartTime) / 1000);
@@ -685,11 +585,11 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
         <div className="grow flex flex-col me-2 relative">
           <div className="px-3 shadow-xs rounded-full border bg-secondary flex items-center grow">
             <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
-              onClick={() => setEmojiPickerIsOpen(prev => !prev)}>
-              <span className={`absolute transition-all size-5 ${!emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
+              onClick={() => { !isRecording ? setEmojiPickerIsOpen(prev => !prev) : handleCancelRecording() }}>
+              <span className={`absolute transition-all size-5 ${(!emojiPickerIsOpen && !isRecording) ? "opacity-0 scale-0" : ""}`}>
                 <FontAwesomeIcon icon={faClose} className="!size-5" />
               </span>
-              <span className={`absolute transition-all size-5 ${emojiPickerIsOpen ? "opacity-0 scale-0" : ""}`}>
+              <span className={`absolute transition-all size-5 ${(emojiPickerIsOpen || isRecording) ? "opacity-0 scale-0" : ""}`}>
                 <FontAwesomeIcon icon={faFaceSmile} className="!size-5" />
               </span>
             </button>
@@ -727,23 +627,12 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
         <input type="file" id="fileInput" hidden ref={fileInputRef} multiple onChange={sendFileHandler} />
 
         <button
-          ref={sendButtonRef}
-          style={{
-            transform: `translateX(${dragDistance}px)`,
-          }}
           className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
           onClick={() => {
-            (!isRecording && messageText) &&
-              sendMessageHandler();
+            (messageText) ?
+              sendMessageHandler() : !isRecording ? handleStartRecording() : handleSendVoiceMessage()
           }}
           disabled={pending}
-          onMouseMove={handleMouseMove}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onMouseUp={handleMouseUp}
-          onTouchStart={handleTouchStart}
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
         >
 
           <FontAwesomeIcon icon={faSquare} size="lg"
