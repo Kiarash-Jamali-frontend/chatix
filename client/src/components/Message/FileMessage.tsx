@@ -36,7 +36,7 @@ export default function FileMessage({ message, isGroupMessage, replayMessage, re
 
     return (
         <div className="flex">
-            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} replayMessage={replayMessage} message={message} />
+            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} isGroupMessage={isGroupMessage} replayMessage={replayMessage} message={message} />
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={({ target }) => {
