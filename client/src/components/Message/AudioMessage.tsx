@@ -111,7 +111,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage, r
 
     return (
         <div className="flex">
-            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} replayMessage={replayMessage} message={message} />
+            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} isGroupMessage={isGroupMessage} replayMessage={replayMessage} message={message} />
             <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata}
                 onPlay={() => setIsStopped(false)}
                 onPause={() => setIsStopped(true)}></audio>
