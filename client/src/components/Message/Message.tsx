@@ -236,7 +236,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
                 senderProfile={senderProfile} />
             }
             {
-              (message.type === "audio" || message.type == "voice") && <AudioMessage recipients={recipients}
+              (message.type === "audio" || message.type === "voice") && <AudioMessage recipients={recipients}
                 replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage}
                 senderProfile={senderProfile} />
             }
