@@ -353,8 +353,17 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
   };
 
   const handleSendVoiceMessage = async () => {
+    stopRecording();
+    setRecordingDuration(0);
+    setIsRecording(false);
     setVoiceMessagePending(true);
-    if (!mediaBlobUrl) {
+
+    if (recordingTimer) {
+      clearInterval(recordingTimer);
+      setRecordingTimer(null);
+    }
+
+    if (!mediaBlobUrl || recordingDuration <= 0) {
       setVoiceMessagePending(false);
       return;
     }
@@ -371,11 +380,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
         `${isPrivateChat ? `chats/${chatId}` : `groups/${groupId}`}/${fileName}`);
       await uploadBytes(fileStorageRef, file);
       const fileUrl = await getDownloadURL(fileStorageRef);
-
-      if (recordingDuration <= 0) {
-        setVoiceMessagePending(false);
-        return;
-      }
 
       const data = {
         content: fileUrl,
@@ -426,8 +430,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
       }
 
       setNewNotSeenedMessageForAllGroupMembers();
-
-      setRecordingDuration(0);
 
       clearBlobUrl();
     } catch (error) {
