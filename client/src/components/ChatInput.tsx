@@ -377,7 +377,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
       const file = new File([blob], fileName, { type: audioFormat });
 
       const fileStorageRef = ref(storage,
-        `${isPrivateChat ? `chats/${chatId}` : `groups/${groupId}`}/${fileName}`);
+        `${isPrivateChat ? `chats/${chatId}/${fileName}` : `groups/${groupId}`}/${fileName}`);
       await uploadBytes(fileStorageRef, file);
       const fileUrl = await getDownloadURL(fileStorageRef);
 
@@ -461,7 +461,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
 
   useEffect(() => {
     const newRecordingStartTime = Date.now();
-    console.log(status, isRecording);
 
     if (status == "recording" && isRecording) {
       const timer = setInterval(() => {
