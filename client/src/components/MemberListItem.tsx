@@ -5,7 +5,6 @@ import GradiantProfile from "./GradiantProfile";
 type PropTypes = {
     member: (Profile & {
         email: string;
-        notSeenedMessages: number;
     });
     isSelected: boolean;
     callbackFn: (e: string) => void;
