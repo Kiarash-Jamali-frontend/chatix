@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import MessageType from '../types/MessageType';
 
@@ -76,33 +76,6 @@ export const getNotificationSettings = async (userEmail: string) => {
     return {
       enabled: true
     };
-  }
-};
-
-// Store message notification data
-export const storeMessageNotification = async (messageId: string, { content = "", chatId = "", groupId = "", ...notificationData }: {
-  from: string;
-  to: string;
-  messageType: string;
-  content?: string;
-  timestamp: Date;
-  chatId?: string;
-  groupId?: string;
-  notificationId?: string;
-}) => {
-  try {
-    const notificationDocRef = doc(db, 'message_notifications', messageId);
-    await setDoc(notificationDocRef, {
-      ...notificationData,
-      sent: false,
-      createdAt: new Date(),
-    });
-
-    console.log('Message notification stored successfully');
-    return true;
-  } catch (error) {
-    console.error('Failed to store message notification:', error);
-    return false;
   }
 };
 

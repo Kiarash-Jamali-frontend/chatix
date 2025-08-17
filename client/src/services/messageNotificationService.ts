@@ -1,7 +1,6 @@
 import MessageType from '../types/MessageType';
 import {
   getOneSignalUserIdsFromFirebase,
-  storeMessageNotification,
   getNotificationSettings,
   sendMessageNotificationViaBackend
 } from './notificationService';
@@ -79,18 +78,6 @@ export const handleNewMessageNotification = async (
 
     if (notificationResult.success) {
       console.log('Notification sent successfully:', notificationResult);
-
-      // Store notification data in Firebase
-      await storeMessageNotification(messageData.id, {
-        from: messageData.from,
-        to: messageData.to,
-        messageType: messageData.type,
-        content: messageData.content,
-        timestamp: messageData.timestamp,
-        chatId: isPrivateMessage ? undefined : messageData.from,
-        groupId: isGroupMessage ? groupId : undefined,
-        notificationId: notificationResult.id
-      });
     } else {
       console.error('Failed to send notification:', notificationResult.error);
     }

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Timestamp } from "firebase/firestore";
 import Profile from "../../types/Profile";
 
-export type ChatData = (Profile & { email: string, notSeenedMessages: number, createdAt: Timestamp });
+export type ChatData = (Profile & { email: string, createdAt: Timestamp });
 
 export type ChatsState = {
     list: ChatData[],

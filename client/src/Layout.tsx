@@ -90,7 +90,6 @@ const Layout: React.FC = () => {
 
   const getChats = () => {
     let profileUnsubs: Unsubscribe[] = [];
-    let messageCountUnsubs: Unsubscribe[] = [];
 
     const q = query(
       collection(db, "chat_room"),
@@ -103,9 +102,7 @@ const Layout: React.FC = () => {
     const chatUnsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
       // Clean up previous subscriptions
       profileUnsubs.forEach(unsub => unsub());
-      messageCountUnsubs.forEach(unsub => unsub());
       profileUnsubs = [];
-      messageCountUnsubs = [];
 
       if (!querySnapshot.size) {
         dispatch(changeChatsStatus("success"));
@@ -126,58 +123,45 @@ const Layout: React.FC = () => {
         oppositeUserEmails.push(oppositeUserEmail);
       });
 
-      // Set up profile listeners for each opposite user
       oppositeUserEmails.forEach((oppositeUserEmail) => {
         const profileDocRef = doc(db, "profile", oppositeUserEmail);
         const profileUnsub = onSnapshot(profileDocRef, (profileDoc) => {
           if (profileDoc.exists()) {
             const profile = profileDoc.data();
+            console.log(profile);
 
-            // Set up message count listener for this user
-            const messageCountUnsub = onSnapshot(
-              query(
-                collection(db, "message"),
-                and(
-                  where("senderEmail", "==", oppositeUserEmail),
-                  where("receiverEmail", "==", user.data?.email),
-                  where("seen", "==", false)
-                )
-              ),
-              (messageSnapshot) => {
-                const notSeenedMessagesCount = messageSnapshot.size;
 
-                // Find the chat data for this user
-                const chatDoc = querySnapshot.docs.find(doc => {
-                  const chatData = doc.data();
-                  return (user.data?.email === chatData.user_1 && oppositeUserEmail === chatData.user_2) ||
-                    (user.data?.email === chatData.user_2 && oppositeUserEmail === chatData.user_1);
-                });
+            // Find the chat data for this user
+            const chatDoc = querySnapshot.docs.find(doc => {
+              const chatData = doc.data();
+              return (user.data?.email === chatData.user_1 && oppositeUserEmail === chatData.user_2) ||
+                (user.data?.email === chatData.user_2 && oppositeUserEmail === chatData.user_1);
+            });
 
-                if (chatDoc) {
-                  const chatData = chatDoc.data();
+            if (chatDoc) {
+              const chatData = chatDoc.data();
+              console.log(profile.showOnlineStatus || true);
 
-                  // Update chats list with real-time data
-                  chatsList = [
-                    ...chatsList.filter(chat => chat.email !== oppositeUserEmail),
-                    {
-                      name: profile.name || "",
-                      photoUrl: profile.photoUrl || "",
-                      lastActivity: profile.lastActivity,
-                      biography: profile.biography || "",
-                      email: oppositeUserEmail,
-                      notSeenedMessages: notSeenedMessagesCount,
-                      createdAt: chatData.createdAt,
-                      showOnlineStatus: profile.showOnlineStatus || true
-                    }
-                  ];
 
-                  dispatch(changeChatsList([...chatsList]));
-                  dispatch(changeChatsStatus("success"));
-                  localStorage.setItem("chatix_has_cache_data", "true");
+              // Update chats list with real-time data
+              chatsList = [
+                ...chatsList.filter(chat => chat.email !== oppositeUserEmail),
+                {
+                  name: profile.name || "",
+                  photoUrl: profile.photoUrl || "",
+                  lastActivity: profile.lastActivity,
+                  biography: profile.biography || "",
+                  email: oppositeUserEmail,
+                  createdAt: chatData.createdAt,
+                  showOnlineStatus: typeof profile.showOnlineStatus == "boolean" ? profile.showOnlineStatus : true
                 }
-              }
-            );
-            messageCountUnsubs.push(messageCountUnsub);
+              ];
+
+              dispatch(changeChatsList([...chatsList]));
+              dispatch(changeChatsStatus("success"));
+              localStorage.setItem("chatix_has_cache_data", "true");
+            }
+
           }
         });
         profileUnsubs.push(profileUnsub);
@@ -187,7 +171,6 @@ const Layout: React.FC = () => {
     return () => {
       chatUnsub();
       profileUnsubs.forEach(unsub => unsub());
-      messageCountUnsubs.forEach(unsub => unsub());
     };
   }
 

@@ -27,7 +27,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     const selectedChatOrGroupID = useAppSelector((state: RootState) => state.selectedChatOrGroup.id);
     const { parse } = Parser();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email)
-    const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(chat.notSeenedMessages);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
     const [decryptedLastMessage, setDecryptedLastMessage] = useState<string>("");
     const chatIsSelected = selectedChatOrGroupID === chat.email;
