@@ -1,8 +1,8 @@
 enum ProfileImageSizes {
-    SMALL = "size-10 text-[1rem]",
-    MEDIUM = "size-12 text-xl",
-    LARGE = "size-14 text-2xl",
-    EXTRA_LARGE = "size-16 text-3xl"
+    SMALL = "size-10 basis-10 text-[1rem]",
+    MEDIUM = "size-12 basis-12 text-xl",
+    LARGE = "size-14 basis-14 text-2xl",
+    EXTRA_LARGE = "size-16 basis-16 text-3xl"
 }
 
 export default ProfileImageSizes;
