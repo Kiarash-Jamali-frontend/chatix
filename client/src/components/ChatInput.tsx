@@ -361,7 +361,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, type
   }
 
   const handleSendVoiceMessage = async (mediaBlobUrl: string) => {
-
     removeMessageSelectedForRelpy();
     
     if (recordingTimer) {

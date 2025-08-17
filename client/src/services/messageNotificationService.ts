@@ -72,7 +72,7 @@ export const handleNewMessageNotification = async (
       type,
       messageData.id,
       groupName,
-      isPrivateMessage ? undefined : messageData.from,
+      isPrivateMessage ? messageData.from : undefined,
       isGroupMessage ? groupId : undefined,
       icon
     );
