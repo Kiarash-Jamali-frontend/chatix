@@ -18,6 +18,7 @@ import NotificationPermission from "../components/NotificationPermission";
 import SwitchButton from "../components/common/SwitchButton";
 import { doc, updateDoc } from "firebase/firestore";
 import { decreaseFontSize, increaseFontSize } from "../redux/slices/fontSize";
+import getDefaultShowOnlineStatus from "../helpers/getDefaultShowOnlineStatus";
 
 export default function Settings() {
     const [pending, setPending] = useState<boolean>(false);
@@ -26,7 +27,7 @@ export default function Settings() {
     const profile = useAppSelector((state: RootState) => state.user.profile);
     const { size: fontSize, max: maxFontSize, min: minFontSize } = useAppSelector((state: RootState) => state.fontSize);
     const [profileData, setProfileData] = useState<Profile | null>(profile);
-    const [showOnlineStatus, setShowOnlineStatus] = useState<boolean>(!!profile?.showOnlineStatus);
+    const [showOnlineStatus, setShowOnlineStatus] = useState<boolean>(getDefaultShowOnlineStatus(profile?.showOnlineStatus));
     const [profileImage, setProfileImage] = useState<File | null>(null);
     const [oldPassword, setOldPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
@@ -109,7 +110,7 @@ export default function Settings() {
 
     useEffect(() => {
         setProfileData(profile);
-        setShowOnlineStatus(!!profile?.showOnlineStatus);
+        setShowOnlineStatus(getDefaultShowOnlineStatus(profile?.showOnlineStatus));
     }, [profile])
 
     if (profileData) {

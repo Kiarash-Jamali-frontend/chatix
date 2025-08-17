@@ -21,6 +21,7 @@ import { Unsubscribe } from "firebase/firestore";
 // import NotificationBanner from "./components/NotificationBanner";
 import { Draft, setDraftsList } from "./redux/slices/drafts";
 import { changeFontSize } from "./redux/slices/fontSize";
+import getDefaultShowOnlineStatus from "./helpers/getDefaultShowOnlineStatus";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -151,7 +152,7 @@ const Layout: React.FC = () => {
                   biography: profile.biography || "",
                   email: oppositeUserEmail,
                   createdAt: chatData.createdAt,
-                  showOnlineStatus: typeof profile.showOnlineStatus == "boolean" ? profile.showOnlineStatus : true
+                  showOnlineStatus: getDefaultShowOnlineStatus(profile.showOnlineStatus)
                 }
               ];
 
