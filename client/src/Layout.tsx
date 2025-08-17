@@ -140,8 +140,6 @@ const Layout: React.FC = () => {
 
             if (chatDoc) {
               const chatData = chatDoc.data();
-              console.log(profile.showOnlineStatus || true);
-
 
               // Update chats list with real-time data
               chatsList = [
