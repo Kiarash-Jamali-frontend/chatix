@@ -109,7 +109,7 @@ layer(base);
 }
 
 .message-text a {
-  @apply decoration-current underline text-blue-50 underline-offset-4
+  @apply decoration-current underline underline-offset-4
 }
 
 .last-message > * {
