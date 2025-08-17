@@ -82,7 +82,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
                 >
                     <div className="flex items-stretch w-full grow">
                         {/*Profile image*/}
-                        <div className="basis-12 py-2 lg:py-0">
+                        <div className="min-w-12 basis-12 py-2 lg:py-0">
                             <ProfileImage name={group.groupName}
                                 photoUrl={group.groupPhotoUrl}
                                 size={ProfileImageSizes.MEDIUM} />

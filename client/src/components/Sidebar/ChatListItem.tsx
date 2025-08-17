@@ -126,7 +126,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
             >
                 <div className="flex items-stretch w-full grow">
                     {/*Profile image*/}
-                    <div className="basis-12 py-2 lg:py-0 relative">
+                    <div className="min-w-12 basis-12 py-2 lg:py-0 relative">
                         <ProfileImage name={chat.name}
                             photoUrl={chat.photoUrl}
                             size={ProfileImageSizes.MEDIUM} />
