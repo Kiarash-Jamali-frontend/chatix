@@ -21,6 +21,7 @@ import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { useEncryption } from "../../hooks/useEncryption";
 import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
 import { motion } from "framer-motion";
+import MessageType from "../../types/MessageType";
 
 type PropTypes = {
   message: any;
@@ -29,12 +30,12 @@ type PropTypes = {
   senderProfile?: Profile & {
     id: string
   };
-  isGroupMessage?: boolean;
+  type: MessageType;
   nextMessageSender?: string | null;
   recipients: string[]
 };
 
-const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isGroupMessage = false, senderProfile, nextMessageSender, recipients }) => {
+const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, type, senderProfile, nextMessageSender, recipients }) => {
   const { parse } = Parser();
   const user = useAppSelector((state: RootState) => state.user);
   const chatsList = useAppSelector((state: RootState) => state.chats.list);
@@ -46,9 +47,11 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
   const [decryptedContent, setDecryptedContent] = useState<string>("");
   const [decryptedReplayedMessageContent, setDecryptedReplayedMessageContent] = useState<string>("");
 
+  const isGroupMessage = type == MessageType.GROUP;
+
   const messageIsForCurrentUser = user.data?.email === message.from;
 
-  const chatIsCreated = isGroupMessage && chatsList.find((c) => c.email === message.from);
+  const chatIsCreated = type == MessageType.GROUP && chatsList.find((c) => c.email === message.from);
 
   const seenMessageHandler = async () => {
     const msgDocRef = doc(db, "chat_message", message.id);
@@ -57,8 +60,8 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     });
   };
 
-  const handleDecryption = async (msg: any, isGroupMsg: boolean): Promise<string> => {
-    if (isEncryptedMessage(msg) && !isGroupMsg) {
+  const handleDecryption = async (msg: any, type: MessageType): Promise<string> => {
+    if (isEncryptedMessage(msg) && type == MessageType.PRIVATE) {
       try {
         const chatSecret = getChatSecret(msg.from, msg.to);
         const decrypted = await decryptMessage(
@@ -75,18 +78,17 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
         return '[Encrypted Message - Unable to decrypt]';
       }
     } else {
-      // For non-encrypted messages or group messages, use original content
       return msg.content || '';
     }
   };
 
   const handleDecryptionMessage = async () => {
-    const decrypted = await handleDecryption(message, isGroupMessage);
+    const decrypted = await handleDecryption(message, type);
     setDecryptedContent(decrypted);
   }
 
   const handleDecryptionReplyedMessage = async () => {
-    const decrypted = await handleDecryption(replyedMessage, isGroupMessage);
+    const decrypted = await handleDecryption(replyedMessage, type);
     setDecryptedReplayedMessageContent(decrypted);
   }
 
@@ -142,7 +144,6 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
     }
   }, [location.search]);
 
-  // Handle decryption of encrypted messages
   useEffect(() => {
     handleDecryptionMessage();
   }, [message, isGroupMessage, getChatSecret]);
@@ -193,7 +194,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
         }
         <div className={`lg:max-w-none max-w-[90%] flex flex-col font-Vazir ${messageIsForCurrentUser ? "flex-row-reverse" : ""}`}>
           {
-            !isGroupMessage && (
+            type == MessageType.PRIVATE && (
               <div className="relative z-40">
                 <ReactionsEmojiPicker message={message} />
               </div>
@@ -220,30 +221,30 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, isG
             }
             {
               message.type === "image" && <ImageMessage recipients={recipients} key={message.id}
-                replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+                replayMessage={replyedMessage} message={message} type={type}
                 senderProfile={senderProfile}
                 scrollDown={scrollDown} />
             }
             {
               message.type === "video" && <VideoMessage recipients={recipients} key={message.id}
-                replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+                replayMessage={replyedMessage} message={message} type={type}
                 senderProfile={senderProfile}
                 scrollDown={scrollDown} />
             }
             {
               message.type === "file" && <FileMessage recipients={recipients} key={message.id}
-                replayMessage={replyedMessage} message={message} isGroupMessage={isGroupMessage}
+                replayMessage={replyedMessage} message={message} type={type}
                 senderProfile={senderProfile} />
             }
             {
               (message.type === "audio" || message.type === "voice") && <AudioMessage recipients={recipients}
-                replayMessage={replyedMessage} key={message.id} message={message} isGroupMessage={isGroupMessage}
+                replayMessage={replyedMessage} key={message.id} message={message} type={type}
                 senderProfile={senderProfile} />
             }
             {
               message.type === "text" &&
               <TextMessage recipients={recipients} replayMessage={replyedMessage} key={message.id}
-                message={{ ...message, content: decryptedContent }} isGroupMessage={isGroupMessage} senderProfile={senderProfile} />
+                message={{ ...message, content: decryptedContent }} type={type} senderProfile={senderProfile} />
             }
           </div>
         </div>

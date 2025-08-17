@@ -31,13 +31,13 @@ export default function ImageModal() {
     }
 
     const deleteMessageHandler = () => {
-        const { id, notificationId, recipients: recipientIds, isGroupMessage, content: fileAddress } = openedImageMessage;
+        const { id, notificationId, recipients: recipientIds, type, content: fileAddress } = openedImageMessage;
         deleteMessage(
             {
                 id,
                 notificationId,
                 recipientIds,
-                isGroupMessage,
+                type,
                 fileAddress
             });
         dispatch(hideImage());

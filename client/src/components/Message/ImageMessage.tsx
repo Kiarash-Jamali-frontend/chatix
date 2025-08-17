@@ -5,12 +5,13 @@ import MessageSeen from "./MessageSeen";
 import MessagePropTypes from "../../types/MessagePropTypes";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import { changeImage } from "../../redux/slices/openedImage";
+import MessageType from "../../types/MessageType";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
 }
 
-export default function ImageMessage({ message, scrollDown, isGroupMessage, recipients }: PropTypes) {
+export default function ImageMessage({ message, scrollDown, type, recipients }: PropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
 
@@ -29,7 +30,7 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage, reci
             >
                 <div className="relative">
                     <div className="relative rounded-lg overflow-hidden cursor-pointer"
-                        onClick={() => dispatch(changeImage({ ...message, isGroupMessage, recipients }))}>
+                        onClick={() => dispatch(changeImage({ ...message, type, recipients }))}>
                         <img
                             crossOrigin="anonymous" onLoad={scrollDown} src={message.content} className="object-cover max-w-[400px] max-h-[275px] w-full" />
                     </div>
@@ -37,7 +38,7 @@ export default function ImageMessage({ message, scrollDown, isGroupMessage, reci
 
                 <div className="flex justify-end items-center my-2">
                     <MessageTime message={message} />
-                    {message.from === userEmail && !isGroupMessage && (
+                    {message.from === userEmail && type == MessageType.PRIVATE && (
                         <MessageSeen message={message} />
                     )}
                 </div>

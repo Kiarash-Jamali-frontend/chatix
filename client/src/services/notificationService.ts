@@ -1,5 +1,6 @@
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
+import MessageType from '../types/MessageType';
 
 const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
 
@@ -184,7 +185,7 @@ export const sendMessageNotificationViaBackend = async (
   senderName: string,
   messageType: string,
   messageContent: string,
-  isGroupMessage: boolean = false,
+  type: MessageType,
   messageId: string,
   groupName?: string,
   chatId?: string,
@@ -208,7 +209,7 @@ export const sendMessageNotificationViaBackend = async (
         messageContent,
         icon,
         messageId,
-        isGroupMessage,
+        type,
         groupName,
         chatId,
         groupId

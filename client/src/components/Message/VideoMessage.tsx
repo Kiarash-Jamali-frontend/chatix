@@ -16,12 +16,13 @@ import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import downloadFile from "../../helpers/downloadFile";
 import { toast, ToastContainer } from "react-toastify";
 import toastConf from "../../../utils/toastConfig";
+import MessageType from "../../types/MessageType";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
 }
 
-export default function VideoMessage({ message, scrollDown, isGroupMessage, recipients }: PropTypes) {
+export default function VideoMessage({ message, scrollDown, type, recipients }: PropTypes) {
 
     const videoRef = useRef<PlayerReference>(null);
 
@@ -79,7 +80,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage, reci
                                         id: message.id,
                                         notificationId: message.notificationId,
                                         recipientIds: recipients,
-                                        isGroupMessage,
+                                        type,
                                         fileAddress: message.content
                                     })}
                                     className={`font-Inter ${!messageIsSelected ? "pointer-events-none" : ""} me-2 text-xs font-medium shadow-md border py-1.5 px-2 flex items-center justify-center bg-secondary hover:bg-zinc-50 text-natural rounded-full`}>
@@ -131,7 +132,7 @@ export default function VideoMessage({ message, scrollDown, isGroupMessage, reci
                     </div>
                     <div className="flex items-center justify-end mt-2">
                         <MessageTime message={message} />
-                        {message.from === userEmail && !isGroupMessage && (
+                        {message.from === userEmail && type == MessageType.PRIVATE && (
                             <MessageSeen message={message} />
                         )}
                     </div>

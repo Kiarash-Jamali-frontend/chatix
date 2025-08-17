@@ -24,6 +24,7 @@ import { isSameDay } from "date-fns";
 import customFormatRelative from "../helpers/customFormatRelative";
 import { AnimatePresence } from "framer-motion";
 import { getOneSignalUserIdsFromFirebase } from "../services/notificationService";
+import MessageType from "../types/MessageType";
 
 const Chat: React.FC = () => {
   const userData = useAppSelector((state: RootState) => state.user.data);
@@ -154,6 +155,7 @@ const Chat: React.FC = () => {
                     )
                   }
                   <Message recipients={oneSignalUserIds}
+                    type={MessageType.PRIVATE}
                     message={m} scrollDown={scrollDownHandler} replyedMessage={
                       replyToMessage ? {
                         ...replyToMessage,
@@ -186,7 +188,7 @@ const Chat: React.FC = () => {
             {
               !roomData.isBlocked && email && (
                 <div className="mb-3 md:mb-5">
-                  <ChatInput mode="private" chatId={roomData.id} oppositeProfile={profile} />
+                  <ChatInput type={MessageType.PRIVATE} chatId={roomData.id} oppositeProfile={profile} />
                 </div>
               )
             }

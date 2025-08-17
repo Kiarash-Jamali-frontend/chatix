@@ -23,9 +23,11 @@ import { addDraft, changeDraft, getDraft, removeDraft } from "../redux/slices/dr
 import { useReactMediaRecorder } from "react-media-recorder";
 import { toast, ToastContainer } from "react-toastify";
 import toastConf from "../../utils/toastConfig";
+import MessageType from "../types/MessageType";
+import messageCollectionByType from "../constants/messageCollectionByType";
 
 export type ChatInputPropTypes = {
-  mode: "group" | "private";
+  type: MessageType;
   groupId?: string;
   oppositeProfile?: any;
   chatId?: string;
@@ -35,8 +37,8 @@ export type ChatInputPropTypes = {
   groupMembersRecipients?: string[]
 };
 
-const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode, groupId, membersProfiles, groupName, groupPhotoUrl, groupMembersRecipients }) => {
-  const isPrivateChat = (mode == "private" || !mode);
+const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, type, groupId, membersProfiles, groupName, groupPhotoUrl, groupMembersRecipients }) => {
+  const isPrivateChat = type == MessageType.PRIVATE;
   const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
 
   const { parse } = Parser();
@@ -148,7 +150,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
         messageData.content = messageText.trim();
       }
 
-      const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), messageData);
+      const docRef = await addDoc(collection(db, messageCollectionByType[type]), messageData);
 
       setTextMessagePending(false);
 
@@ -178,7 +180,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
 
       if (notificationId) {
         runTransaction(db, async (transaction) => {
-          transaction.update(doc(db, isPrivateChat ? "chat_message" : "group_message", docRef.id), {
+          transaction.update(doc(db, messageCollectionByType[type], docRef.id), {
             notificationId
           })
         })
@@ -187,7 +189,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
       setNewNotSeenedMessageForAllGroupMembers();
     } catch (error) {
       console.error('Failed to send encrypted message:', error);
-      await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), {
+      await addDoc(collection(db, messageCollectionByType[type]), {
         content: messageText.trim(),
         from: userEmail,
         seen: false,
@@ -237,7 +239,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
           data.fileName = file.name;
           data.fileSize = file.size;
         }
-        const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
+        const docRef = await addDoc(collection(db, messageCollectionByType[type]), data);
 
         let notificationId: string = "";
         if (isPrivateChat && oppositeProfile.notificationSettings?.enabled && userProfile) {
@@ -265,7 +267,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
 
         if (notificationId) {
           runTransaction(db, async (transaction) => {
-            transaction.update(doc(db, isPrivateChat ? "chat_message" : "group_message", docRef.id), {
+            transaction.update(doc(db, messageCollectionByType[type], docRef.id), {
               notificationId
             })
           })
@@ -396,7 +398,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
         replyTo: messageSelectedForReply?.id || null
       };
 
-      const docRef = await addDoc(collection(db, isPrivateChat ? "chat_message" : "group_message"), data);
+      const docRef = await addDoc(collection(db, messageCollectionByType[type]), data);
       setVoiceMessagePending(false);
 
       let notificationId: string = "";
@@ -425,7 +427,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, mode
 
       if (notificationId) {
         runTransaction(db, async (transaction) => {
-          transaction.update(doc(db, isPrivateChat ? "chat_message" : "group_message", docRef.id), {
+          transaction.update(doc(db, messageCollectionByType[type], docRef.id), {
             notificationId
           })
         })

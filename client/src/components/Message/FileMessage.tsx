@@ -12,8 +12,9 @@ import { useState } from "react";
 import downloadFile from "../../helpers/downloadFile";
 import { toast } from "react-toastify";
 import toastConf from "../../../utils/toastConfig";
+import MessageType from "../../types/MessageType";
 
-export default function FileMessage({ message, isGroupMessage, replayMessage, recipients }: MessagePropTypes) {
+export default function FileMessage({ message, type, replayMessage, recipients }: MessagePropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
@@ -36,7 +37,7 @@ export default function FileMessage({ message, isGroupMessage, replayMessage, re
 
     return (
         <div className="flex">
-            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} isGroupMessage={isGroupMessage} replayMessage={replayMessage} message={message} />
+            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} type={type} replayMessage={replayMessage} message={message} />
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={({ target }) => {
@@ -74,7 +75,7 @@ export default function FileMessage({ message, isGroupMessage, replayMessage, re
                 </div>
                 <div className="mt-1 flex justify-end">
                     <MessageTime message={message} />
-                    {message.from === userEmail && !isGroupMessage && (
+                    {message.from === userEmail && type == MessageType.PRIVATE && (
                         <MessageSeen message={message} />
                     )}
                 </div>

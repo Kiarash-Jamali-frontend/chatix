@@ -156,7 +156,7 @@ app.post('/api/notifications/message', async (req, res) => {
       senderName,
       messageType,
       messageContent,
-      isGroupMessage,
+      type,
       groupName,
       chatId,
       groupId,
@@ -164,10 +164,10 @@ app.post('/api/notifications/message', async (req, res) => {
       messageId
     } = req.body;
 
-    if (!recipientIds || !Array.isArray(recipientIds) || !senderName) {
+    if (!recipientIds || !Array.isArray(recipientIds) || !senderName || !type) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: recipientIds, senderName'
+        error: 'Missing required fields: recipientIds, senderName, type'
       });
     }
 
@@ -176,7 +176,7 @@ app.post('/api/notifications/message', async (req, res) => {
     let message = '';
     let data = {};
 
-    if (isGroupMessage && groupName) {
+    if (type == 1 && groupName) {
       title = `${senderName} in ${groupName}`;
       message = messageType === 'text' ? messageContent : `Sent a ${messageType}`;
       data = {
@@ -184,7 +184,9 @@ app.post('/api/notifications/message', async (req, res) => {
         groupId,
         url: `/group/${groupId}`
       };
-    } else {
+    }
+
+    if (type == 0) {
       title = senderName;
       message = messageType === 'text' ? messageContent : `Sent a ${messageType}`;
       data = {

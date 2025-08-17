@@ -2,17 +2,19 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { db, storage } from "../../../utils/firebase";
 import { deleteNotification } from "../../services/notificationService";
 import { deleteObject, ref } from "firebase/storage";
+import MessageType from "../../types/MessageType";
+import messageCollectionByType from "../../constants/messageCollectionByType";
 
 type DeleteMessage = {
     id: string;
     notificationId?: string;
     recipientIds?: string[];
-    isGroupMessage?: boolean;
+    type: MessageType;
     fileAddress?: string;
 }
 
 export default function deleteMessage(
-    { id, fileAddress, isGroupMessage = false, notificationId, recipientIds }: DeleteMessage
+    { id, fileAddress, type, notificationId, recipientIds }: DeleteMessage
 ) {
     if (notificationId && recipientIds?.length) {
         deleteNotification(notificationId, id, recipientIds);
@@ -21,5 +23,5 @@ export default function deleteMessage(
         const fileRef = ref(storage, fileAddress);
         deleteObject(fileRef);
     }
-    deleteDoc(doc(db, isGroupMessage ? "group_message" : "chat_message", id));
+    deleteDoc(doc(db, messageCollectionByType[type], id));
 }

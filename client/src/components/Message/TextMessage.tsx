@@ -7,8 +7,9 @@ import MessagePropTypes from "../../types/MessagePropTypes";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import urlify from "../../helpers/urlify";
+import MessageType from "../../types/MessageType";
 
-const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, replayMessage, recipients }) => {
+const TextMessage: React.FC<MessagePropTypes> = ({ message, type, replayMessage, recipients }) => {
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
@@ -54,7 +55,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, repl
 
   return (
     <div className="flex">
-      <DeleteTextFileAudioMessageButton recipients={recipients} replayMessage={replayMessage} message={message} isGroupMessage={isGroupMessage} />
+      <DeleteTextFileAudioMessageButton recipients={recipients} replayMessage={replayMessage} message={message} type={type} />
       <button
         onBlur={() => dispatch(changeSelectedMessage(null))}
         onFocus={(e) => {
@@ -78,7 +79,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, isGroupMessage, repl
         </div>
         <div className="mt-1 flex justify-end">
           <MessageTime message={message} />
-          {message.from === userEmail && !isGroupMessage && (
+          {message.from === userEmail && type == MessageType.PRIVATE && (
             <MessageSeen message={message} />
           )}
         </div>

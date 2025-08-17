@@ -1,3 +1,4 @@
+import MessageType from '../types/MessageType';
 import {
   getOneSignalUserIdsFromFirebase,
   storeMessageNotification,
@@ -16,7 +17,7 @@ export const handleNewMessageNotification = async (
     timestamp: Date;
   },
   senderName: string,
-  isGroupMessage: boolean = false,
+  type: MessageType,
   groupId?: string,
   groupName?: string,
   membersProfilesOneSignalIds?: string[],
@@ -24,10 +25,9 @@ export const handleNewMessageNotification = async (
 ): Promise<void | { success: boolean, id?: string }> => {
   try {
     // Get recipient's OneSignal user ID
-
     let oneSignalUserIds = [];
 
-    if (!isGroupMessage) {
+    if (type == MessageType.PRIVATE) {
       const recipientEmail = messageData.to;
       oneSignalUserIds = await getOneSignalUserIdsFromFirebase(recipientEmail);
 
@@ -44,16 +44,35 @@ export const handleNewMessageNotification = async (
       }
     }
 
+    let recipientIds: string[] = [];
+
+    switch (type) {
+      case MessageType.PRIVATE: {
+        recipientIds = oneSignalUserIds;
+        break;
+      }
+      case MessageType.GROUP: {
+        recipientIds = membersProfilesOneSignalIds || [];
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+
+    const isPrivateMessage = type == MessageType.PRIVATE;
+    const isGroupMessage = type == MessageType.GROUP;
+
     // Send notification using the backend service
     const notificationResult = await sendMessageNotificationViaBackend(
-      isGroupMessage ? (membersProfilesOneSignalIds || []) : oneSignalUserIds,
+      recipientIds,
       senderName,
       messageData.type,
-      getNotificationContent(messageData.type, messageData.content,) || '',
-      isGroupMessage,
+      getNotificationContent(messageData.type, messageData.content) || '',
+      type,
       messageData.id,
       groupName,
-      isGroupMessage ? undefined : messageData.from,
+      isPrivateMessage ? undefined : messageData.from,
       isGroupMessage ? groupId : undefined,
       icon
     );
@@ -68,7 +87,7 @@ export const handleNewMessageNotification = async (
         messageType: messageData.type,
         content: messageData.content,
         timestamp: messageData.timestamp,
-        chatId: isGroupMessage ? undefined : messageData.from,
+        chatId: isPrivateMessage ? undefined : messageData.from,
         groupId: isGroupMessage ? groupId : undefined,
         notificationId: notificationResult.id
       });
@@ -99,7 +118,7 @@ export const handleGroupMessageNotification = async (
   membersProfilesOneSignalIds: string[],
   icon?: string
 ) => {
-  return handleNewMessageNotification(messageData, senderName, true, groupId, groupName, membersProfilesOneSignalIds, icon);
+  return handleNewMessageNotification(messageData, senderName, MessageType.GROUP, groupId, groupName, membersProfilesOneSignalIds, icon);
 };
 
 // Handle notification for private messages
@@ -115,7 +134,7 @@ export const handlePrivateMessageNotification = async (
   senderName: string,
   icon?: string
 ) => {
-  return handleNewMessageNotification(messageData, senderName, false, undefined, undefined, undefined, icon);
+  return handleNewMessageNotification(messageData, senderName, MessageType.PRIVATE, undefined, undefined, undefined, icon);
 };
 
 // Check if user should receive notifications

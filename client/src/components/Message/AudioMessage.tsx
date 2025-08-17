@@ -10,8 +10,9 @@ import MessageSeen from "./MessageSeen";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { changeCurrentPlayingMedia } from "../../redux/slices/currentPlayingMedia";
 import AudioDownloadButton from "./AudioDownloadButton";
+import MessageType from "../../types/MessageType";
 
-export default function AudioMessage({ message, isGroupMessage, replayMessage, recipients }: MessagePropTypes) {
+export default function AudioMessage({ message, type, replayMessage, recipients }: MessagePropTypes) {
 
     const [isStopped, setIsStopped] = useState<boolean>(true);
     const [duration, setDuration] = useState<number>(0);
@@ -111,7 +112,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage, r
 
     return (
         <div className="flex">
-            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} isGroupMessage={isGroupMessage} replayMessage={replayMessage} message={message} />
+            <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} type={type} replayMessage={replayMessage} message={message} />
             <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata}
                 onPlay={() => setIsStopped(false)}
                 onPause={() => setIsStopped(true)}></audio>
@@ -160,7 +161,7 @@ export default function AudioMessage({ message, isGroupMessage, replayMessage, r
                 </div>
                 <div className="mt-1 flex justify-end">
                     <MessageTime message={message} />
-                    {message.from === userEmail && !isGroupMessage && (
+                    {message.from === userEmail && type == MessageType.PRIVATE && (
                         <MessageSeen message={message} />
                     )}
                 </div>

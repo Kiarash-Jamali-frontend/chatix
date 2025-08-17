@@ -15,6 +15,7 @@ import ImageModal from "../components/ImageModal";
 import { isSameDay } from "date-fns";
 import customFormatRelative from "../helpers/customFormatRelative";
 import { AnimatePresence } from "framer-motion";
+import MessageType from "../types/MessageType";
 
 export type MemberProfile = (Profile & {
     id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
@@ -179,7 +180,7 @@ export default function Group() {
                                     }
 
                                     <Message senderProfile={messageSender}
-                                        isGroupMessage={true}
+                                        type={MessageType.GROUP}
                                         nextMessageSender={messages[i + 1]?.from}
                                         message={m}
                                         scrollDown={scrollDownHandler}
@@ -203,7 +204,7 @@ export default function Group() {
                         <ChatInput
                             groupPhotoUrl={groupData.groupPhotoUrl}
                             membersProfiles={membersProfiles}
-                            mode="group"
+                            type={MessageType.GROUP}
                             groupId={groupId}
                             groupMembersRecipients={getGroupMembersRecipients(false)}
                             groupName={groupData.groupName} />

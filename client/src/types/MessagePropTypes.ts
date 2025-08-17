@@ -1,9 +1,10 @@
+import MessageType from "./MessageType";
 import Profile from "./Profile";
 
 type MessagePropTypes = {
     message: any;
     senderProfile?: Profile;
-    isGroupMessage?: boolean;
+    type: MessageType;
     replayMessage: any;
     recipients: string[];
     isFile?: boolean
