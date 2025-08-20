@@ -28,7 +28,6 @@ export default function CreateGroup() {
     const groupProfileInput = useRef<HTMLInputElement>(null);
 
     const successfulCreateGroupCallback = useCallback(() => {
-        toast.success(`${groupName} group created successful!`, toastConf);
         removeGroupProfileHandler();
         setGroupName("");
         setMemberName("");
