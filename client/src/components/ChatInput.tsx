@@ -37,7 +37,16 @@ export type ChatInputPropTypes = {
   groupMembersRecipients?: string[]
 };
 
-const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, type, groupId, membersProfiles, groupName, groupPhotoUrl, groupMembersRecipients }) => {
+const ChatInput: React.FC<ChatInputPropTypes> = ({
+  oppositeProfile,
+  chatId,
+  type,
+  groupId,
+  membersProfiles,
+  groupName,
+  groupPhotoUrl,
+  groupMembersRecipients
+}) => {
   const isPrivateChat = type == MessageType.PRIVATE;
   const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
 
@@ -362,7 +371,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, type
 
   const handleSendVoiceMessage = async (mediaBlobUrl: string) => {
     removeMessageSelectedForRelpy();
-    
+
     if (recordingTimer) {
       clearInterval(recordingTimer);
       setRecordingTimer(null);
@@ -465,7 +474,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, type
   }, [messageText]);
 
   useEffect(() => {
-    
+
     if (voiceMessagePending && mediaBlobUrl) {
       handleSendVoiceMessage(mediaBlobUrl);
       return;
@@ -495,7 +504,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({ oppositeProfile, chatId, type
       <ToastContainer />
       <div className={`relative flex items-stretch max-h-12`}
         onKeyDown={(e) => {
-          if (e.key == "Enter" && !e.shiftKey && showSendButton) {
+          if (e.key == "Enter" && !e.shiftKey && !pending) {
             e.preventDefault();
             sendMessageHandler();
           }

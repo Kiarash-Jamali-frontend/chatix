@@ -15,7 +15,6 @@ import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
 import { useEncryption } from "../../hooks/useEncryption";
 import { getDraft } from "../../redux/slices/drafts";
-import useUserIsOnline from "../../hooks/useUserIsOnline";
 import { AnimatePresence, motion } from "framer-motion";
 
 type PropTypes = {
@@ -34,7 +33,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     const { getChatSecret } = useEncryption();
     const draft = useAppSelector((state: RootState) => getDraft(state, chat.email));
     const { value: draftValue, timestamp } = Object.values(draft || [])[0] || { value: "", timestamp: undefined };
-    const userIsOnline = useUserIsOnline(chat.lastActivity);
+    const order = `-${draftValue ? timestamp : (lastMessage?.timestamp?.seconds || chat.createdAt?.seconds || 0)}`;
 
     useEffect(() => {
         if (userEmail) {
@@ -117,7 +116,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     return (
         <div className={`lg:px-2 lg:mb-1 ${(!chat.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`}
             style={{
-                order: `-${draftValue ? timestamp : (lastMessage?.timestamp?.seconds || chat.createdAt?.seconds || 0)}`
+                order
             }}>
             <Link viewTransition
                 to={`/chat/${chat.email}`}
@@ -132,7 +131,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                             size={ProfileImageSizes.MEDIUM} />
                         <AnimatePresence>
                             {
-                                userIsOnline && chat.showOnlineStatus ? (
+                                chat.isOnline && chat.showOnlineStatus ? (
                                     <motion.div
                                         variants={{
                                             hide: {
@@ -144,7 +143,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                                                 transform: "scale(1)"
                                             }
                                         }} initial="hide" animate="open" exit="hide"
-                                        className={`${chatIsSelected ? "bg-white" : "bg-green-500 shadow shadow-green-500/25"} absolute right-0 bottom-2.5 lg:right-1 lg:bottom-0 size-2.5 rounded-full`}>
+                                        className={`${chatIsSelected ? "bg-white" : "bg-green-500"} absolute right-0 bottom-2.5 lg:right-1 lg:bottom-0 size-2.5 rounded-full`}>
                                     </motion.div>
                                 ) : null
                             }

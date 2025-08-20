@@ -28,6 +28,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
     const [notSeenedMessagesCount, setNotSeenedMessagesCount] = useState<number>(0);
     const draft = useAppSelector((state: RootState) => getDraft(state, group.id));
     const { value: draftValue, timestamp } = Object.values(draft || [])[0] || { value: "", timestamp: undefined };
+    const order = `-${draftValue ? timestamp : (lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0)}`;
 
     useEffect(() => {
         if (userEmail) {
@@ -73,7 +74,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
     return (
         <>
             <div className={`lg:px-2 lg:mb-1 ${(!group.groupName.toLocaleLowerCase().includes(search.toLocaleLowerCase())) ? "hidden" : "block"}`} style={{
-                order: `-${draftValue ? timestamp : (lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0)}`
+                order
             }}>
                 <Link viewTransition
                     to={`/group/${group.id}`}

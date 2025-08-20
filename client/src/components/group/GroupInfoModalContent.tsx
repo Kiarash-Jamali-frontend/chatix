@@ -3,7 +3,6 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import getGroupMembersCount from "../../helpers/group/getGroupMembersCount";
-import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { MemberProfile } from "../../pages/Group";
@@ -53,7 +52,7 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
     const getOnlineMembersCount = useCallback(() => {
         let onlineMembersCount = 0;
         membersProfiles.forEach((p) => {
-            userEmail != p.email && !p.removedFromGroup && userIsOnline(p.lastActivity) && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
+            userEmail != p.email && !p.removedFromGroup && p.isOnline && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
         });
         setOnlineMembersCount(onlineMembersCount);
     }, [membersProfiles])

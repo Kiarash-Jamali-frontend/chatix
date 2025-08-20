@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import button from "../../cva/button";
 import {
   and,
   collection,
@@ -15,13 +14,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import Profile from "../../types/Profile";
 import { Link } from "react-router-dom";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faClose, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import UserLastActivity from "../UserLastActivity";
-import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
 import Modal from "../Modal";
 import UserInfoModalContent from "./UserInfoModalContent";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
+import { AnimatePresence } from "framer-motion";
+import ChatHeaderMenu from "./ChatHeaderMenu";
 
 type PropTypes = {
   profile: Profile & { email: string };
@@ -30,8 +30,10 @@ type PropTypes = {
 const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
   const userData = useSelector((state: RootState) => state.user.data);
   const [chatRoom, setChatRoom] = useState<any>();
-  const changeIsBlockingUser = useChangeIsBlockingUser(chatRoom);
+  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
   const [userInfoModalIsActive, setUserInfoModalIsActive] = useState<boolean>(false);
+
+  const showMenu = chatRoom && (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked);
 
   useEffect(() => {
     const q = query(
@@ -80,7 +82,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
                 <UserLastActivity profile={profile} />
               </div>
             </div>
-            {
+            {/* {
               chatRoom && (
                 (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked) && (
                   <button
@@ -91,6 +93,37 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
                   </button>
                 )
               )
+            } */}
+            {
+              showMenu ? (
+                <div dir="rtl">
+                  <div className="relative">
+                    <button className="size-9 relative text-lg grid place-items-center rounded-full border-2 cursor-pointer"
+                      onFocus={() => setMenuIsOpen(true)}
+                      onBlur={() => setMenuIsOpen(false)}
+                    >
+                      <FontAwesomeIcon icon={faEllipsisV} className={`transition-all absolute ${!menuIsOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"}`} />
+                      <FontAwesomeIcon icon={faClose} className={`transition-all absolute ${menuIsOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"}`} />
+
+                    </button>
+                    {
+                      menuIsOpen ? (
+                        <div className="absolute inset-0 w-full h-full z-30"
+                          onClick={() => setMenuIsOpen(false)}>
+
+                        </div>
+                      ) : null
+                    }
+                  </div>
+                  <AnimatePresence>
+                    {
+                      menuIsOpen && (
+                        <ChatHeaderMenu chatRoom={chatRoom} />
+                      )
+                    }
+                  </AnimatePresence>
+                </div>
+              ) : null
             }
           </div>
         </div>

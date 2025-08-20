@@ -5,7 +5,6 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
-import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
 import Modal from "../Modal";
 import GroupInfoModalContent from "./GroupInfoModalContent";
 import { MemberProfile } from "../../pages/Group";
@@ -28,7 +27,7 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
   const getOnlineMembersCount = useCallback(() => {
     let onlineMembersCount = 0;
     membersProfiles.forEach((p) => {
-      userEmail != p.email && !p.removedFromGroup && userIsOnline(p.lastActivity) && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
+      userEmail != p.email && !p.removedFromGroup && p.isOnline && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
     });
     setOnlineMembersCount(onlineMembersCount);
   }, [membersProfiles])

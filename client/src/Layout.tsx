@@ -6,13 +6,12 @@ import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
 import { auth, db } from "../utils/firebase";
 import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
-import { and, collection, disableNetwork, doc, enableNetwork, getDoc, onSnapshot, or, query, runTransaction, setDoc, Timestamp, where } from "firebase/firestore";
+import { and, collection, disableNetwork, doc, enableNetwork, getDoc, onSnapshot, or, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { changeChatsList, changeChatsStatus, ChatsState } from "./redux/slices/chats";
-import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
+import { getRedirectResult, onAuthStateChanged, User } from "firebase/auth";
 import { changeGroupsList, changeGroupsStatus, SidebarGroupData } from "./redux/slices/groups";
 import useOnlineStatus from "./hooks/useOnlineStatus";
 import ProfileModal from "./components/ProfileModal";
-
 import GroupMember from "./types/GroupMember";
 import useThemeDetector from "./hooks/useThemeDetector";
 import { changeTheme } from "./redux/slices/theme";
@@ -21,7 +20,7 @@ import { Unsubscribe } from "firebase/firestore";
 // import NotificationBanner from "./components/NotificationBanner";
 import { Draft, setDraftsList } from "./redux/slices/drafts";
 import { changeFontSize } from "./redux/slices/fontSize";
-import getDefaultShowOnlineStatus from "./helpers/getDefaultShowOnlineStatus";
+import firestoreDefaultDBAPIUrl from "./constants/firestoreDefaultDBAPIUrl";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -36,17 +35,32 @@ const Layout: React.FC = () => {
   const isOnline = useOnlineStatus();
   const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "loading") || !isOnline);
 
-  const updateLastActivity = async () => {
-    const newDate = Timestamp.now();
-    await runTransaction(db, async (transaction) => {
-      transaction.update(doc(db, "profile", user.data!.email), { lastActivity: newDate });
-    })
-  }
+  const handleSetOnlineStatusAndLastActivity = async (authUser: User, { isOnline, lastActivity }: { isOnline: boolean, lastActivity: string }) => {
+    const searchParams = new URLSearchParams();
+    searchParams.append("updateMask.fieldPaths", "isOnline");
+    searchParams.append("updateMask.fieldPaths", "lastActivity");
+    const firestoreUrl = `${firestoreDefaultDBAPIUrl}/documents/profile/${authUser.email}`;
 
-  const setActivityInterval = () => {
-    return setInterval(() => {
-      updateLastActivity();
-    }, 30000);
+    try {
+      const response = await fetch(`${firestoreUrl}?${searchParams.toString()}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await authUser.getIdToken()}`
+        },
+        body: JSON.stringify({
+          fields: {
+            isOnline: { booleanValue: isOnline },
+            lastActivity: { timestampValue: lastActivity }
+          }
+        }),
+        keepalive: true
+      });
+
+      return response.ok;
+    } catch (error) {
+      console.error('Firebase request failed:', error);
+    }
   }
 
   const getFontSize = () => {
@@ -80,15 +94,6 @@ const Layout: React.FC = () => {
     dispatch(setDraftsList(parsedDrafts));
   }
 
-  useEffect(() => {
-    if (user.status === "authenticated") {
-      updateLastActivity();
-      const interval = setActivityInterval();
-      return () =>
-        clearInterval(interval);
-    }
-  }, [user]);
-
   const getChats = () => {
     let profileUnsubs: Unsubscribe[] = [];
 
@@ -101,11 +106,11 @@ const Layout: React.FC = () => {
     );
 
     const chatUnsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
-      // Clean up previous subscriptions
       profileUnsubs.forEach(unsub => unsub());
       profileUnsubs = [];
 
       if (!querySnapshot.size) {
+        dispatch(changeChatsList([]));
         dispatch(changeChatsStatus("success"));
         return;
       }
@@ -113,7 +118,6 @@ const Layout: React.FC = () => {
       let chatsList: (ChatsState['list']) = [];
       const oppositeUserEmails: string[] = [];
 
-      // Extract opposite user emails from chat rooms
       querySnapshot.forEach((docSnap) => {
         const chatData = docSnap.data();
         const oppositeUserEmail =
@@ -129,10 +133,7 @@ const Layout: React.FC = () => {
         const profileUnsub = onSnapshot(profileDocRef, (profileDoc) => {
           if (profileDoc.exists()) {
             const profile = profileDoc.data();
-            console.log(profile);
 
-
-            // Find the chat data for this user
             const chatDoc = querySnapshot.docs.find(doc => {
               const chatData = doc.data();
               return (user.data?.email === chatData.user_1 && oppositeUserEmail === chatData.user_2) ||
@@ -142,7 +143,6 @@ const Layout: React.FC = () => {
             if (chatDoc) {
               const chatData = chatDoc.data();
 
-              // Update chats list with real-time data
               chatsList = [
                 ...chatsList.filter(chat => chat.email !== oppositeUserEmail),
                 {
@@ -152,7 +152,8 @@ const Layout: React.FC = () => {
                   biography: profile.biography || "",
                   email: oppositeUserEmail,
                   createdAt: chatData.createdAt,
-                  showOnlineStatus: getDefaultShowOnlineStatus(profile.showOnlineStatus)
+                  showOnlineStatus: profile.showOnlineStatus,
+                  isOnline: profile.isOnline
                 }
               ];
 
@@ -224,6 +225,28 @@ const Layout: React.FC = () => {
     };
   };
 
+  const handleSetIsOnline = () => {
+    const profileDoc = doc(db, "profile", user.data!.email);
+    const isOnlineUnsub = onSnapshot(
+      profileDoc,
+      (snapshot) => {
+        const data = snapshot.data();
+
+        if (!data?.isOnline) {
+          const lastActivity = new Date().toISOString();
+          updateDoc(profileDoc, {
+            isOnline: true,
+            lastActivity
+          })
+        }
+      }
+    );
+
+    return () => {
+      isOnlineUnsub();
+    }
+  }
+
   const getTheme = () => {
     const themeInLocalStorage = localStorage.getItem("chatix_theme") as "dark" | "light" | null;
     themeInLocalStorage && dispatch(changeTheme(themeInLocalStorage))
@@ -253,9 +276,11 @@ const Layout: React.FC = () => {
     if (user.data?.email) {
       const cleanupChats = getChats();
       const cleanupGroups = getGroups();
+      const cleanupIsOnline = handleSetIsOnline();
       return () => {
-        cleanupChats && cleanupChats();
-        cleanupGroups && cleanupGroups();
+        cleanupChats();
+        cleanupGroups();
+        cleanupIsOnline();
       };
     }
   }, [user, isOnline]);
@@ -273,6 +298,17 @@ const Layout: React.FC = () => {
     getTheme();
     getFontSize();
     getDrafts();
+
+    window.addEventListener("unload", () => {
+      const authUser = auth.currentUser;
+      if (authUser) {
+        const lastActivity = new Date().toISOString();
+        handleSetOnlineStatusAndLastActivity(authUser, {
+          isOnline: false,
+          lastActivity
+        });
+      }
+    });
   }, []);
 
   useEffect(() => {

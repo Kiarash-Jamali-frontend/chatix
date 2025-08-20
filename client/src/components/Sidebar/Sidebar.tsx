@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { app, auth, db, getNewFirestore } from "../../../utils/firebase";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,7 +32,6 @@ const Sidebar: React.FC = () => {
   const [logoutPending, setLogoutPending] = useState<boolean>(false);
   const [createMenuIsOpen, setCreateMenuIsOpen] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
-  const createMenuButtonRef = useRef<HTMLButtonElement>(null);
   const user: UserState = useAppSelector((state: RootState) => state.user);
   const { list: chats, status: chatsStatus } = useAppSelector((state: RootState) => state.chats);
   const { list: groups, status: groupsStatus } = useAppSelector((state: RootState) => state.groups);
@@ -176,7 +175,6 @@ const Sidebar: React.FC = () => {
             <button className="size-12 z-20 cursor-pointer relative rounded-full text-white flex items-center justify-center bg-primary-500"
               onFocus={() => setCreateMenuIsOpen(true)}
               onBlur={() => setCreateMenuIsOpen(false)}
-              ref={createMenuButtonRef}
             >
               <FontAwesomeIcon icon={faPlus} size="xl" className={`transition-transform ${createMenuIsOpen ? "rotate-45" : "rotate-0"}`} />
             </button>

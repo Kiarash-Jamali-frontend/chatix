@@ -1,13 +1,11 @@
 import Profile from "../types/Profile";
-import useUserIsOnline from "../hooks/useUserIsOnline";
 import { formatRelative, subDays } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
 export default function UserLastActivity({ profile }: { profile: Profile }) {
-    const userIsOnline = useUserIsOnline(profile.lastActivity);
     if (profile.showOnlineStatus != false) {
         return (
-            userIsOnline ? (
+            profile.isOnline ? (
                 <span className="text-primary-500 text-xs font-medium inline-block">
                     Online
                 </span>

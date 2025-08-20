@@ -4,16 +4,13 @@ import Profile from "../../types/Profile";
 import UserLastActivity from "../UserLastActivity";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import button from "../../cva/button";
-import toastConf from "../../../utils/toastConfig";
-import { toast } from "react-toastify";
-import shareData from "../../helpers/shareWebAPI/shareData";
-import canBrowserShareData from "../../helpers/shareWebAPI/canBrowserShareData";
 import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
 import { RootState } from "../../redux/store";
 import { Dispatch, SetStateAction } from "react";
 import { changeOpenedProfile } from "../../redux/slices/openedProfile";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
+import shareProfile from "../../helpers/usersAndProfiles/shareProfile";
 
 type PropTypes = {
     userProfile: Profile & { email: string },
@@ -26,18 +23,6 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
     const dispatch = useAppDispatch();
     const changeIsBlockingUser = useChangeIsBlockingUser(chatRoom);
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
-
-    const shareProfileDataHandler = () => {
-        const sharedData: ShareData = {
-            title: userProfile.name,
-            text: `This is my email, you can create new chat with me in chatix: ${userProfile.email}`
-        }
-        if (canBrowserShareData(sharedData)) {
-            shareData(sharedData);
-        } else {
-            toast.error("Your browser does not support this feature", toastConf);
-        }
-    }
 
     const openProfileHandler = () => {
         if (userProfile.photoUrl) {
@@ -85,7 +70,7 @@ export default function UserInfoModalContent({ userProfile, chatRoom, setIsActiv
                 <p className="text-natural/60">{userProfile.email}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
-                <button className={button({ intent: "primary" })} onClick={shareProfileDataHandler}>
+                <button className={button({ intent: "primary" })} onClick={() => shareProfile({ name: userProfile.name, email: userProfile.email })}>
                     <FontAwesomeIcon icon={faShareNodes} className="me-1.5" />
                     Share
                 </button>
