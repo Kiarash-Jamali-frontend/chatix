@@ -1,6 +1,6 @@
 import { faArrowLeft, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import input from "../cva/input";
 import { FormEvent, useCallback, useRef, useState } from "react";
 import button from "../cva/button";
@@ -24,6 +24,7 @@ export default function CreateGroup() {
     const [pending, setPending] = useState<boolean>(false);
     const [groupName, setGroupName] = useState<string>("");
     const [groupProfile, setGroupProfile] = useState<File | null>(null);
+    const navigate = useNavigate();
 
     const groupProfileInput = useRef<HTMLInputElement>(null);
 
@@ -32,6 +33,7 @@ export default function CreateGroup() {
         setGroupName("");
         setMemberName("");
         setSelctedMembersEmails([]);
+        navigate("/");
     }, [groupName, userEmail])
 
     const createGroupHandler = async (e: FormEvent<HTMLFormElement>) => {
