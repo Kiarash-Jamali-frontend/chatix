@@ -37,7 +37,7 @@ export default function ChatHeaderMenu({ chatRoom }: { chatRoom: any }) {
                     opacity: 0,
                     transform: "translate(1rem, -1rem) scale(0.9)"
                 }
-            }} initial="hide" animate="open" exit="hide"
+            }} transition={{ duration: 0.2 }} initial="hide" animate="open" exit="hide"
             className="bg-secondary border p-1.5 absolute min-w-52 rounded-2xl mt-2 shadow-lg space-y-1.5">
             <button
                 onClick={() => shareProfile({ name: userProfile!.name, email: userProfile!.id })}
