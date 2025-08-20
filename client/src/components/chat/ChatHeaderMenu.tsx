@@ -3,13 +3,11 @@ import shareProfile from "../../helpers/usersAndProfiles/shareProfile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBan, faShare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import useChangeIsBlockingUser from "../../hooks/useChangeIsBlockingUser";
-import { useAppSelector } from "../../redux/hooks";
-import { RootState } from "../../redux/store";
 import deleteChat from "../../helpers/chat/deleteChat";
 import { useNavigate } from "react-router-dom";
+import Profile from "../../types/Profile";
 
-export default function ChatHeaderMenu({ chatRoom }: { chatRoom: any }) {
-    const userProfile = useAppSelector((state: RootState) => state.user.profile);
+export default function ChatHeaderMenu({ chatRoom, profile }: { chatRoom: any, profile: Profile & { email: string }; }) {
     const changeIsBlockingUser = useChangeIsBlockingUser(chatRoom);
     const navigate = useNavigate();
 
@@ -40,7 +38,7 @@ export default function ChatHeaderMenu({ chatRoom }: { chatRoom: any }) {
             }} transition={{ duration: 0.2 }} initial="hide" animate="open" exit="hide"
             className="bg-secondary border p-1.5 absolute min-w-52 rounded-2xl mt-2 shadow-lg space-y-1.5">
             <button
-                onClick={() => shareProfile({ name: userProfile!.name, email: userProfile!.id })}
+                onClick={() => shareProfile({ name: profile.name, email: profile.email })}
                 className={`bg-base border cursor-pointer p-2 rounded-xl w-full text-start text-sm font-medium flex items-center`}>
                 <FontAwesomeIcon icon={faShare} className="me-2" />
                 Share

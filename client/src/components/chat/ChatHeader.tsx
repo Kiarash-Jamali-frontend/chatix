@@ -118,7 +118,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
                   <AnimatePresence>
                     {
                       menuIsOpen && (
-                        <ChatHeaderMenu chatRoom={chatRoom} />
+                        <ChatHeaderMenu profile={profile} chatRoom={chatRoom} />
                       )
                     }
                   </AnimatePresence>
