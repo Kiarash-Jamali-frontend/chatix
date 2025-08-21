@@ -33,7 +33,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
   const [userInfoModalIsActive, setUserInfoModalIsActive] = useState<boolean>(false);
 
-  const showMenu = chatRoom && (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked);
+  const renderMenu = chatRoom && (chatRoom.blockedFrom === userData?.email || !chatRoom.isBlocked);
 
   useEffect(() => {
     const q = query(
@@ -95,7 +95,7 @@ const ChatHeader: React.FC<PropTypes> = ({ profile }) => {
               )
             } */}
             {
-              showMenu ? (
+              renderMenu ? (
                 <div dir="rtl">
                   <div className="relative">
                     <button className="size-9 relative text-lg grid place-items-center rounded-full border-2 cursor-pointer"

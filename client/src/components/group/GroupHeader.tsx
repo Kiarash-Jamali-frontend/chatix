@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useEffect, useState } from "react";
+import { faArrowLeft, faClose, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import Modal from "../Modal";
@@ -11,18 +11,31 @@ import { MemberProfile } from "../../pages/Group";
 import getGroupMembersCount from "../../helpers/group/getGroupMembersCount";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
+import { AnimatePresence } from "framer-motion";
+import GroupHeaderMenu from "./GroupHeaderMenu";
 
-type PropTypes = {
+export type GroupHeaderPropTypes = {
   groupData: SidebarGroupData;
   membersProfiles: MemberProfile[];
+  setIsActive: Dispatch<SetStateAction<boolean>>;
+  setModalContentType: Dispatch<SetStateAction<ModalContentType>>;
 }
 
-export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
+export enum ModalContentType {
+  ADD_MEMBER_FORM,
+  // DELETE_GROUP_QUESTION,
+  DEFAULT,
+  EDIT_GROUP
+}
+
+export default function GroupHeader({ groupData, membersProfiles }: GroupHeaderPropTypes) {
 
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const [membersCount, setMembersCount] = useState<number>(0);
   const [onlineMembersCount, setOnlineMembersCount] = useState<number>(0);
   const [groupInfoModalIsActive, setGroupInfoModalIsActive] = useState<boolean>(false);
+  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
+  const [modalContentType, setModalContentType] = useState<ModalContentType>(ModalContentType.DEFAULT);
 
   const getOnlineMembersCount = useCallback(() => {
     let onlineMembersCount = 0;
@@ -48,6 +61,8 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
     <>
       <Modal isActive={groupInfoModalIsActive} setIsActive={setGroupInfoModalIsActive}>
         <GroupInfoModalContent
+          modalContentType={modalContentType}
+          setModalContentType={setModalContentType}
           groupData={groupData}
           membersProfiles={membersProfiles}
           setIsActive={setGroupInfoModalIsActive} />
@@ -87,6 +102,40 @@ export default function GroupHeader({ groupData, membersProfiles }: PropTypes) {
                 </div>
               </div>
             </div>
+          </div>
+          <div>
+            {
+              <div dir="rtl">
+                <div className="relative">
+                  <button className="size-9 relative text-lg grid place-items-center rounded-full border-2 cursor-pointer"
+                    onFocus={() => setMenuIsOpen(true)}
+                    onBlur={() => setMenuIsOpen(false)}
+                  >
+                    <FontAwesomeIcon icon={faEllipsisV} className={`transition-all absolute ${!menuIsOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"}`} />
+                    <FontAwesomeIcon icon={faClose} className={`transition-all absolute ${menuIsOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"}`} />
+
+                  </button>
+                  {
+                    menuIsOpen ? (
+                      <div className="absolute inset-0 w-full h-full z-30"
+                        onClick={() => setMenuIsOpen(false)}>
+
+                      </div>
+                    ) : null
+                  }
+                </div>
+                <AnimatePresence>
+                  {
+                    menuIsOpen && (
+                      <GroupHeaderMenu
+                        setIsActive={setGroupInfoModalIsActive}
+                        setModalContentType={setModalContentType}
+                        groupData={groupData} membersProfiles={membersProfiles} />
+                    )
+                  }
+                </AnimatePresence>
+              </div>
+            }
           </div>
         </div>
       </div>

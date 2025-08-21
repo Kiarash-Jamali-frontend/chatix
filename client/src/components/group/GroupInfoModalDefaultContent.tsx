@@ -7,10 +7,10 @@ import { RootState } from "../../redux/store";
 import MemberListItem from "./MemberListItem"
 import { faArrowLeft, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ModalContentType } from "./GroupInfoModalContent";
 import { useNavigate } from "react-router-dom";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
 import { faEdit } from "@fortawesome/free-regular-svg-icons";
+import { ModalContentType } from "./GroupHeader";
 
 type PropTypes = {
     groupData: SidebarGroupData;

@@ -3,7 +3,6 @@ import { useAppSelector } from "../../redux/hooks";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import { RootState } from "../../redux/store";
 import MemberListItem from "../MemberListItem";
-import { ModalContentType } from "./GroupInfoModalContent";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -11,6 +10,7 @@ import { addDoc, and, collection, getDocs, query, where } from "firebase/firesto
 import { db } from "../../../utils/firebase";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
 import { MemberProfile } from "../../pages/Group";
+import { ModalContentType } from "./GroupHeader";
 
 type PropTypes = {
     groupData: SidebarGroupData;

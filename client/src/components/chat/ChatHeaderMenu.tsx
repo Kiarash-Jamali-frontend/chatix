@@ -19,7 +19,7 @@ export default function ChatHeaderMenu({ chatRoom, profile }: { chatRoom: any, p
             navigate("/", {
                 replace: true,
                 viewTransition: true
-            })
+            });
         }
     }
 

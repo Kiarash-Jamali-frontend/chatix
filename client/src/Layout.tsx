@@ -106,14 +106,14 @@ const Layout: React.FC = () => {
     );
 
     const chatUnsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
-      profileUnsubs.forEach(unsub => unsub());
-      profileUnsubs = [];
-
       if (!querySnapshot.size) {
         dispatch(changeChatsList([]));
         dispatch(changeChatsStatus("success"));
         return;
       }
+
+      profileUnsubs.forEach(unsub => unsub());
+      profileUnsubs = [];
 
       let chatsList: (ChatsState['list']) = [];
       const oppositeUserEmails: string[] = [];
@@ -158,11 +158,11 @@ const Layout: React.FC = () => {
               ];
 
               dispatch(changeChatsList([...chatsList]));
-              dispatch(changeChatsStatus("success"));
-              localStorage.setItem("chatix_has_cache_data", "true");
             }
-
           }
+
+          dispatch(changeChatsStatus("success"));
+          localStorage.setItem("chatix_has_cache_data", "true");
         });
         profileUnsubs.push(profileUnsub);
       });
@@ -186,6 +186,12 @@ const Layout: React.FC = () => {
     );
 
     const groupMemberUnsub = onSnapshot(q, { includeMetadataChanges: true }, (querySnapshot) => {
+      if (!querySnapshot.size) {
+        dispatch(changeGroupsStatus("success"));
+        dispatch(changeGroupsList([]));
+        return;
+      }
+
       let groupsList: SidebarGroupData[] = [];
       let groupIds: string[] = [];
 
@@ -197,23 +203,20 @@ const Layout: React.FC = () => {
         groupIds.push(groupMemberData.groupId);
       });
 
-      if (!querySnapshot.size) {
-        dispatch(changeGroupsStatus("success"));
-      }
-
       groupIds.forEach((groupId) => {
         const groupDocRef = doc(db, "group", groupId);
-        const unsub = onSnapshot(groupDocRef, (groupDoc) => {
-          if (groupDoc.exists()) {
+        const unsub = onSnapshot(groupDocRef, { includeMetadataChanges: true }, (groupDoc) => {
+          const exists = groupDoc.exists();
+          if (exists) {
             const groupData = groupDoc.data() as SidebarGroupData;
             groupsList = [
               ...groupsList.filter(g => g.id !== groupId),
               { ...groupData, id: groupId }
             ];
             dispatch(changeGroupsList([...groupsList]));
-            dispatch(changeGroupsStatus("success"));
-            localStorage.setItem("chatix_has_cache_data", "true");
           }
+          dispatch(changeGroupsStatus("success"));
+          localStorage.setItem("chatix_has_cache_data", "true");
         });
         groupUnsubs.push(unsub);
       });

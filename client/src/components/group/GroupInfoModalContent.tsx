@@ -12,27 +12,22 @@ import { changeOpenedProfile } from "../../redux/slices/openedProfile";
 import GroupInfoModalEditContent from "./GroupInfoModalEditContent";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
+import { ModalContentType } from "./GroupHeader";
 
 type PropTypes = {
     groupData: SidebarGroupData;
     membersProfiles: MemberProfile[];
     setIsActive: Dispatch<SetStateAction<boolean>>;
+    modalContentType: ModalContentType;
+    setModalContentType: Dispatch<SetStateAction<ModalContentType>>;
 }
 
-export enum ModalContentType {
-    ADD_MEMBER_FORM,
-    // DELETE_GROUP_QUESTION,
-    DEFAULT,
-    EDIT_GROUP
-}
-
-export default function GroupInfoModalContent({ groupData, membersProfiles, setIsActive }: PropTypes) {
+export default function GroupInfoModalContent({ groupData, membersProfiles, setIsActive, modalContentType, setModalContentType }: PropTypes) {
 
     const dispatch = useAppDispatch();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const [onlineMembersCount, setOnlineMembersCount] = useState<number>(0);
     const [membersCount, setMembersCount] = useState<number>(0);
-    const [modalContentType, setModalContentType] = useState<ModalContentType>(ModalContentType.DEFAULT);
 
     const openProfileHandler = () => {
         if (groupData.groupPhotoUrl) {

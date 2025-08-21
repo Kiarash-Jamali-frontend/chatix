@@ -5,11 +5,11 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import button from "../../cva/button";
 import { faArrowLeft, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { ModalContentType } from "./GroupInfoModalContent";
 import { doc, runTransaction } from "firebase/firestore";
 import { db, storage } from "../../../utils/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../../helpers/files/getFileExt";
+import { ModalContentType } from "./GroupHeader";
 
 export default function GroupInfoModalEditContent({ groupData, setModalContentType }:
     { groupData: Group, setModalContentType: Dispatch<SetStateAction<ModalContentType>> }) {
