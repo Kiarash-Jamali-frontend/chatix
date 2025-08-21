@@ -2,14 +2,14 @@ import { collection, deleteDoc, doc, getDocs, query, where } from "firebase/fire
 import { MemberProfile } from "../../pages/Group";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import { db, storage } from "../../../utils/firebase";
-import { deleteObject, ref } from "firebase/storage";
+import { deleteObject, ref, listAll } from "firebase/storage";
 
 export default async function deleteGroup({ groupData, membersProfiles }: {
     groupData: SidebarGroupData;
     membersProfiles: MemberProfile[];
 }):
     Promise<{ successful: boolean, error: string | null }> {
-        try {
+    try {
         const q = query(collection(db, "group_message"), where("to", "==", groupData.id));
 
         const snapshot = await getDocs(q);
@@ -17,17 +17,22 @@ export default async function deleteGroup({ groupData, membersProfiles }: {
             deleteDoc(doc(db, "group_message", msgSnapshot.id));
         });
 
+        const groupFilesRef = ref(storage, `groups/${groupData.id}`);
+        const list = await listAll(groupFilesRef);
+
+        if (list.items.length) {
+            await deleteObject(groupFilesRef);
+        }
+
+        if (groupData.groupPhotoUrl) {
+            await deleteObject(ref(storage, groupData.groupPhotoUrl));
+        }
+
         membersProfiles.forEach((mp) => {
             deleteDoc(doc(db, "group_member", mp.groupMemberDocId));
         })
 
         await deleteDoc(doc(db, "group", groupData.id));
-
-        await deleteObject(ref(storage, `groups/${groupData.id}`));
-
-        if (groupData.groupPhotoUrl) {
-            await deleteObject(ref(storage, groupData.groupPhotoUrl));
-        }
 
         return {
             error: null,
