@@ -34,8 +34,10 @@ export default function GroupInfoModalEditContent({ groupData, setModalContentTy
         let newGroupPhotoUrl: string;
 
         if (groupProfile) {
-            await deleteObject(ref(storage, groupData.groupPhotoUrl));
-            
+            if (groupData.groupPhotoUrl) {
+                await deleteObject(ref(storage, groupData.groupPhotoUrl));
+            }
+
             const profileRef = ref(storage, `groups_profiles/${groupData.id}.${getFileExt(groupProfile.name)}`);
             await uploadBytes(profileRef, groupProfile);
             newGroupPhotoUrl = await getDownloadURL(profileRef);
@@ -49,6 +51,18 @@ export default function GroupInfoModalEditContent({ groupData, setModalContentTy
         });
 
         removeGroupProfileHandler();
+        setPending(false);
+    }
+
+    const handleDeleteGroupProfile = async () => {
+        setPending(true);
+        const docRef = doc(db, "group", groupData.id);
+        await runTransaction(db, async (transaction) => {
+            transaction.update(docRef, {
+                groupPhotoUrl: ""
+            });
+        });
+        await deleteObject(ref(storage, groupData.groupPhotoUrl));
         setPending(false);
     }
 
@@ -70,9 +84,21 @@ export default function GroupInfoModalEditContent({ groupData, setModalContentTy
                     ref={groupProfileInput} />
                 {
                     !groupProfile ? (
-                        <label htmlFor="groupProfile" className={button({ className: "mt-0.5" })}>
-                            <FontAwesomeIcon icon={faUpload} className="me-2" />
-                            Choose file</label>
+                        <div className="flex mt-0.5">
+                            <label htmlFor="groupProfile" className={button({ className: "grow" })}>
+                                <FontAwesomeIcon icon={faUpload} className="me-2" />
+                                Choose file</label>
+                            {
+                                groupData.groupPhotoUrl ? (
+                                    <button className={button({ intent: "danger", className: "ms-2" })}
+                                        disabled={pending}
+                                        onClick={handleDeleteGroupProfile}>
+                                        <FontAwesomeIcon icon={faTrashCan} className="me-2" />
+                                        Delete profile
+                                    </button>
+                                ) : null
+                            }
+                        </div>
                     ) : (
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
@@ -93,7 +119,7 @@ export default function GroupInfoModalEditContent({ groupData, setModalContentTy
                     )
                 }
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-3 gap-y-2 mt-4">
+            <div className="grid grid-cols-2 gap-x-3 mt-4">
                 <button className={button({ intent: "default" })}
                     onClick={() => setModalContentType(ModalContentType.DEFAULT)}>
                     <FontAwesomeIcon icon={faArrowLeft} className="me-2" />

@@ -48,7 +48,7 @@ export default function GroupInfoModalDefaultContent({ membersProfiles, groupDat
             <div className={`mt-4`}>
                 {
                     groupData.creator == userEmail ? (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-3 gap-y-2">
+                        <div className="grid grid-cols-2 gap-x-3">
                             <button className={button({ intent: "primary" })}
                                 onClick={() => setModalContentType(ModalContentType.ADD_MEMBER_FORM)}>
                                 <FontAwesomeIcon icon={faUserPlus} className="me-2" />
