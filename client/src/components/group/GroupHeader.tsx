@@ -71,7 +71,10 @@ export default function GroupHeader({ groupData, membersProfiles }: GroupHeaderP
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </Link>
           <div className="flex items-center justify-between grow">
-            <div className="flex items-center cursor-pointer grow" onClick={() => setGroupInfoModalIsActive(true)}>
+            <div className="flex items-center cursor-pointer grow" onClick={() => {
+              setModalContentType(ModalContentType.DEFAULT);
+              setGroupInfoModalIsActive(true);
+            }}>
               <ProfileImage name={groupData.groupName}
                 photoUrl={groupData.groupPhotoUrl}
                 size={ProfileImageSizes.MEDIUM} />
