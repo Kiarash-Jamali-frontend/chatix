@@ -17,7 +17,7 @@ export default async function deleteGroup({ groupData, membersProfiles }: {
         });
 
         membersProfiles.forEach((mp) => {
-            deleteDoc(doc(db, "group_member", mp.id));
+            deleteDoc(doc(db, "group_member", mp.groupMemberDocId));
         })
 
         await deleteDoc(doc(db, "group", groupData.id));

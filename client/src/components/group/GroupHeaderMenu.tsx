@@ -7,8 +7,12 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
+import { Dispatch, SetStateAction } from "react";
 
-export default function GroupHeaderMenu({ groupData, membersProfiles, setIsActive, setModalContentType }: GroupHeaderPropTypes) {
+export default function GroupHeaderMenu({ groupData, membersProfiles, setIsActive, setModalContentType }: GroupHeaderPropTypes & {
+    setIsActive: Dispatch<SetStateAction<boolean>>;
+    setModalContentType: Dispatch<SetStateAction<ModalContentType>>;
+}) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const navigate = useNavigate();

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faClose, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import Modal from "../Modal";
@@ -17,8 +17,6 @@ import GroupHeaderMenu from "./GroupHeaderMenu";
 export type GroupHeaderPropTypes = {
   groupData: SidebarGroupData;
   membersProfiles: MemberProfile[];
-  setIsActive: Dispatch<SetStateAction<boolean>>;
-  setModalContentType: Dispatch<SetStateAction<ModalContentType>>;
 }
 
 export enum ModalContentType {
