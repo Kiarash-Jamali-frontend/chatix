@@ -1,5 +1,6 @@
 import { and, collection, deleteDoc, doc, getDocs, or, query, where } from "firebase/firestore";
-import { db } from "../../../utils/firebase";
+import { db, storage } from "../../../utils/firebase";
+import { deleteObject, ref } from "firebase/storage";
 
 export default async function deleteChat({ user1, user2, chatRoomId }: { user1: string, user2: string, chatRoomId: string }):
     Promise<{ successful: boolean, error: string | null }> {
@@ -22,6 +23,8 @@ export default async function deleteChat({ user1, user2, chatRoomId }: { user1: 
         });
 
         await deleteDoc(doc(db, "chat_room", chatRoomId));
+
+        await deleteObject(ref(storage, `chats/${chatRoomId}`));
 
         return {
             successful: true,

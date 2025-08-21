@@ -113,9 +113,13 @@ export default function Group() {
                     where("memberEmail", "==", userEmail)
                 ))
                 const unsub = onSnapshot(q, { includeMetadataChanges: true }, (snap) => {
-                    const data = snap.docs[0].data() as GroupMember;
-                    if (!snap.empty && !data.removedFromGroup) {
-                        setGroupData({ ...snapshot.data(), id: snapshot.id } as SidebarGroupData);
+                    if (snap.size) {
+                        const data = snap.docs[0].data() as GroupMember;
+                        if (!snap.empty && !data.removedFromGroup) {
+                            setGroupData({ ...snapshot.data(), id: snapshot.id } as SidebarGroupData);
+                        }
+                    } else {
+                        setGroupData(null);
                     }
                 });
 

@@ -7,7 +7,7 @@ import { faArrowLeft, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { doc, runTransaction } from "firebase/firestore";
 import { db, storage } from "../../../utils/firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../../helpers/files/getFileExt";
 import { ModalContentType } from "./GroupHeader";
 
@@ -34,7 +34,9 @@ export default function GroupInfoModalEditContent({ groupData, setModalContentTy
         let newGroupPhotoUrl: string;
 
         if (groupProfile) {
-            const profileRef = ref(storage, `group_profiles/${groupData.id}.${getFileExt(groupProfile.name)}`);
+            await deleteObject(ref(storage, groupData.groupPhotoUrl));
+            
+            const profileRef = ref(storage, `groups_profiles/${groupData.id}.${getFileExt(groupProfile.name)}`);
             await uploadBytes(profileRef, groupProfile);
             newGroupPhotoUrl = await getDownloadURL(profileRef);
         }
