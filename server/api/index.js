@@ -164,7 +164,7 @@ app.post('/api/notifications/message', async (req, res) => {
       messageId
     } = req.body;
 
-    if (!recipientIds || !Array.isArray(recipientIds) || !senderName || !type) {
+    if (!recipientIds || !Array.isArray(recipientIds) || !senderName || typeof type != 'number') {
       return res.status(400).json({
         success: false,
         error: 'Missing required fields: recipientIds, senderName, type'
