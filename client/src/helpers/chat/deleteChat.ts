@@ -27,7 +27,7 @@ export default async function deleteChat({ user1, user2, chatRoomId, oppositeUse
         querySnap.forEach(async (snapshot) => {
             const msgData = snapshot.data();
             const recipientIds = await getOneSignalUserIdsFromFirebase(oppositeUserEmail);
-            await deleteNotification(msgData.notificationId, msgData.id, recipientIds);
+            await deleteNotification(msgData.notificationId, snapshot.id, recipientIds);
             await deleteDoc(doc(db, "chat_message", snapshot.id));
         });
 

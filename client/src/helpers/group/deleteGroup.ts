@@ -17,7 +17,7 @@ export default async function deleteGroup({ groupData, membersProfiles, groupMem
         const snapshot = await getDocs(q);
         snapshot.forEach((msgSnapshot) => {
             const msgData = msgSnapshot.data();
-            deleteNotification(msgData.notificationId, msgData.id, groupMembersRecipients);
+            deleteNotification(msgData.notificationId, msgSnapshot.id, groupMembersRecipients);
             deleteDoc(doc(db, "group_message", msgSnapshot.id));
         });
 
