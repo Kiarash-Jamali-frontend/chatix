@@ -3,10 +3,12 @@ import { MemberProfile } from "../../pages/Group";
 import { SidebarGroupData } from "../../redux/slices/groups";
 import { db, storage } from "../../../utils/firebase";
 import { deleteObject, ref, listAll } from "firebase/storage";
+import { deleteNotification } from "../../services/notificationService";
 
-export default async function deleteGroup({ groupData, membersProfiles }: {
+export default async function deleteGroup({ groupData, membersProfiles, groupMembersRecipients }: {
     groupData: SidebarGroupData;
     membersProfiles: MemberProfile[];
+    groupMembersRecipients: string[];
 }):
     Promise<{ successful: boolean, error: string | null }> {
     try {
@@ -14,6 +16,8 @@ export default async function deleteGroup({ groupData, membersProfiles }: {
 
         const snapshot = await getDocs(q);
         snapshot.forEach((msgSnapshot) => {
+            const msgData = msgSnapshot.data();
+            deleteNotification(msgData.notificationId, msgData.id, groupMembersRecipients);
             deleteDoc(doc(db, "group_message", msgSnapshot.id));
         });
 

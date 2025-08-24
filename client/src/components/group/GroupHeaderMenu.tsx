@@ -9,16 +9,21 @@ import { RootState } from "../../redux/store";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
 import { Dispatch, SetStateAction } from "react";
 
-export default function GroupHeaderMenu({ groupData, membersProfiles, setIsActive, setModalContentType }: GroupHeaderPropTypes & {
-    setIsActive: Dispatch<SetStateAction<boolean>>;
-    setModalContentType: Dispatch<SetStateAction<ModalContentType>>;
-}) {
+export default function GroupHeaderMenu({
+    groupData,
+    membersProfiles,
+    groupMembersRecipients,
+    setIsActive,
+    setModalContentType }: GroupHeaderPropTypes & {
+        setIsActive: Dispatch<SetStateAction<boolean>>;
+        setModalContentType: Dispatch<SetStateAction<ModalContentType>>;
+    }) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const navigate = useNavigate();
 
     const handleDeleteGroup = async () => {
-        const { successful } = await deleteGroup({ groupData, membersProfiles });
+        const { successful } = await deleteGroup({ groupData, membersProfiles, groupMembersRecipients });
 
         if (successful) {
             navigate("/", {

@@ -17,6 +17,7 @@ import GroupHeaderMenu from "./GroupHeaderMenu";
 export type GroupHeaderPropTypes = {
   groupData: SidebarGroupData;
   membersProfiles: MemberProfile[];
+  groupMembersRecipients: string[];
 }
 
 export enum ModalContentType {
@@ -26,7 +27,7 @@ export enum ModalContentType {
   EDIT_GROUP
 }
 
-export default function GroupHeader({ groupData, membersProfiles }: GroupHeaderPropTypes) {
+export default function GroupHeader({ groupData, membersProfiles, groupMembersRecipients }: GroupHeaderPropTypes) {
 
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const [membersCount, setMembersCount] = useState<number>(0);
@@ -129,6 +130,7 @@ export default function GroupHeader({ groupData, membersProfiles }: GroupHeaderP
                   {
                     menuIsOpen && (
                       <GroupHeaderMenu
+                        groupMembersRecipients={groupMembersRecipients}
                         setIsActive={setGroupInfoModalIsActive}
                         setModalContentType={setModalContentType}
                         groupData={groupData} membersProfiles={membersProfiles} />

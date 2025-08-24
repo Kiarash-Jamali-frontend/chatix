@@ -13,7 +13,12 @@ export default function ChatHeaderMenu({ chatRoom, profile }: { chatRoom: any, p
 
     const handleDeleteChat = async () => {
         const { successful } =
-            await deleteChat({ user1: chatRoom.user_1, user2: chatRoom.user_2, chatRoomId: chatRoom.id });
+            await deleteChat({
+                user1: chatRoom.user_1,
+                user2: chatRoom.user_2,
+                chatRoomId: chatRoom.id,
+                oppositeUserEmail: profile.email
+            });
 
         if (successful) {
             navigate("/", {

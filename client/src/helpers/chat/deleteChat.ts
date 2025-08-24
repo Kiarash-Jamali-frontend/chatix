@@ -1,8 +1,14 @@
 import { and, collection, deleteDoc, doc, getDocs, or, query, where } from "firebase/firestore";
 import { db, storage } from "../../../utils/firebase";
-import { deleteObject, ref } from "firebase/storage";
+import { deleteObject, listAll, ref } from "firebase/storage";
+import { deleteNotification, getOneSignalUserIdsFromFirebase } from "../../services/notificationService";
 
-export default async function deleteChat({ user1, user2, chatRoomId }: { user1: string, user2: string, chatRoomId: string }):
+export default async function deleteChat({ user1, user2, chatRoomId, oppositeUserEmail }: {
+    user1: string,
+    user2: string,
+    chatRoomId: string,
+    oppositeUserEmail: string
+}):
     Promise<{ successful: boolean, error: string | null }> {
     try {
         const q = query(collection(db, "chat_message"), or(
@@ -19,12 +25,21 @@ export default async function deleteChat({ user1, user2, chatRoomId }: { user1: 
         const querySnap = await getDocs(q);
 
         querySnap.forEach(async (snapshot) => {
+            const msgData = snapshot.data();
+            const recipientIds = await getOneSignalUserIdsFromFirebase(oppositeUserEmail);
+            await deleteNotification(msgData.notificationId, msgData.id, recipientIds);
             await deleteDoc(doc(db, "chat_message", snapshot.id));
         });
 
         await deleteDoc(doc(db, "chat_room", chatRoomId));
 
-        await deleteObject(ref(storage, `chats/${chatRoomId}`));
+
+        const chatFilesRef = ref(storage, `chats/${chatRoomId}`);
+        const list = await listAll(chatFilesRef);
+
+        if (list.items.length) {
+            await deleteObject(chatFilesRef);
+        }
 
         return {
             successful: true,
