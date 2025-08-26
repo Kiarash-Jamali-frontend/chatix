@@ -9,7 +9,7 @@ import { useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import MemberListItem from "../components/MemberListItem";
 import { toast, ToastContainer } from "react-toastify";
-import { addDoc, collection, runTransaction, Timestamp } from "firebase/firestore";
+import { addDoc, collection, doc, runTransaction, setDoc, Timestamp } from "firebase/firestore";
 import { db, storage } from "../../utils/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
@@ -53,7 +53,7 @@ export default function CreateGroup() {
                 });
                 let members: string[] = [...selectedMembersEmails, userEmail];
                 members.forEach((e) => {
-                    addDoc(collection(db, "group_member", getGroupMemberId({ email: e, groupId: docRef.id })), {
+                    setDoc(doc(db, "group_member", getGroupMemberId({ email: e, groupId: docRef.id })), {
                         groupId: docRef.id,
                         memberEmail: e,
                         notSeenedMessagesCount: 0,

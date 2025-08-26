@@ -6,7 +6,7 @@ import MemberListItem from "../MemberListItem";
 import button from "../../cva/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { addDoc, and, collection, getDocs, query, where } from "firebase/firestore";
+import { and, collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { db } from "../../../utils/firebase";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
 import { MemberProfile } from "../../pages/Group";
@@ -50,7 +50,7 @@ export default function AddMemberForm({ groupData, setModalContentType, membersE
                     removeAndAddUserGroup(memberProfileDocId, "add");
                 }
             } else {
-                await addDoc(collection(db, "group_member", getGroupMemberId({ groupId: groupData.id, email: e })), {
+                await setDoc(doc(db, "group_member", getGroupMemberId({ groupId: groupData.id, email: e })), {
                     groupId: groupData.id,
                     memberEmail: e,
                     notSeenedMessagesCount: 0,
