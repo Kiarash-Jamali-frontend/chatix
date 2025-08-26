@@ -11,6 +11,7 @@ import { db } from "../../../utils/firebase";
 import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
 import { MemberProfile } from "../../pages/Group";
 import { ModalContentType } from "./GroupHeader";
+import getGroupMemberId from "../../helpers/group/getGroupMemberId";
 
 type PropTypes = {
     groupData: SidebarGroupData;
@@ -49,7 +50,7 @@ export default function AddMemberForm({ groupData, setModalContentType, membersE
                     removeAndAddUserGroup(memberProfileDocId, "add");
                 }
             } else {
-                await addDoc(collection(db, "group_member"), {
+                await addDoc(collection(db, "group_member", getGroupMemberId({ groupId: groupData.id, email: e })), {
                     groupId: groupData.id,
                     memberEmail: e,
                     notSeenedMessagesCount: 0,

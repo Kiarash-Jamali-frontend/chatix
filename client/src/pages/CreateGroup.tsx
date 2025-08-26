@@ -14,6 +14,7 @@ import { db, storage } from "../../utils/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
 import toastConf from "../../utils/toastConfig";
+import getGroupMemberId from "../helpers/group/getGroupMemberId";
 
 export default function CreateGroup() {
 
@@ -52,7 +53,7 @@ export default function CreateGroup() {
                 });
                 let members: string[] = [...selectedMembersEmails, userEmail];
                 members.forEach((e) => {
-                    addDoc(collection(db, "group_member"), {
+                    addDoc(collection(db, "group_member", getGroupMemberId({ email: e, groupId: docRef.id })), {
                         groupId: docRef.id,
                         memberEmail: e,
                         notSeenedMessagesCount: 0,
