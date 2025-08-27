@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
 import { auth, db } from "../utils/firebase";
 import { changeUserData, changeUserStatus, getUserProfile } from "./redux/slices/user";
-import { and, collection, disableNetwork, doc, enableNetwork, getDoc, onSnapshot, or, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
+import { and, collection, disableNetwork, doc, enableNetwork, getDoc, onSnapshot, or, query, runTransaction, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { changeChatsList, changeChatsStatus, ChatsState } from "./redux/slices/chats";
 import { getRedirectResult, onAuthStateChanged, User } from "firebase/auth";
 import { changeGroupsList, changeGroupsStatus, SidebarGroupData } from "./redux/slices/groups";
@@ -35,10 +35,22 @@ const Layout: React.FC = () => {
   const isOnline = useOnlineStatus();
   const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "loading") || !isOnline);
 
-  const handleSetOnlineStatusAndLastActivity = async (authUser: User, { isOnline, lastActivity }: { isOnline: boolean, lastActivity: string }) => {
+  const updateLastActivity = async () => {
+    const newDate = Timestamp.now();
+    await runTransaction(db, async (transaction) => {
+      transaction.update(doc(db, "profile", user.data!.email), { lastActivity: newDate });
+    })
+  }
+
+  const setActivityInterval = () => {
+    return setInterval(() => {
+      updateLastActivity();
+    }, 60000);
+  }
+
+  const handleSetOnlineStatus = async (authUser: User, { isOnline }: { isOnline: boolean }) => {
     const searchParams = new URLSearchParams();
     searchParams.append("updateMask.fieldPaths", "isOnline");
-    searchParams.append("updateMask.fieldPaths", "lastActivity");
     const firestoreUrl = `${firestoreDefaultDBAPIUrl}/documents/profile/${authUser.email}`;
 
     try {
@@ -51,7 +63,6 @@ const Layout: React.FC = () => {
         body: JSON.stringify({
           fields: {
             isOnline: { booleanValue: isOnline },
-            lastActivity: { timestampValue: lastActivity }
           }
         }),
         keepalive: true
@@ -236,10 +247,8 @@ const Layout: React.FC = () => {
         const data = snapshot.data();
 
         if (!data?.isOnline) {
-          const lastActivity = new Date().toISOString();
           updateDoc(profileDoc, {
             isOnline: true,
-            lastActivity
           })
         }
       }
@@ -296,6 +305,15 @@ const Layout: React.FC = () => {
       enableNetwork(db);
     }
   }, [isConnecting]);
+  
+  useEffect(() => {
+    if (user.status === "authenticated") {
+      updateLastActivity();
+      const interval = setActivityInterval();
+      return () =>
+        clearInterval(interval);
+    }
+  }, [user]);
 
   useEffect(() => {
     getTheme();
@@ -305,10 +323,8 @@ const Layout: React.FC = () => {
     window.addEventListener("unload", () => {
       const authUser = auth.currentUser;
       if (authUser) {
-        const lastActivity = new Date().toISOString();
-        handleSetOnlineStatusAndLastActivity(authUser, {
-          isOnline: false,
-          lastActivity
+        handleSetOnlineStatus(authUser, {
+          isOnline: false
         });
       }
     });

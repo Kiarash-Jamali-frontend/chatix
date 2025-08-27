@@ -16,6 +16,7 @@ import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
 import { useEncryption } from "../../hooks/useEncryption";
 import { getDraft } from "../../redux/slices/drafts";
 import { AnimatePresence, motion } from "framer-motion";
+import useUserIsOnline from "../../hooks/useUserIsOnline";
 
 type PropTypes = {
     chat: ChatData;
@@ -34,6 +35,8 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
     const draft = useAppSelector((state: RootState) => getDraft(state, chat.email));
     const { value: draftValue, timestamp } = Object.values(draft || [])[0] || { value: "", timestamp: undefined };
     const order = `-${draftValue ? timestamp : (lastMessage?.timestamp?.seconds || chat.createdAt?.seconds || 0)}`;
+
+    const isOnline = useUserIsOnline({ isOnline: chat.isOnline, lastActivity: chat.lastActivity });
 
     useEffect(() => {
         if (userEmail) {
@@ -131,7 +134,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                             size={ProfileImageSizes.MEDIUM} />
                         <AnimatePresence>
                             {
-                                chat.isOnline && chat.showOnlineStatus ? (
+                                isOnline && chat.showOnlineStatus ? (
                                     <motion.div
                                         variants={{
                                             hide: {
