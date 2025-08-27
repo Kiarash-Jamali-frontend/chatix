@@ -1,6 +1,3 @@
-// Example backend service for sending OneSignal notifications
-// This is a Node.js/Express example - adapt for your backend framework
-
 import express from 'express';
 import cors from "cors";
 import dotenv from "dotenv";

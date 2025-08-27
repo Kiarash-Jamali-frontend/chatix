@@ -302,7 +302,7 @@ const Layout: React.FC = () => {
     getFontSize();
     getDrafts();
 
-    window.addEventListener("unload", () => {
+    const handleLeaveApp = () => {
       const authUser = auth.currentUser;
       if (authUser) {
         const lastActivity = new Date().toISOString();
@@ -311,7 +311,12 @@ const Layout: React.FC = () => {
           lastActivity
         });
       }
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState == "hidden") handleLeaveApp();
     });
+    window.addEventListener("pagehide", handleLeaveApp);
   }, []);
 
   useEffect(() => {
