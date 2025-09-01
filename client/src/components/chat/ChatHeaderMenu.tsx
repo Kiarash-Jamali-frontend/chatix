@@ -41,7 +41,7 @@ export default function ChatHeaderMenu({ chatRoom, profile }: { chatRoom: any, p
                     transform: "translate(1rem, -1rem) scale(0.9)"
                 }
             }} transition={{ duration: 0.2 }} initial="hide" animate="open" exit="hide"
-            className="bg-secondary border p-1.5 absolute min-w-52 rounded-2xl mt-2 shadow-lg space-y-1.5">
+            className="bg-secondary border p-1.5 absolute min-w-52 rounded-2xl mt-2 shadow-lg space-y-1.5 z-[51]">
             <button
                 onClick={() => shareProfile({ name: profile.name, email: profile.email })}
                 className={`bg-base border cursor-pointer p-2 rounded-xl w-full text-start text-sm font-medium flex items-center`}>

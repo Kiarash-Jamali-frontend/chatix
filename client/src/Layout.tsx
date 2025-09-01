@@ -17,7 +17,6 @@ import useThemeDetector from "./hooks/useThemeDetector";
 import { changeTheme } from "./redux/slices/theme";
 import publicRoutes from "./constants/publicRoutes";
 import { Unsubscribe } from "firebase/firestore";
-// import NotificationBanner from "./components/NotificationBanner";
 import { Draft, setDraftsList } from "./redux/slices/drafts";
 import { changeFontSize } from "./redux/slices/fontSize";
 import firestoreDefaultDBAPIUrl from "./constants/firestoreDefaultDBAPIUrl";

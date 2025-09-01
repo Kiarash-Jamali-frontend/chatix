@@ -64,7 +64,7 @@ export default function GroupHeaderMenu({
                     transform: "translate(1rem, -1rem) scale(0.9)"
                 }
             }} transition={{ duration: 0.2 }} initial="hide" animate="open" exit="hide"
-            className="bg-secondary border p-1.5 absolute min-w-52 rounded-2xl mt-2 shadow-lg space-y-1.5">
+            className="bg-secondary border p-1.5 absolute min-w-52 rounded-2xl mt-2 shadow-lg space-y-1.5 z-[51]">
             {
                 groupData.creator == userEmail ? (
                     <>
