@@ -53,12 +53,16 @@ export default function ChatHeaderMenu({ chatRoom, profile }: { chatRoom: any, p
                 <FontAwesomeIcon icon={faBellSlash} className="me-2" />
                 Mute notifications
             </button> */}
-            <button
-                onClick={changeIsBlockingUser}
-                className={`bg-base border cursor-pointer p-2 rounded-xl w-full text-start text-sm font-medium flex items-center`}>
-                <FontAwesomeIcon icon={faBan} className="me-2" />
-                {chatRoom.isBlocked ? "Unblock" : "Block"}
-            </button>
+            {
+                chatRoom.blockedFrom != profile.email || !chatRoom.isBlocked ? (
+                    <button
+                        onClick={changeIsBlockingUser}
+                        className={`bg-base border cursor-pointer p-2 rounded-xl w-full text-start text-sm font-medium flex items-center`}>
+                        <FontAwesomeIcon icon={faBan} className="me-2" />
+                        {chatRoom.isBlocked ? "Unblock" : "Block"}
+                    </button>
+                ) : null
+            }
             <button
                 onClick={handleDeleteChat}
                 className={`bg-red-500/10 text-red-500 border cursor-pointer p-2 rounded-xl w-full text-start text-sm font-medium flex items-center`}>

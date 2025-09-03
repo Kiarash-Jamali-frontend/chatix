@@ -13,10 +13,10 @@ const useChangeIsBlockingUser = (chatRoom: any) => {
             });
         });
     }
-    if (chatRoom && email) {
+    if (chatRoom && email && (!chatRoom.blockedFrom || chatRoom.blockedFrom == email)) {
         return blockHandler;
     }
-    return () => {}
+    return () => { }
 }
 
 export default useChangeIsBlockingUser;
