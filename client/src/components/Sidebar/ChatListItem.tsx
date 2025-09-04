@@ -200,7 +200,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                                     ""
                                 )}
                                 {
-                                    lastMessage && (
+                                    (lastMessage && !draftValue) && (
                                         <div className="flex items-center justify-between w-fit ps-2">
                                             <div className={`${chatIsSelected ? "text-white/60" : "text-natural/60"} flex items-center`}>
                                                 <div className="text-xs text-nowrap">

@@ -146,7 +146,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
                                         </div>
                                     ) : null}
                                     {
-                                        lastMessage && (
+                                        (lastMessage && !draftValue) && (
                                             <div className="flex items-center justify-between w-fit">
                                                 <div className={`${groupIsSelected ? "text-white/60" : "text-natural/60"} flex items-center`}>
                                                     <div className="text-xs text-nowrap">
