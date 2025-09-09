@@ -13,6 +13,7 @@ import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { AnimatePresence } from "framer-motion";
 import GroupHeaderMenu from "./GroupHeaderMenu";
+import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
 
 export type GroupHeaderPropTypes = {
   groupData: SidebarGroupData;
@@ -39,7 +40,10 @@ export default function GroupHeader({ groupData, membersProfiles, groupMembersRe
   const getOnlineMembersCount = useCallback(() => {
     let onlineMembersCount = 0;
     membersProfiles.forEach((p) => {
-      userEmail != p.email && !p.removedFromGroup && p.isOnline && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
+      userEmail != p.email && !p.removedFromGroup && userIsOnline({
+        lastActivity: p.lastActivity,
+        isOnline: p.isOnline
+      }) && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
     });
     setOnlineMembersCount(onlineMembersCount);
   }, [membersProfiles])
