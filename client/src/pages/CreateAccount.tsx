@@ -43,6 +43,11 @@ const CreateAccount: React.FC = () => {
         }
     }
 
+    const handleCreateAccountShowError = (e: Error) => {
+        setLoading(false);
+        toast.error(e.message, toastConf);
+    }
+
     const createAccountHandler = async () => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
@@ -58,15 +63,8 @@ const CreateAccount: React.FC = () => {
                         setLoading(false);
                         navigate("/");
                     });
-                }).catch((error) => {
-                    toast.error(error.message, toastConf);
-                })
-            }).catch((error) => {
-                toast.error(error.message, toastConf);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+                }).catch(handleCreateAccountShowError);
+            }).catch(handleCreateAccountShowError)
     }
 
     return (
