@@ -104,6 +104,7 @@ export default function AudioMessage({ message, type, replayMessage, recipients 
             updateProgress();
         }
         return () => {
+            dispatch(changeCurrentPlayingMedia(null));
             audioRef.current?.pause();
             if (playAnimationRef.current !== null) {
                 cancelAnimationFrame(playAnimationRef.current);
