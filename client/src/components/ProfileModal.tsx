@@ -53,7 +53,7 @@ export default function ProfileModal() {
     const handleHideModal = () => {
         dispatch(removeOpenedProfile());
         hideCallback();
-        resetHideCallback();
+        dispatch(resetHideCallback());
     }
 
     return (
