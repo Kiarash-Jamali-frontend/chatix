@@ -13,6 +13,7 @@ import GroupInfoModalEditContent from "./GroupInfoModalEditContent";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { ModalContentType } from "./GroupHeader";
+import userIsOnline from "../../helpers/usersAndProfiles/userIsOnline";
 
 type PropTypes = {
     groupData: SidebarGroupData;
@@ -47,8 +48,11 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
     const getOnlineMembersCount = useCallback(() => {
         let onlineMembersCount = 0;
         membersProfiles.forEach((p) => {
-            userEmail != p.email && !p.removedFromGroup && p.isOnline && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
-        });
+            userEmail != p.email && !p.removedFromGroup && userIsOnline({
+              lastActivity: p.lastActivity,
+              isOnline: p.isOnline
+            }) && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
+          });
         setOnlineMembersCount(onlineMembersCount);
     }, [membersProfiles])
 
