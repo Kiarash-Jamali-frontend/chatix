@@ -104,12 +104,18 @@ export default function AudioMessage({ message, type, replayMessage, recipients 
             updateProgress();
         }
         return () => {
-            dispatch(changeCurrentPlayingMedia(null));
             if (playAnimationRef.current !== null) {
                 cancelAnimationFrame(playAnimationRef.current);
+                playAnimationRef.current = null;
             }
         };
     }, [isPlaying, startAnimation, updateProgress, audioRef]);
+
+    useEffect(() => {
+        return () => {
+            dispatch(changeCurrentPlayingMedia(null));
+        }
+    }, []);
 
     return (
         <div className="flex">
