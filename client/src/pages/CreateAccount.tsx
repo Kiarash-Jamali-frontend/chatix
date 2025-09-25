@@ -55,13 +55,18 @@ const CreateAccount: React.FC = () => {
                 }).then(() => {
                     dispatch(changeUserData({ email }));
                     dispatch(getUserProfile(email)).then(() => {
+                        setLoading(false);
                         navigate("/");
                     });
+                }).catch((error) => {
+                    toast.error(error.message, toastConf);
                 })
             }).catch((error) => {
                 toast.error(error.message, toastConf);
             })
-            .finally(() => setLoading(false))
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
     return (
