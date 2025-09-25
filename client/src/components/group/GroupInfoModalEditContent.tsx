@@ -38,7 +38,7 @@ export default function GroupInfoModalEditContent({ groupData, setModalContentTy
                 await deleteObject(ref(storage, groupData.groupPhotoUrl));
             }
 
-            const profileRef = ref(storage, `groups_profiles/${groupData.id}.${getFileExt(groupProfile.name)}`);
+            const profileRef = ref(storage, `groups_profiles/${groupData.id}/${groupData.id}.${getFileExt(groupProfile.name)}`);
             await uploadBytes(profileRef, groupProfile);
             newGroupPhotoUrl = await getDownloadURL(profileRef);
         }

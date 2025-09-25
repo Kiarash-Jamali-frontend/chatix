@@ -391,7 +391,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
       const file = new File([blob], fileName, { type: audioFormat });
 
       const fileStorageRef = ref(storage,
-        `${isPrivateChat ? `chats/${chatId}/${fileName}` : `groups/${groupId}`}/${fileName}`);
+        `${isPrivateChat ? `chats/${chatId}` : `groups/${groupId}`}/${fileName}`);
       await uploadBytes(fileStorageRef, file);
       const fileUrl = await getDownloadURL(fileStorageRef);
 
