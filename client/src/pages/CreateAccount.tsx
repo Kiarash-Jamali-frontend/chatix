@@ -44,25 +44,23 @@ const CreateAccount: React.FC = () => {
     }
 
     const createAccountHandler = async () => {
-        setDoc(doc(db, "profile", email), {
-            biography: "",
-            name: "New user",
-            lastActivity: Timestamp.now(),
-            photoUrl: "",
-            showOnlineStatus: false
-        }).then(() => {
-            createUserWithEmailAndPassword(auth, email, password)
-                .then(() => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(() => {
+                setDoc(doc(db, "profile", email), {
+                    biography: "",
+                    name: "New user",
+                    lastActivity: Timestamp.now(),
+                    photoUrl: "",
+                    showOnlineStatus: false
+                }).then(() => {
                     dispatch(changeUserData({ email }));
                     dispatch(getUserProfile(email)).then(() => {
                         navigate("/");
                     });
-                }).catch((error) => {
-                    toast.error(error.message, toastConf);
                 })
-        }).catch((error) => {
-            toast.error(error.message, toastConf);
-        })
+            }).catch((error) => {
+                toast.error(error.message, toastConf);
+            })
             .finally(() => setLoading(false))
     }
 
