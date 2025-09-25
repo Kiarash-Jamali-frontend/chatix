@@ -25,6 +25,7 @@ import { useEncryption } from "../../hooks/useEncryption";
 import { clearIndexedDbPersistence, terminate } from "firebase/firestore";
 import { changeChatsList } from "../../redux/slices/chats";
 import { changeGroupsList } from "../../redux/slices/groups";
+import { changeToSystemDefaultTheme } from "../../redux/slices/theme";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -45,6 +46,7 @@ const Sidebar: React.FC = () => {
     setLogoutPending(true);
     dispatch(changeChatsList([]));
     dispatch(changeGroupsList([]));
+    dispatch(changeToSystemDefaultTheme());
     clearAllSecrets();
     localStorage.clear();
     await signOut(auth);

@@ -110,12 +110,19 @@ export default function AudioMessage({ message, type, replayMessage, recipients 
         };
     }, [isPlaying, startAnimation, updateProgress, audioRef]);
 
+    useEffect(() => {
+        return () => {
+            setIsStopped(false);
+        }
+    }, []);
+
     return (
         <div className="flex">
             <DeleteTextFileAudioMessageButton recipients={recipients} isFile={true} type={type} replayMessage={replayMessage} message={message} />
             <audio src={message.content} ref={audioRef} hidden onLoadedMetadata={onLoadedMetadata}
                 onPlay={() => setIsStopped(false)}
-                onPause={() => setIsStopped(true)}></audio>
+                onPause={() => setIsStopped(true)}
+                onEnded={() => setIsStopped(true)}></audio>
             <button
                 onBlur={() => dispatch(changeSelectedMessage(null))}
                 onFocus={({ target }) => {
