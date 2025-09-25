@@ -112,7 +112,7 @@ export default function AudioMessage({ message, type, replayMessage, recipients 
 
     useEffect(() => {
         return () => {
-            setIsStopped(false);
+            setIsStopped(true);
         }
     }, []);
 
