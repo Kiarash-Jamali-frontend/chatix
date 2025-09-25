@@ -180,7 +180,9 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
               className={`mt-auto me-2`}>
               {
                 senderProfile?.photoUrl ? (
-                  <img src={senderProfile?.photoUrl} className="size-10 object-cover rounded-full object-center" />
+                  <img
+                    crossOrigin="anonymous"
+                    src={senderProfile?.photoUrl} className="size-10 object-cover rounded-full object-center" />
                 ) : (
                   <GradiantProfile name={senderProfile?.name} size={ProfileImageSizes.SMALL} />
                 )
