@@ -44,9 +44,12 @@ export default function GroupInfoModalEditContent({ groupData, setModalContentTy
         }
 
         await runTransaction(db, async (transaction) => {
-            transaction.update(docRef, {
+            const groupPhotoUrl = newGroupPhotoUrl || groupData.groupPhotoUrl;
+            transaction.update(docRef, groupPhotoUrl ? {
                 groupName,
-                groupPhotoUrl: newGroupPhotoUrl || groupData.groupPhotoUrl
+                groupPhotoUrl: groupPhotoUrl
+            } : {
+                groupName
             });
         });
 
