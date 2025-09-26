@@ -310,17 +310,19 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
       setMessageText("");
       return;
     }
-    if (!draftValue || value != draftValue) {
-      const newDraft = {
-        [messageTo]: {
-          value: isEmoji ? `${draftValue}${value}` : value,
-          timestamp: +(Date.now() / 1000).toFixed(0)
-        },
-      };
+    setMessageText(prev => {
+      if (!draftValue || (isEmoji ? `${prev}${value}` : value) != draftValue) {
+        const newDraft = {
+          [messageTo]: {
+            value: isEmoji ? `${prev}${value}` : value,
+            timestamp: +(Date.now() / 1000).toFixed(0)
+          },
+        };
 
-      dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
-    }
-    setMessageText(prev => isEmoji ? `${prev}${value}` : value);
+        dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
+      }
+      return isEmoji ? `${prev}${value}` : value;
+    });
   }
 
   const handleStartRecording = async () => {
