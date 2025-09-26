@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { addDoc, collection, doc, runTransaction, Timestamp } from "firebase/firestore";
 import { db, storage } from "../../utils/firebase";
@@ -304,27 +304,28 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     dispatch(changeMessageSelectedForReply(null));
   }
 
-  const handleChangeMessageText = (value: string, isEmoji: boolean = false) => {
-    if (!value || value == "<br>") {
-      dispatch(removeDraft(messageTo));
-      setMessageText("");
-      return;
-    }
-    setMessageText(prev => {
-      const newValue = isEmoji ? `${prev}${value}` : value;
-      if (!draftValue || newValue != draftValue) {
-        const newDraft = {
-          [messageTo]: {
-            value: newValue,
-            timestamp: +(Date.now() / 1000).toFixed(0)
-          },
-        };
-
-        dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
+  const handleChangeMessageText = useCallback(
+    (value: string, isEmoji: boolean = false) => {
+      if (!value || value == "<br>") {
+        dispatch(removeDraft(messageTo));
+        setMessageText("");
+        return;
       }
-      return newValue;
-    });
-  }
+      setMessageText(prev => {
+        const newValue = isEmoji ? `${prev}${value}` : value;
+        if (!draftValue || newValue != draftValue) {
+          const newDraft = {
+            [messageTo]: {
+              value: newValue,
+              timestamp: +(Date.now() / 1000).toFixed(0)
+            },
+          };
+
+          dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
+        }
+        return newValue;
+      });
+    }, [draft, messageTo])
 
   const handleStartRecording = async () => {
     setIsRecording(true);
