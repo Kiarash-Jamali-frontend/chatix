@@ -11,6 +11,13 @@ export default async function deleteChat({ user1, user2, chatRoomId, oppositeUse
 }):
     Promise<{ successful: boolean, error: string | null }> {
     try {
+        const chatFilesRef = ref(storage, `chats/${chatRoomId}`);
+        const list = await listAll(chatFilesRef);
+
+        if (list.items.length) {
+            await deleteObject(chatFilesRef);
+        }
+
         const q = query(collection(db, "chat_message"), or(
             and(
                 where("from", "==", user1),
@@ -32,14 +39,6 @@ export default async function deleteChat({ user1, user2, chatRoomId, oppositeUse
         });
 
         await deleteDoc(doc(db, "chat_room", chatRoomId));
-
-
-        const chatFilesRef = ref(storage, `chats/${chatRoomId}`);
-        const list = await listAll(chatFilesRef);
-
-        if (list.items.length) {
-            await deleteObject(chatFilesRef);
-        }
 
         return {
             successful: true,

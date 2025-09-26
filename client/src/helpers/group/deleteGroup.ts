@@ -12,15 +12,6 @@ export default async function deleteGroup({ groupData, membersProfiles, groupMem
 }):
     Promise<{ successful: boolean, error: string | null }> {
     try {
-        const q = query(collection(db, "group_message"), where("to", "==", groupData.id));
-
-        const snapshot = await getDocs(q);
-        snapshot.forEach((msgSnapshot) => {
-            const msgData = msgSnapshot.data();
-            deleteNotification(msgData.notificationId, msgSnapshot.id, groupMembersRecipients);
-            deleteDoc(doc(db, "group_message", msgSnapshot.id));
-        });
-
         const groupFilesRef = ref(storage, `groups/${groupData.id}`);
         const list = await listAll(groupFilesRef);
 
@@ -37,6 +28,15 @@ export default async function deleteGroup({ groupData, membersProfiles, groupMem
         })
 
         await deleteDoc(doc(db, "group", groupData.id));
+        
+        const q = query(collection(db, "group_message"), where("to", "==", groupData.id));
+
+        const snapshot = await getDocs(q);
+        snapshot.forEach((msgSnapshot) => {
+            const msgData = msgSnapshot.data();
+            deleteNotification(msgData.notificationId, msgSnapshot.id, groupMembersRecipients);
+            deleteDoc(doc(db, "group_message", msgSnapshot.id));
+        });
 
         return {
             error: null,
