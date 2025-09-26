@@ -45,6 +45,7 @@ const CreateAccount: React.FC = () => {
     }
 
     const handleCreateAccountShowError = (e: Error) => {
+        console.log("test");
         setLoading(false);
         toast.error(e.message, toastConf);
     }
