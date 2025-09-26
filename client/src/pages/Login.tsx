@@ -45,7 +45,7 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-svh w-full justify-center items-center">
+    <div className="flex flex-col min-h-svh w-full justify-center items-center">
       <AppUpdateMessage />
       <ToastContainer />
       <div className="dark:bg-base bg-secondary lg:dark:bg-secondary lg:border h-full lg:h-auto lg:rounded-2xl w-full lg:max-w-[900px] grid gap-x-5 grid-cols-1 lg:grid-cols-2 shadow-xl">

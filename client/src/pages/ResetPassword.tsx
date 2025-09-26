@@ -32,7 +32,7 @@ export default function ResetPassword() {
 
     return (
         <>
-            <div className="flex min-h-svh w-full justify-center items-center">
+            <div className="flex flex-col min-h-svh w-full justify-center items-center">
                 <AppUpdateMessage />
                 <ToastContainer />
                 <div className="bg-secondary border rounded-2xl px-10 py-9 w-full max-w-[450px] shadow-xl">
