@@ -13,6 +13,7 @@ import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import Lottie from 'react-lottie-player';
 import LoginMessageAnimation from '../lottie/LoginMessageAnimation.json';
+import AppUpdateMessage from "../components/Sidebar/AppUpdateMessage";
 
 const CreateAccount: React.FC = () => {
 
@@ -69,6 +70,7 @@ const CreateAccount: React.FC = () => {
 
     return (
         <div className="flex min-h-svh w-full justify-center items-center">
+            <AppUpdateMessage />
             <ToastContainer />
             <div className="dark:bg-base bg-secondary lg:dark:bg-secondary h-full lg:h-auto lg:rounded-2xl lg:border w-full lg:max-w-[900px] grid gap-x-5 grid-cols-1 lg:grid-cols-2 shadow-xl">
                 <div className="px-10 py-8 lg:py-9 lg:border-e mt-auto lg:mt-0 max-lg:border-t">

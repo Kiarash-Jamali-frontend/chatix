@@ -8,6 +8,7 @@ import { useState } from "react";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../utils/firebase";
 import toastConf from "../../utils/toastConfig";
+import AppUpdateMessage from "../components/Sidebar/AppUpdateMessage";
 
 export default function ResetPassword() {
 
@@ -32,6 +33,7 @@ export default function ResetPassword() {
     return (
         <>
             <div className="flex min-h-svh w-full justify-center items-center">
+                <AppUpdateMessage />
                 <ToastContainer />
                 <div className="bg-secondary border rounded-2xl px-10 py-9 w-full max-w-[450px] shadow-xl">
                     <h1 className="text-2xl font-bold mb-2">Reset password</h1>

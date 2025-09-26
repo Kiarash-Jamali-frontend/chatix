@@ -11,6 +11,7 @@ import { changeUserData, getUserProfile } from "../redux/slices/user";
 import toastConf from "../../utils/toastConfig";
 import Lottie from 'react-lottie-player';
 import LoginMessageAnimation from '../lottie/LoginMessageAnimation.json';
+import AppUpdateMessage from "../components/Sidebar/AppUpdateMessage";
 
 const Login: React.FC = () => {
 
@@ -45,6 +46,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="flex min-h-svh w-full justify-center items-center">
+      <AppUpdateMessage />
       <ToastContainer />
       <div className="dark:bg-base bg-secondary lg:dark:bg-secondary lg:border h-full lg:h-auto lg:rounded-2xl w-full lg:max-w-[900px] grid gap-x-5 grid-cols-1 lg:grid-cols-2 shadow-xl">
         <div className="px-10 py-8 lg:py-9 lg:border-e mt-auto lg:mt-0 max-lg:border-t">
