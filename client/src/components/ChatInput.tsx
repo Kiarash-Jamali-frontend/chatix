@@ -321,7 +321,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
             },
           };
 
-          dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
+          dispatch(newValue ? changeDraft(newDraft) : addDraft(newDraft));
         }
         return newValue;
       });
