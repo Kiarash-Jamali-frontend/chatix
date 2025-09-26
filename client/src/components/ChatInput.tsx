@@ -306,7 +306,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
 
   const handleChangeMessageText = useCallback(
     (value: string, isEmoji: boolean = false) => {
-      if (!value || value == "<br>") {
+      if (!value || value == "<br>" || value == " ") {
         dispatch(removeDraft(messageTo));
         setMessageText("");
         return;
