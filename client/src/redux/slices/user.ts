@@ -32,10 +32,10 @@ export const changeUserProfile = createAsyncThunk("user/changeUserProfile", asyn
     { userEmail: string, name: string, biography: string, profileImage: File | null, defaultProfileUrl: string }, thunk) => {
     let profileUrl = defaultProfileUrl;
     if (profileImage) {
-        await thunk.dispatch(deleteProfileImage({ userEmail, profileUrl: defaultProfileUrl }));
         const profileRef = ref(storage, `profiles/${userEmail}/${userEmail}.${getFileExt(profileImage.name)}`);
         await uploadBytes(profileRef, profileImage);
         profileUrl = await getDownloadURL(profileRef);
+        await thunk.dispatch(deleteProfileImage({ userEmail, profileUrl: defaultProfileUrl }));
     }
 
     await runTransaction(db, async (transaction) => {
