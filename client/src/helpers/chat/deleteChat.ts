@@ -14,9 +14,9 @@ export default async function deleteChat({ user1, user2, chatRoomId, oppositeUse
         const chatFilesRef = ref(storage, `chats/${chatRoomId}`);
         const list = await listAll(chatFilesRef);
 
-        if (list.items.length) {
-            await deleteObject(chatFilesRef);
-        }
+        list.items.forEach(async (item) => {
+            await deleteObject(item);
+        })
 
         const q = query(collection(db, "chat_message"), or(
             and(

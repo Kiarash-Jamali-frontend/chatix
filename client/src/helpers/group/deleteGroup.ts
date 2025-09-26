@@ -15,9 +15,9 @@ export default async function deleteGroup({ groupData, membersProfiles, groupMem
         const groupFilesRef = ref(storage, `groups/${groupData.id}`);
         const list = await listAll(groupFilesRef);
 
-        if (list.items.length) {
-            await deleteObject(groupFilesRef);
-        }
+        list.items.forEach(async (item) => {
+            await deleteObject(item);
+        })
 
         if (groupData.groupPhotoUrl) {
             await deleteObject(ref(storage, groupData.groupPhotoUrl));
@@ -28,7 +28,7 @@ export default async function deleteGroup({ groupData, membersProfiles, groupMem
         })
 
         await deleteDoc(doc(db, "group", groupData.id));
-        
+
         const q = query(collection(db, "group_message"), where("to", "==", groupData.id));
 
         const snapshot = await getDocs(q);
