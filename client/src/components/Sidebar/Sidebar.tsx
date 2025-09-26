@@ -26,6 +26,7 @@ import { clearIndexedDbPersistence, terminate } from "firebase/firestore";
 import { changeChatsList } from "../../redux/slices/chats";
 import { changeGroupsList } from "../../redux/slices/groups";
 import { changeToSystemDefaultTheme } from "../../redux/slices/theme";
+import OneSignal from "react-onesignal";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -48,6 +49,7 @@ const Sidebar: React.FC = () => {
     dispatch(changeGroupsList([]));
     dispatch(changeToSystemDefaultTheme());
     clearAllSecrets();
+    OneSignal.logout();
     localStorage.clear();
     await signOut(auth);
     await terminate(db);
