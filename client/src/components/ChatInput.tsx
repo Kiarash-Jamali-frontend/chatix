@@ -325,7 +325,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         }
         return newValue;
       });
-    }, [!!draft, messageTo])
+    }, [draft, messageTo])
 
   const handleStartRecording = async () => {
     setIsRecording(true);
