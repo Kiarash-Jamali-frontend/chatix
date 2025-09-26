@@ -136,8 +136,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     setMessageText("");
     removeMessageSelectedForRelpy();
 
-    if (draft) dispatch(removeDraft(messageTo));
-
     try {
       let messageData: any = {
         from: userEmail,
@@ -161,6 +159,8 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
       }
 
       const docRef = await addDoc(collection(db, messageCollectionByType[type]), messageData);
+
+      if (draft) dispatch(removeDraft(messageTo));
 
       setTextMessagePending(false);
 
@@ -208,6 +208,8 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         type: "text",
         replyTo: messageSelectedForReply?.id || null
       });
+
+      if (draft) dispatch(removeDraft(messageTo));
 
       setTextMessagePending(false);
     }
@@ -306,7 +308,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
 
   const handleChangeMessageText = useCallback(
     (value: string, isEmoji: boolean = false) => {
-      if (!value || value == "<br>" || value == " ") {
+      if (!value || value == "<br>") {
         dispatch(removeDraft(messageTo));
         setMessageText("");
         return;
