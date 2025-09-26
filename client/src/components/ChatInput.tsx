@@ -90,6 +90,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
   const messageTextHtmlBody = new DOMParser().parseFromString(messageText, "text/html").body;
   const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false);
 
+  const emojiPickerContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const pending = textMessagePending || filePending || voiceMessagePending;
@@ -303,7 +304,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     dispatch(changeMessageSelectedForReply(null));
   }
 
-  const handleChangeMessageText = (value: string) => {
+  const handleChangeMessageText = (value: string, isEmoji: boolean = false) => {
     if (!value || value == "<br>") {
       dispatch(removeDraft(messageTo));
       setMessageText("");
@@ -319,7 +320,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
 
       dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
     }
-    setMessageText(value);
+    setMessageText(prev => isEmoji ? `${prev}${value}` : value);
   }
 
   const handleStartRecording = async () => {
@@ -499,6 +500,19 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     checkMicrophonePermission();
   }, []);
 
+  useEffect(() => {
+    const imgElements =
+      emojiPickerContainerRef.current?.getElementsByTagName("img");
+    if (imgElements) {
+      for (let i = 0; i < imgElements.length; i++) {
+        const imgEl = imgElements.item(i);
+        if (imgEl) {
+          imgEl.crossOrigin = "anonymous";
+        }
+      }
+    }
+  }, [emojiPickerIsOpen])
+
   return (
     <>
       <ToastContainer />
@@ -511,7 +525,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         }}>
         <AnimatePresence>
           {emojiPickerIsOpen && (
-            <motion.div variants={{
+            <motion.div ref={emojiPickerContainerRef} variants={{
               hide: {
                 opacity: 0,
                 transform: "scale(0.9) translate(-10px, 20px)"
@@ -525,10 +539,11 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
               className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50">
               <EmojiPicker open={emojiPickerIsOpen}
                 theme={theme == "dark" || (!theme && systemThemeIsDark) ? Theme.DARK : Theme.LIGHT}
-                height={300} searchDisabled={true} previewConfig={{ showPreview: false }} lazyLoadEmojis={true}
+                height={300} previewConfig={{ showPreview: false }} lazyLoadEmojis={true} searchDisabled
                 suggestedEmojisMode={SuggestionMode.FREQUENT}
                 onEmojiClick={(e) => handleChangeMessageText(
-                  `${messageText}<img src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`
+                  `<img crossOrigin="anonymous" src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`,
+                  true
                 )} />
             </motion.div>
           )}

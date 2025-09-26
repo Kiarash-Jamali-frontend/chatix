@@ -304,7 +304,7 @@ const Layout: React.FC = () => {
       enableNetwork(db);
     }
   }, [isConnecting]);
-  
+
   useEffect(() => {
     if (user.status === "authenticated") {
       updateLastActivity();
