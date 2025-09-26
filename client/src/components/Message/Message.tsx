@@ -134,7 +134,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
     if (params.get("message") === message.id) {
       removeMessageURLParamHandler = setTimeout(() => {
         params.delete("message");
-        navigate(`?${params.toString()}`);
+        navigate(`?${params.toString()}`, { replace: true });
       }, 1000);
     }
 
