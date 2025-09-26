@@ -311,17 +311,18 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
       return;
     }
     setMessageText(prev => {
-      if (!draftValue || (isEmoji ? `${prev}${value}` : value) != draftValue) {
+      const newValue = isEmoji ? `${prev}${value}` : value;
+      if (!draftValue || newValue != draftValue) {
         const newDraft = {
           [messageTo]: {
-            value: isEmoji ? `${prev}${value}` : value,
+            value: newValue,
             timestamp: +(Date.now() / 1000).toFixed(0)
           },
         };
 
         dispatch(draft ? changeDraft(newDraft) : addDraft(newDraft));
       }
-      return isEmoji ? `${prev}${value}` : value;
+      return newValue;
     });
   }
 
