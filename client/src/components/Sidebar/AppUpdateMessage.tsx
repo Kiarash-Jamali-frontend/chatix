@@ -1,6 +1,6 @@
 import { useRegisterSW } from "virtual:pwa-register/react"
 
-export default function AppUpdateMessage() {
+export default function AppUpdateMessage({ isInSidebar = false }: { isInSidebar?: boolean }) {
 
     const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW({
         onNeedRefresh: () => {
@@ -10,7 +10,7 @@ export default function AppUpdateMessage() {
 
     if (needRefresh) {
         return (
-            <div className="py-3 px-4 bg-purple-100 border-b-purple-300 border-b-2 text-sm font-semibold text-black flex items-center justify-between">
+            <div className={`${!isInSidebar ? "lg:fixed lg:top-0 lg:left-0 lg:right-0" : ""} w-full py-3 px-4 bg-purple-100 border-b-purple-300 border-b-2 text-sm font-semibold text-black flex items-center justify-between`}>
                 <span>
                     Chatix has a new update!
                 </span>
