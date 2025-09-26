@@ -313,7 +313,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     if (!draftValue || value != draftValue) {
       const newDraft = {
         [messageTo]: {
-          value,
+          value: isEmoji ? `${draftValue}${value}` : value,
           timestamp: +(Date.now() / 1000).toFixed(0)
         },
       };
