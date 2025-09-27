@@ -49,6 +49,7 @@ const Sidebar: React.FC = () => {
     dispatch(changeGroupsList([]));
     dispatch(changeToSystemDefaultTheme());
     clearAllSecrets();
+    OneSignal.User.PushSubscription.optOut();
     OneSignal.logout();
     localStorage.clear();
     await signOut(auth);
