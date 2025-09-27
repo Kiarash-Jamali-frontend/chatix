@@ -32,8 +32,10 @@ export const changeUserProfile = createAsyncThunk("user/changeUserProfile", asyn
     { userEmail: string, name: string, biography: string, profileImage: File | null, defaultProfileUrl: string }) => {
     let profileUrl = defaultProfileUrl;
     if (profileImage) {
-        const deletedProfileRef = ref(storage, `profiles/${userEmail}/${userEmail}.${getFileExt(defaultProfileUrl)}`);
-        await deleteObject(deletedProfileRef);
+        if (defaultProfileUrl) {
+            const deletedProfileRef = ref(storage, `profiles/${userEmail}/${userEmail}.${getFileExt(defaultProfileUrl)}`);
+            await deleteObject(deletedProfileRef);
+        }
         const profileRef = ref(storage, `profiles/${userEmail}/${userEmail}.${getFileExt(profileImage.name)}`);
         await uploadBytes(profileRef, profileImage);
         profileUrl = await getDownloadURL(profileRef);
