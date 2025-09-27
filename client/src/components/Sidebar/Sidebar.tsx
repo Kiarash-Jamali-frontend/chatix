@@ -22,11 +22,12 @@ import SearchBox from "./SearchBox";
 import AppUpdateMessage from "./AppUpdateMessage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { useEncryption } from "../../hooks/useEncryption";
-import { clearIndexedDbPersistence, terminate } from "firebase/firestore";
+import { clearIndexedDbPersistence, doc, terminate, updateDoc } from "firebase/firestore";
 import { changeChatsList } from "../../redux/slices/chats";
 import { changeGroupsList } from "../../redux/slices/groups";
 import { changeToSystemDefaultTheme } from "../../redux/slices/theme";
 import OneSignal from "react-onesignal";
+import { useOneSignal } from "../../hooks/useOneSignal";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -39,6 +40,7 @@ const Sidebar: React.FC = () => {
   const { list: groups, status: groupsStatus } = useAppSelector((state: RootState) => state.groups);
   const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "loading") || !isOnline);
   const { clearAllSecrets } = useEncryption();
+  const { getUserId } = useOneSignal();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,6 +51,14 @@ const Sidebar: React.FC = () => {
     dispatch(changeGroupsList([]));
     dispatch(changeToSystemDefaultTheme());
     clearAllSecrets();
+    if (user.profile) {
+      const { oneSignalUserIds } = user.profile;
+      const userDocRef = doc(db, 'profile', user.data!.email);
+      const oneSignalUserId = await getUserId();
+      await updateDoc(userDocRef, {
+        oneSignalUserIds: oneSignalUserIds ? oneSignalUserIds.filter((id) => oneSignalUserId != id) : []
+      });
+    }
     OneSignal.User.PushSubscription.optOut();
     OneSignal.logout();
     localStorage.clear();
