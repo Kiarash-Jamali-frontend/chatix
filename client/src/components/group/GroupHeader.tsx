@@ -65,6 +65,7 @@ export default function GroupHeader({ groupData, membersProfiles, groupMembersRe
       <Modal isActive={groupInfoModalIsActive} setIsActive={setGroupInfoModalIsActive}>
         <GroupInfoModalContent
           modalContentType={modalContentType}
+          groupMembersRecipients={groupMembersRecipients}
           setModalContentType={setModalContentType}
           groupData={groupData}
           membersProfiles={membersProfiles}

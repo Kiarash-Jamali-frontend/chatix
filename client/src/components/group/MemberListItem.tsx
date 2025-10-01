@@ -11,7 +11,7 @@ import removeAndAddUserGroup from "../../helpers/group/removeAndAddUserGroup";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 
-export default function MemberListItem({ profile, groupData }: { profile: MemberProfile, groupData: SidebarGroupData }) {
+export default function MemberListItem({ profile, groupData, groupMembersRecipients }: { profile: MemberProfile, groupData: SidebarGroupData, groupMembersRecipients: string[] }) {
     const chatsList = useAppSelector((state: RootState) => state.chats.list);
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const chatIsCreated = chatsList.find((c) => c.email === profile.email);
@@ -19,7 +19,7 @@ export default function MemberListItem({ profile, groupData }: { profile: Member
 
     const removeUserFromGroupHandler = async (id: string) => {
         setPending(true);
-        removeAndAddUserGroup(id, "remove");
+        removeAndAddUserGroup(id, "remove", userEmail, groupMembersRecipients);
         setPending(false);
     }
 

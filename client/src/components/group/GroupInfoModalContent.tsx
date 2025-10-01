@@ -21,9 +21,10 @@ type PropTypes = {
     setIsActive: Dispatch<SetStateAction<boolean>>;
     modalContentType: ModalContentType;
     setModalContentType: Dispatch<SetStateAction<ModalContentType>>;
+    groupMembersRecipients: string[];
 }
 
-export default function GroupInfoModalContent({ groupData, membersProfiles, setIsActive, modalContentType, setModalContentType }: PropTypes) {
+export default function GroupInfoModalContent({ groupData, membersProfiles, setIsActive, modalContentType, setModalContentType, groupMembersRecipients }: PropTypes) {
 
     const dispatch = useAppDispatch();
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
@@ -49,10 +50,10 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
         let onlineMembersCount = 0;
         membersProfiles.forEach((p) => {
             userEmail != p.email && !p.removedFromGroup && userIsOnline({
-              lastActivity: p.lastActivity,
-              isOnline: p.isOnline
+                lastActivity: p.lastActivity,
+                isOnline: p.isOnline
             }) && p.showOnlineStatus && (onlineMembersCount = onlineMembersCount + 1);
-          });
+        });
         setOnlineMembersCount(onlineMembersCount);
     }, [membersProfiles])
 
@@ -111,7 +112,8 @@ export default function GroupInfoModalContent({ groupData, membersProfiles, setI
                     <GroupInfoModalDefaultContent
                         setModalContentType={setModalContentType}
                         groupData={groupData}
-                        membersProfiles={membersProfiles} />
+                        membersProfiles={membersProfiles}
+                        groupMembersRecipients={groupMembersRecipients} />
                 )
             }
             {

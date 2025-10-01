@@ -16,9 +16,10 @@ type PropTypes = {
     groupData: SidebarGroupData;
     membersProfiles: MemberProfile[];
     setModalContentType: Dispatch<SetStateAction<ModalContentType>>
+    groupMembersRecipients: string[]
 }
 
-export default function GroupInfoModalDefaultContent({ membersProfiles, groupData, setModalContentType }: PropTypes) {
+export default function GroupInfoModalDefaultContent({ membersProfiles, groupData, setModalContentType, groupMembersRecipients }: PropTypes) {
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const [pending, setPending] = useState<boolean>(false);
 
@@ -28,7 +29,7 @@ export default function GroupInfoModalDefaultContent({ membersProfiles, groupDat
         setPending(true);
         const id = membersProfiles.find((mp) => mp.email == userEmail)?.groupMemberDocId;
         if (id) {
-            removeAndAddUserGroup(id, "remove");
+            removeAndAddUserGroup(id, "remove", userEmail, groupMembersRecipients);
             navigate("/");
         }
         setPending(false);
@@ -40,7 +41,7 @@ export default function GroupInfoModalDefaultContent({ membersProfiles, groupDat
                 {
                     membersProfiles.filter((p) => !p.removedFromGroup).map((p) => {
                         return (
-                            <MemberListItem key={p.id} groupData={groupData} profile={p} />
+                            <MemberListItem groupMembersRecipients={groupMembersRecipients} key={p.id} groupData={groupData} profile={p} />
                         )
                     })
                 }

@@ -36,7 +36,7 @@ export default function GroupHeaderMenu({
     const leaveGroupHandler = () => {
         const id = membersProfiles.find((mp) => mp.email == userEmail)?.groupMemberDocId;
         if (id) {
-            removeAndAddUserGroup(id, "remove");
+            removeAndAddUserGroup(id, "remove", userEmail, groupMembersRecipients);
             navigate("/");
         }
     }
