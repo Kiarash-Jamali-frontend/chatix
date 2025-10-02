@@ -16,7 +16,7 @@ const removeAndAddUserGroup = async (id: string, action: "remove" | "add", userE
             querySnap.forEach(async (snapshot) => {
                 const msgData = snapshot.data();
 
-                if (msgData.type && (msgData.type === "image" || msgData.type === "video" || msgData.type === "audio" || msgData.type === "file") && msgData.content) {
+                if (msgData.type && (msgData.type === "image" || msgData.type === "video" || msgData.type === "audio" || msgData.type === "file" || msgData.type === "voice") && msgData.content) {
                     const fileRef = ref(storage, msgData.content);
                     await deleteObject(fileRef);
                 }
