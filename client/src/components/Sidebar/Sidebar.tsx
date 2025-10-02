@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
       await updateDoc(userDocRef, {
         oneSignalUserIds: oneSignalUserIds ? oneSignalUserIds.filter((id) => oneSignalUserId != id) : []
       });
-      updateDoc(doc(db, "profile", user.profile.id), {
+      await updateDoc(doc(db, "profile", user.profile.id), {
         isOnline: false,
       })
     }
