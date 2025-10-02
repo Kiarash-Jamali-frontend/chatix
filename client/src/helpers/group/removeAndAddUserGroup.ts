@@ -1,6 +1,7 @@
 import { and, collection, deleteDoc, doc, getDocs, query, runTransaction, where } from "firebase/firestore";
-import { db } from "../../../utils/firebase";
+import { db, storage } from "../../../utils/firebase";
 import { deleteNotification } from "../../services/notificationService";
+import { deleteObject, ref } from "firebase/storage";
 
 const removeAndAddUserGroup = async (id: string, action: "remove" | "add", userEmail?: string, groupMembersRecipients?: string[]) => {
     await runTransaction(db, async (transaction) => {
@@ -14,6 +15,12 @@ const removeAndAddUserGroup = async (id: string, action: "remove" | "add", userE
 
             querySnap.forEach(async (snapshot) => {
                 const msgData = snapshot.data();
+
+                if (msgData.type && (msgData.type === "image" || msgData.type === "video" || msgData.type === "audio" || msgData.type === "file") && msgData.content) {
+                    const fileRef = ref(storage, msgData.content);
+                    await deleteObject(fileRef);
+                }
+
                 await deleteNotification(msgData.notificationId, snapshot.id, groupMembersRecipients || []);
                 await deleteDoc(doc(db, "group_message", snapshot.id));
             });
