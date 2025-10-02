@@ -58,6 +58,9 @@ const Sidebar: React.FC = () => {
       await updateDoc(userDocRef, {
         oneSignalUserIds: oneSignalUserIds ? oneSignalUserIds.filter((id) => oneSignalUserId != id) : []
       });
+      updateDoc(doc(db, "profile", user.profile.id), {
+        isOnline: false,
+      })
     }
     OneSignal.User.PushSubscription.optOut();
     OneSignal.logout();
