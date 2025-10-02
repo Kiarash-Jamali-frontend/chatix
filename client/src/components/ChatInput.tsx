@@ -188,6 +188,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         if (result?.success && result.id) notificationId = result.id;
       }
 
+      console.log("notificationId", notificationId);
       if (notificationId) {
         runTransaction(db, async (transaction) => {
           transaction.update(doc(db, messageCollectionByType[type], docRef.id), {
