@@ -14,6 +14,7 @@ import { db } from "../../utils/firebase";
 import Lottie from 'react-lottie-player';
 import LoginMessageAnimation from '../lottie/LoginMessageAnimation.json';
 import AppUpdateMessage from "../components/Sidebar/AppUpdateMessage";
+import { useOneSignal } from "../hooks/useOneSignal";
 
 const CreateAccount: React.FC = () => {
 
@@ -22,6 +23,7 @@ const CreateAccount: React.FC = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("")
+    const { subscribe } = useOneSignal();
 
     const auth = getAuth();
 
@@ -60,9 +62,10 @@ const CreateAccount: React.FC = () => {
                     showOnlineStatus: false
                 }).then(() => {
                     dispatch(changeUserData({ email }));
-                    dispatch(getUserProfile(email)).then(() => {
+                    dispatch(getUserProfile(email)).then(async () => {
+                        await subscribe();
                         setLoading(false);
-                        navigate("/");
+                        navigate("/", { replace: true });
                     });
                 }).catch(handleCreateAccountShowError);
             }).catch(handleCreateAccountShowError)

@@ -12,6 +12,7 @@ import toastConf from "../../utils/toastConfig";
 import Lottie from 'react-lottie-player';
 import LoginMessageAnimation from '../lottie/LoginMessageAnimation.json';
 import AppUpdateMessage from "../components/Sidebar/AppUpdateMessage";
+import { useOneSignal } from "../hooks/useOneSignal";
 
 const Login: React.FC = () => {
 
@@ -19,6 +20,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const { subscribe } = useOneSignal();
 
   const auth = getAuth();
 
@@ -36,8 +38,9 @@ const Login: React.FC = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         dispatch(changeUserData({ email: userCredential.user.email! }));
-        dispatch(getUserProfile(userCredential.user.email!)).then(() => {
-          navigate("/");
+        dispatch(getUserProfile(userCredential.user.email!)).then(async () => {
+          await subscribe();
+          navigate("/", { replace: true });
         })
       }).catch((error) => {
         toast.error(error.message, toastConf);

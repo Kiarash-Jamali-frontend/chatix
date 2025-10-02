@@ -34,7 +34,7 @@ export default function CreateGroup() {
         setGroupName("");
         setMemberName("");
         setSelctedMembersEmails([]);
-        navigate("/");
+        navigate("/", { replace: true });
     }, [groupName, userEmail])
 
     const createGroupHandler = async (e: FormEvent<HTMLFormElement>) => {

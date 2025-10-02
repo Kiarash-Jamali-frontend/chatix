@@ -33,7 +33,7 @@ export default function CreateChat() {
                 blockedFrom: "",
                 createdAt: timestamp
             });
-            navigate(`/chat/${email}`);
+            navigate(`/chat/${email}`, { replace: true });
         } else {
             setError("There is no user with this email");
             setTimeout(() => {
