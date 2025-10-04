@@ -69,7 +69,7 @@ const TextMessage: React.FC<MessagePropTypes> = ({ message, type, replayMessage,
           } ${selectedMessage?.id === message.id ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-s-none!" : ""}
              w-fit grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative`}
       >
-        <div className="max-w-[400px] break-all message-text" dir="auto">
+        <div className="max-w-[400px] break-words message-text" dir="auto">
           {/* {isDecrypting && !decryptedContent ? (
             <span className="text-gray-500 italic">Loading...</span>
           ) : (

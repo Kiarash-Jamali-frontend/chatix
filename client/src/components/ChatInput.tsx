@@ -621,7 +621,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                   <ContentEditable
                     html={messageText ? messageText : ""}
                     onChange={({ target }) => handleChangeMessageText(target.value)}
-                    className={`focus:outline-hidden relative before:font-Inter ${!showSendButton ? "before:content-['Message']" : "before:content-none"} before:absolute before:text-natural/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-hidden font-Vazir`}
+                    className={`focus:outline-hidden relative before:font-Inter ${!showSendButton ? "before:content-['Message'] before:cursor-text" : "before:content-none"} before:absolute before:text-natural/40 before:left-0 w-full break-all text-sm max-w-none max-h-11 overflow-auto font-Vazir`}
                   />
                 )
               }
