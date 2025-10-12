@@ -175,6 +175,7 @@ export default function Settings() {
                         <label htmlFor="biography" className="text-sm inline-block mb-1">Biography
                             <span className="text-xs font-light text-natural/75 ms-1.5">{profileData.biography.length}/180</span></label>
                         <textarea
+                            dir="auto"
                             value={profileData.biography}
                             onChange={(e) => setProfileData((prev) => ({ ...prev!, biography: e.target.value }))}
                             className={input({ className: "resize-none" })}
