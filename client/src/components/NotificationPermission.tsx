@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOneSignal } from '../hooks/useOneSignal';
 import { useAppSelector } from '../redux/hooks';
 import { RootState } from '../redux/store';
-import { storeOneSignalUserId, storeNotificationSettings } from '../services/notificationService';
+import { storeNotificationSettings } from '../services/notificationService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faBellSlash } from '@fortawesome/free-solid-svg-icons';
 import button from '../cva/button';
@@ -30,7 +30,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   const [oneSignalUserId, setOneSignalUserId] = useState<string | null>(null);
   const [settings, setSettings] = useState<SettingsType | null>(null);
 
-  const handleUserSetup = async (oneSignalUserIds: string[] | undefined) => {
+  const handleUserSetup = async () => {
     if (!userEmail) return;
 
     try {
@@ -38,10 +38,10 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
       setUserEmail(userEmail);
 
       // Get OneSignal user ID and store it in Firebase
-      const oneSignalUserId = await getUserId();
-      if (oneSignalUserId && !oneSignalUserIds?.find((id) => id == oneSignalUserId)) {
-        await storeOneSignalUserId(userEmail, oneSignalUserId, oneSignalUserIds);
-      }
+      // const oneSignalUserId = await getUserId();
+      // if (oneSignalUserId && !oneSignalUserIds?.find((id) => id == oneSignalUserId)) {
+      //   await storeOneSignalUserId(userEmail, oneSignalUserId, oneSignalUserIds);
+      // }
 
       if (!settings && userProfile) {
         await storeNotificationSettings(userEmail, { enabled: true });
@@ -82,7 +82,8 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   };
 
   const getOneSignalUserId = async () => {
-    setOneSignalUserId((await getUserId()) || null);
+    const newOneSignalId = await getUserId();
+    setOneSignalUserId(newOneSignalId || null);
   }
 
   useEffect(() => {
@@ -103,7 +104,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   useEffect(() => {
     if (isInitialized && userEmail) {
-      handleUserSetup(userProfile?.oneSignalUserIds);
+      handleUserSetup();
     }
   }, [isInitialized, userEmail, userProfile]);
 
