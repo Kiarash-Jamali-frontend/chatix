@@ -8,6 +8,7 @@ import { faBell, faBellSlash } from '@fortawesome/free-solid-svg-icons';
 import button from '../cva/button';
 import SwitchButton from './common/SwitchButton';
 import { getUserProfile } from '../redux/slices/user';
+import { isNotificationEnabled } from '../utils/onesignal';
 
 interface NotificationPermissionProps {
   onClose?: () => void;
@@ -56,7 +57,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   const handleRequestPermission = async () => {
     setIsLoading(true);
     try {
-      if (permission != 'granted') {
+      if (!isNotificationEnabled()) {
         const result = await requestPermission();
         if (result != false && userEmail) {
           await storeNotificationSettings(userEmail, settings || { enabled: true });
@@ -105,14 +106,14 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   if (isInitialized && settings) {
     return (
-      (isEnabled && userId && userProfile?.oneSignalUserIds?.includes(userId)) ?
+      (isEnabled && userId && userProfile?.oneSignalUserIds && userProfile?.oneSignalUserIds.includes(userId)) ?
         (
           <div className="flex items-center justify-between"
             onClick={() => handleSettingsChange('enabled', !settings.enabled)}>
             <span>Notifications</span>
             <SwitchButton enabled={settings.enabled} />
           </div>
-        ) : permission === 'denied' ? (
+        ) : permission == 'denied' ? (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg p-4">
             <div className="flex items-end lg:justify-between lg:items-center lg:flex-row flex-col">
               <div className="flex items-center gap-2 w-full lg:w-fit">
