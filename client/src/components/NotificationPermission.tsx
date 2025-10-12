@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOneSignal } from '../hooks/useOneSignal';
 import { useAppSelector } from '../redux/hooks';
 import { RootState } from '../redux/store';
-import { storeNotificationSettings } from '../services/notificationService';
+import { storeNotificationSettings, storeOneSignalUserId } from '../services/notificationService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faBellSlash } from '@fortawesome/free-solid-svg-icons';
 import button from '../cva/button';
@@ -21,13 +21,12 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
     isEnabled,
     requestPermission,
     setUserEmail,
-    getUserId
+    userId
   } = useOneSignal();
 
   const userProfile = useAppSelector((state: RootState) => state.user.profile)
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const [isLoading, setIsLoading] = useState(false);
-  const [oneSignalUserId, setOneSignalUserId] = useState<string | null>(null);
   const [settings, setSettings] = useState<SettingsType | null>(null);
 
   const handleUserSetup = async () => {
@@ -55,12 +54,14 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   const handleRequestPermission = async () => {
     setIsLoading(true);
     try {
-      const result = await requestPermission();
-      if (result != false) {
-        // Store notification settings
-        if (userEmail) {
+      if (permission != 'granted') {
+        const result = await requestPermission();
+        if (result != false && userEmail) {
           await storeNotificationSettings(userEmail, settings || { enabled: true });
         }
+      }
+      if (userEmail && userId && userProfile && !userProfile.oneSignalUserIds?.find((id) => id == userId)) {
+        await storeOneSignalUserId(userEmail, userId, userProfile.oneSignalUserIds);
       }
     } catch (error) {
       console.error('Failed to request permission:', error);
@@ -81,11 +82,6 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
     }
   };
 
-  const getOneSignalUserId = async () => {
-    const newOneSignalId = await getUserId();
-    setOneSignalUserId(newOneSignalId || null);
-  }
-
   useEffect(() => {
     if (settings && !settings.enabled && Object.values(settings).some((s) => s)) {
       setSettings({
@@ -99,10 +95,6 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   }, [userProfile]);
 
   useEffect(() => {
-    getOneSignalUserId();
-  }, [userProfile, isInitialized])
-
-  useEffect(() => {
     if (isInitialized && userEmail) {
       handleUserSetup();
     }
@@ -110,7 +102,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   if (isInitialized && settings) {
     return (
-      (isEnabled && oneSignalUserId && userProfile?.oneSignalUserIds?.includes(oneSignalUserId)) ?
+      (isEnabled && userId && userProfile?.oneSignalUserIds?.includes(userId)) ?
         (
           <div className="flex items-center justify-between"
             onClick={() => handleSettingsChange('enabled', !settings.enabled)}>
