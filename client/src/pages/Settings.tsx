@@ -131,7 +131,7 @@ export default function Settings() {
                     <div className="grid grid-cols-1 md:grid-cols-2 mt-3 gap-4">
                         <div>
                             <label htmlFor="name" className="text-sm inline-block mb-1">Name</label>
-                            <input id="name" value={profileData.name}
+                            <input dir="auto" id="name" value={profileData.name}
                                 onChange={(e) => setProfileData((prev) => ({ ...prev!, name: e.target.value }))}
                                 type="text"
                                 className={input()} maxLength={30} />
