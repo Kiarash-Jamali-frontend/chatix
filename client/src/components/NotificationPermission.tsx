@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useOneSignal } from '../hooks/useOneSignal';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { RootState } from '../redux/store';
 import { storeNotificationSettings, storeOneSignalUserId } from '../services/notificationService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faBellSlash } from '@fortawesome/free-solid-svg-icons';
 import button from '../cva/button';
 import SwitchButton from './common/SwitchButton';
+import { getUserProfile } from '../redux/slices/user';
 
 interface NotificationPermissionProps {
   onClose?: () => void;
@@ -26,6 +27,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   const userProfile = useAppSelector((state: RootState) => state.user.profile)
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [settings, setSettings] = useState<SettingsType | null>(null);
 
@@ -62,6 +64,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
       }
       if (userEmail && userId && userProfile && !userProfile.oneSignalUserIds?.find((id) => id == userId)) {
         await storeOneSignalUserId(userEmail, userId, userProfile.oneSignalUserIds);
+        dispatch(getUserProfile(userEmail));
       }
     } catch (error) {
       console.error('Failed to request permission:', error);
