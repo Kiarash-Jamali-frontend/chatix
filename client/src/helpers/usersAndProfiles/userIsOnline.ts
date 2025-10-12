@@ -5,5 +5,5 @@ export default function userIsOnline({ lastActivity, nowTime, isOnline }: { last
     if (!nowTimeSeconds) {
         nowTimeSeconds = Timestamp.now().seconds;
     }
-    return isOnline && nowTimeSeconds - lastActivity.seconds < 60 && nowTimeSeconds !== 0;
+    return isOnline && nowTimeSeconds - lastActivity.seconds < (60+10) && nowTimeSeconds !== 0;
 }
