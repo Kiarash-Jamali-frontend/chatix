@@ -27,6 +27,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   const userProfile = useAppSelector((state: RootState) => state.user.profile)
   const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
   const [isLoading, setIsLoading] = useState(false);
+  const [oneSignalUserId, setOneSignalUserId] = useState<string | null>(null);
   const [settings, setSettings] = useState<SettingsType | null>(null);
 
   const handleUserSetup = async (oneSignalUserIds: string[] | undefined) => {
@@ -80,6 +81,10 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
     }
   };
 
+  const getOneSignalUserId = async () => {
+    setOneSignalUserId((await getUserId()) || null);
+  }
+
   useEffect(() => {
     if (settings && !settings.enabled && Object.values(settings).some((s) => s)) {
       setSettings({
@@ -93,6 +98,10 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   }, [userProfile]);
 
   useEffect(() => {
+    getOneSignalUserId();
+  }, [userProfile, isInitialized])
+
+  useEffect(() => {
     if (isInitialized && userEmail) {
       handleUserSetup(userProfile?.oneSignalUserIds);
     }
@@ -100,7 +109,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   if (isInitialized && settings) {
     return (
-      isEnabled ?
+      (isEnabled && oneSignalUserId && userProfile?.oneSignalUserIds?.includes(oneSignalUserId)) ?
         (
           <div className="flex items-center justify-between"
             onClick={() => handleSettingsChange('enabled', !settings.enabled)}>
