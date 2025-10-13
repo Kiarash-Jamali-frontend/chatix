@@ -23,7 +23,8 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
     isEnabled,
     requestPermission,
     setUserEmail,
-    userId
+    userId,
+    subscribe
   } = useOneSignal();
 
   const userProfile = useAppSelector((state: RootState) => state.user.profile)
@@ -60,6 +61,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
       if (!isNotificationEnabled()) {
         const result = await requestPermission();
         if (result != false && userEmail) {
+          await subscribe();
           await storeNotificationSettings(userEmail, settings || { enabled: true });
         }
       }
