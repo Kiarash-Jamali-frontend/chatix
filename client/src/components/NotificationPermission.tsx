@@ -68,7 +68,6 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
         await storeOneSignalUserId(userEmail, userId, userProfile.oneSignalUserIds);
         dispatch(getUserProfile(userEmail));
       }
-      await subscribe();
     } catch (error) {
       console.error('Failed to request permission:', error);
     } finally {
