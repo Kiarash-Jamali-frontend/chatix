@@ -281,7 +281,7 @@ const Layout: React.FC = () => {
     return () => {
       unsub();
     }
-  }, [isOnline]);
+  }, [isOnline, isConnecting]);
 
   useEffect(() => {
     if (user.data?.email) {
