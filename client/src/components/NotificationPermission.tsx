@@ -58,10 +58,10 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
   const handleRequestPermission = async () => {
     setIsLoading(true);
     try {
+      await subscribe();
       if (!isNotificationEnabled()) {
         const result = await requestPermission();
         if (result != false && userEmail) {
-          await subscribe();
           await storeNotificationSettings(userEmail, settings || { enabled: true });
         }
       }
