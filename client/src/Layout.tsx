@@ -20,13 +20,10 @@ import { Unsubscribe } from "firebase/firestore";
 import { Draft, setDraftsList } from "./redux/slices/drafts";
 import { changeFontSize } from "./redux/slices/fontSize";
 import firestoreDefaultDBAPIUrl from "./constants/firestoreDefaultDBAPIUrl";
-import { useOneSignal } from "./hooks/useOneSignal";
-import OneSignal from "react-onesignal";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const { unsubscribe, userId: oneSignalUserId } = useOneSignal();
   const user = useAppSelector((state: RootState) => state.user);
   const { value: theme } = useAppSelector((state: RootState) => state.theme);
   const { size: fontSize } = useAppSelector((state: RootState) => state.fontSize);
