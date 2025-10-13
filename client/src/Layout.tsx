@@ -310,9 +310,9 @@ const Layout: React.FC = () => {
 
   useEffect(() => {
     if (user.status === "authenticated") {
-      if (oneSignalUserId && !user.profile?.oneSignalUserIds?.includes(oneSignalUserId)) {
+      if (oneSignalUserId && !user.profile?.oneSignalUserIds?.includes(oneSignalUserId) || !oneSignalUserId) {
         console.log("X");
-        
+
         OneSignal.logout();
         unsubscribe();
       }
