@@ -24,7 +24,6 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
     requestPermission,
     setUserEmail,
     userId,
-    subscribe
   } = useOneSignal();
 
   const userProfile = useAppSelector((state: RootState) => state.user.profile)
