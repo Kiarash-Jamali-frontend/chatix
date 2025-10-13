@@ -302,9 +302,6 @@ const Layout: React.FC = () => {
       disableNetwork(db);
     } else {
       enableNetwork(db);
-      if (user.status == "authenticated" && user.data) {
-        dispatch(getUserProfile(user.data.email));
-      }
     }
   }, [isConnecting, user]);
 
