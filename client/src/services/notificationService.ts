@@ -2,7 +2,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import MessageType from '../types/MessageType';
 
-const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
+export const backendUrl = import.meta.env.VITE_CHATIX_SERVER_URL || 'http://localhost:3001';
 
 // Store user's OneSignal ID in Firebase
 export const storeOneSignalUserId = async (userEmail: string, newOneSignalUserId: string, oneSignalUserIds: string[] | undefined) => {

@@ -28,6 +28,7 @@ import { changeGroupsList } from "../../redux/slices/groups";
 import { changeToSystemDefaultTheme } from "../../redux/slices/theme";
 import OneSignal from "react-onesignal";
 import { useOneSignal } from "../../hooks/useOneSignal";
+import { backendUrl } from "../../services/notificationService";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -62,7 +63,7 @@ const Sidebar: React.FC = () => {
         isOnline: false,
       })
     }
-    await fetch(`${process.env.VITE_CHATIX_SERVER_URL}/api/subscriptions/delete`, {
+    await fetch(`${backendUrl}/api/subscriptions/delete`, {
       method: "DELETE",
       body: JSON.stringify({ id: OneSignal.User.PushSubscription.id })
     });
