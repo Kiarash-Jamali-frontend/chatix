@@ -24,6 +24,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
     requestPermission,
     setUserEmail,
     userId,
+    subscribe
   } = useOneSignal();
 
   const userProfile = useAppSelector((state: RootState) => state.user.profile)
@@ -64,9 +65,11 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
         }
       }
       if (userEmail && userId && userProfile && !userProfile.oneSignalUserIds?.find((id) => id == userId)) {
+        setUserEmail(userEmail);
         await storeOneSignalUserId(userEmail, userId, userProfile.oneSignalUserIds);
         dispatch(getUserProfile(userEmail));
       }
+      await subscribe();
     } catch (error) {
       console.error('Failed to request permission:', error);
     } finally {
