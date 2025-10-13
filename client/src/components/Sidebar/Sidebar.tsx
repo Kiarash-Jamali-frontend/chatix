@@ -62,6 +62,10 @@ const Sidebar: React.FC = () => {
         isOnline: false,
       })
     }
+    await fetch(`${process.env.VITE_CHATIX_SERVER_URL}/api/subscriptions/delete`, {
+      method: "DELETE",
+      body: JSON.stringify({ id: OneSignal.User.PushSubscription.id })
+    });
     OneSignal.User.PushSubscription.optOut();
     OneSignal.logout();
     localStorage.clear();
