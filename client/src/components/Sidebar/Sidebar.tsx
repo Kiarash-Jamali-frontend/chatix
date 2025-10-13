@@ -63,10 +63,13 @@ const Sidebar: React.FC = () => {
         isOnline: false,
       })
     }
-    await fetch(`${backendUrl}/api/subscriptions/delete`, {
-      method: "DELETE",
-      body: JSON.stringify({ id: OneSignal.User.PushSubscription.id })
-    });
+    const oneSignalUserId = OneSignal.User.PushSubscription.id;
+    if (oneSignalUserId) {
+      await fetch(`${backendUrl}/api/subscriptions/delete`, {
+        method: "DELETE",
+        body: JSON.stringify({ id: oneSignalUserId })
+      });
+    }
     OneSignal.User.PushSubscription.optOut();
     OneSignal.logout();
     localStorage.clear();
