@@ -20,7 +20,6 @@ import { Unsubscribe } from "firebase/firestore";
 import { Draft, setDraftsList } from "./redux/slices/drafts";
 import { changeFontSize } from "./redux/slices/fontSize";
 import firestoreDefaultDBAPIUrl from "./constants/firestoreDefaultDBAPIUrl";
-import OneSignal from "react-onesignal";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -269,7 +268,6 @@ const Layout: React.FC = () => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));
       if (!user) {
-        await OneSignal.logout();
         dispatch(changeUserStatus("unauthenticated"));
         dispatch(changeChatsStatus("userUnauthenticated"));
         dispatch(changeGroupsStatus("userUnauthenticated"));
