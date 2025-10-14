@@ -117,7 +117,7 @@ export const sendNotificationToUser = (userId: string, title: string, message: s
 export const subscribeToNotifications = async () => {
   try {
     await OneSignal.User.PushSubscription.optIn();
-    await OneSignal.Notifications.setDefaultUrl('/');
+    await OneSignal.Notifications.setDefaultUrl(import.meta.env.VITE_APP_URL);
     console.log('Subscribed to notifications successfully');
     return true;
   } catch (error) {
