@@ -246,17 +246,11 @@ app.delete("/api/subscriptions/delete", async (req, res) => {
       })
     }
 
-    const response = await fetch(`https://api.onesignal.com/apps/${ONESIGNAL_APP_ID}/subscriptions/${id}`, {
+    await fetch(`https://api.onesignal.com/apps/${ONESIGNAL_APP_ID}/subscriptions/${id}`, {
       method: 'DELETE',
       body: undefined
     });
 
-    const result = await response.json();
-
-    if (result.errors) {
-      console.error('OneSignal API errors:', result.errors);
-      return res.status(400).json({ success: false, errors: result.errors });
-    }
 
     return res.json({ success: true });
   } catch {
