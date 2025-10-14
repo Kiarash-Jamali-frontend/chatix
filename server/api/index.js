@@ -251,8 +251,7 @@ app.delete("/api/subscriptions/delete", async (req, res) => {
       body: undefined
     });
 
-
-    return res.json({ success: true });
+    res.json({ success: true });
   } catch {
     res.status(500).json({
       success: false,
