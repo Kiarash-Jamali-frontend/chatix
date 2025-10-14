@@ -13,7 +13,6 @@ import Lottie from 'react-lottie-player';
 import LoginMessageAnimation from '../lottie/LoginMessageAnimation.json';
 import AppUpdateMessage from "../components/Sidebar/AppUpdateMessage";
 import { useOneSignal } from "../hooks/useOneSignal";
-import OneSignal from "react-onesignal";
 import { setOneSignalUserEmail } from "../utils/onesignal";
 
 const Login: React.FC = () => {
@@ -41,7 +40,6 @@ const Login: React.FC = () => {
       .then((userCredential) => {
         dispatch(changeUserData({ email: userCredential.user.email! }));
         dispatch(getUserProfile(userCredential.user.email!)).then(async () => {
-          await OneSignal.login(userCredential.user.email!);
           setOneSignalUserEmail(userCredential.user.email!);
           await subscribe();
           navigate("/", { replace: true });

@@ -15,7 +15,6 @@ import Lottie from 'react-lottie-player';
 import LoginMessageAnimation from '../lottie/LoginMessageAnimation.json';
 import AppUpdateMessage from "../components/Sidebar/AppUpdateMessage";
 import { useOneSignal } from "../hooks/useOneSignal";
-import OneSignal from "react-onesignal";
 import { setOneSignalUserEmail } from "../utils/onesignal";
 
 const CreateAccount: React.FC = () => {
@@ -65,7 +64,6 @@ const CreateAccount: React.FC = () => {
                 }).then(() => {
                     dispatch(changeUserData({ email }));
                     dispatch(getUserProfile(email)).then(async () => {
-                        await OneSignal.login(email);
                         setOneSignalUserEmail(email);
                         await subscribe();
                         setLoading(false);
