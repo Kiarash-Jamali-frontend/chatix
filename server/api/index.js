@@ -236,30 +236,6 @@ app.delete("/api/notifications/delete", async (req, res) => {
   }
 });
 
-app.delete("/api/subscriptions/delete", async (req, res) => {
-  try {
-    const { id } = req.body;
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required fields: id (string)"
-      })
-    }
-
-    await fetch(`https://api.onesignal.com/apps/${ONESIGNAL_APP_ID}/subscriptions/${id}`, {
-      method: 'DELETE',
-      body: undefined
-    });
-
-    res.json({ success: true });
-  } catch {
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error'
-    });
-  }
-});
-
 // Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Unhandled error:', error);
