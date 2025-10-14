@@ -266,10 +266,10 @@ const Layout: React.FC = () => {
 
   useLayoutEffect(() => {
     getGoogleSigninRedirectResult();
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
       dispatch(changeUserData(user?.email ? { email: user.email } : null));
       if (!user) {
-        OneSignal.logout();
+        await OneSignal.logout();
         dispatch(changeUserStatus("unauthenticated"));
         dispatch(changeChatsStatus("userUnauthenticated"));
         dispatch(changeGroupsStatus("userUnauthenticated"));
