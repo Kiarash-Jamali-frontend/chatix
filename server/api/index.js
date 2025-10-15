@@ -32,7 +32,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
     const { players } = await playersResponse.json();
     const playerIds = players.map((p) => p.id);
 
-    const validPlayers = recipientIds.filter((r) => playerIds.includes(r.id))
+    const validPlayers = recipientIds.filter((r) => playerIds.includes(r))
 
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
