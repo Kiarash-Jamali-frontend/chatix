@@ -28,7 +28,6 @@ import { changeGroupsList } from "../../redux/slices/groups";
 import { changeToSystemDefaultTheme } from "../../redux/slices/theme";
 import OneSignal from "react-onesignal";
 import { useOneSignal } from "../../hooks/useOneSignal";
-import { backendUrl } from "../../services/notificationService";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -62,13 +61,6 @@ const Sidebar: React.FC = () => {
       await updateDoc(doc(db, "profile", user.profile.id), {
         isOnline: false,
       })
-    }
-    const oneSignalUserId = OneSignal.User.PushSubscription.id;
-    if (oneSignalUserId) {
-      await fetch(`${backendUrl}/api/subscriptions/delete`, {
-        method: "DELETE",
-        body: JSON.stringify({ id: oneSignalUserId })
-      });
     }
     OneSignal.User.PushSubscription.optOut();
     OneSignal.logout();
