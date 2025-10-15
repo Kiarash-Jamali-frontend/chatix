@@ -22,6 +22,17 @@ const APP_URL = process.env.APP_URL;
 // Send notification to multiple users
 const sendNotificationToUsers = async (recipientIds, title, message, icon, webPushTopic, channelId, data = {}) => {
   try {
+
+    const playersResponse = await fetch(`https://onesignal.com/api/v1/players?app_id=${ONESIGNAL_APP_ID}`, {
+      headers: {
+        'Authorization': `Basic ${ONESIGNAL_REST_API_KEY}`
+      }
+    });
+
+    const players = await playersResponse.json();
+
+    const validPlayers = players.filter((r) => !r.invalid_identifier && recipientIds.includes(r.id));
+
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
       headers: {
@@ -31,7 +42,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
       body: JSON.stringify({
         app_id: ONESIGNAL_APP_ID,
         include_aliases: {
-          onesignal_id: recipientIds
+          onesignal_id: validPlayers
         },
         target_channel: "push",
         headings: { en: title },
