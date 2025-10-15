@@ -63,7 +63,6 @@ const Sidebar: React.FC = () => {
       })
     }
     OneSignal.User.PushSubscription.optOut();
-    OneSignal.logout();
     localStorage.clear();
     await signOut(auth);
     await terminate(db);
