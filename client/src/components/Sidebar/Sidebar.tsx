@@ -70,7 +70,7 @@ const Sidebar: React.FC = () => {
     await clearIndexedDbPersistence(db).then(() => {
       getNewFirestore(app);
       setLogoutPending(false);
-      navigate("/login");
+      navigate(0);
     });
   };
 
