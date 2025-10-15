@@ -104,14 +104,14 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
 
   if (isInitialized && settings) {
     return (
-      (isEnabled && userId && userProfile?.oneSignalUserIds && userProfile?.oneSignalUserIds.includes(userId)) ?
+      (isEnabled && userId && userProfile?.oneSignalUserIds && userProfile?.oneSignalUserIds.includes(userId)) && permission == "granted" ?
         (
           <div className="flex items-center justify-between"
             onClick={() => handleSettingsChange('enabled', !settings.enabled)}>
             <span>Notifications</span>
             <SwitchButton enabled={settings.enabled} />
           </div>
-        ) : permission != 'granted' ? (
+        ) : permission == 'denied' ? (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-lg p-4">
             <div className="flex items-end lg:justify-between lg:items-center lg:flex-row flex-col">
               <div className="flex items-center gap-2 w-full lg:w-fit">
