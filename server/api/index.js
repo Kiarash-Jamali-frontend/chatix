@@ -29,7 +29,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
       }
     });
 
-    const players = await playersResponse.json();
+    const { players } = await playersResponse.json();
 
     const validPlayers = players.filter((r) => !r.invalid_identifier && recipientIds.includes(r.id));
 
