@@ -62,7 +62,7 @@ const NotificationPermission: React.FC<NotificationPermissionProps> = () => {
       }
       if (userEmail && userId && userProfile && !userProfile.oneSignalUserIds?.find((id) => id == userId)) {
         await storeOneSignalUserId(userEmail, userId, userProfile.oneSignalUserIds);
-        dispatch(getUserProfile(userEmail));
+        await dispatch(getUserProfile(userEmail));
       }
       await subscribe();
     } catch (error) {
