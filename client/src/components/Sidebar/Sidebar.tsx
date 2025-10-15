@@ -62,7 +62,8 @@ const Sidebar: React.FC = () => {
         isOnline: false,
       })
     }
-    OneSignal.User.PushSubscription.optOut();
+    await OneSignal.User.PushSubscription.optOut();
+    await OneSignal.logout();
     localStorage.clear();
     await signOut(auth);
     await terminate(db);
