@@ -53,7 +53,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
 
     const result = await response.json();
 
-    if (result.errors) {
+    if (!result.id) {
       console.error('OneSignal API errors:', result.errors);
       return { success: false, errors: result.errors };
     }
