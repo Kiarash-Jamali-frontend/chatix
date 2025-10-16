@@ -303,7 +303,7 @@ const Layout: React.FC = () => {
     } else {
       enableNetwork(db);
     }
-  }, [isConnecting, user]);
+  }, [isConnecting]);
 
   useEffect(() => {
     if (user.status === "authenticated") {
