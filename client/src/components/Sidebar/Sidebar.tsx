@@ -26,7 +26,6 @@ import { clearIndexedDbPersistence, doc, terminate, updateDoc } from "firebase/f
 import { changeChatsList } from "../../redux/slices/chats";
 import { changeGroupsList } from "../../redux/slices/groups";
 import { changeToSystemDefaultTheme } from "../../redux/slices/theme";
-import OneSignal from "react-onesignal";
 import { useOneSignal } from "../../hooks/useOneSignal";
 
 const Sidebar: React.FC = () => {
@@ -40,7 +39,7 @@ const Sidebar: React.FC = () => {
   const { list: groups, status: groupsStatus } = useAppSelector((state: RootState) => state.groups);
   const isConnecting = ([chatsStatus, groupsStatus, user.status].some((v) => v == "loading") || !isOnline);
   const { clearAllSecrets } = useEncryption();
-  const { getUserId } = useOneSignal();
+  const { getUserId, unsubscribe } = useOneSignal();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -62,7 +61,7 @@ const Sidebar: React.FC = () => {
         isOnline: false,
       })
     }
-    await OneSignal.User.PushSubscription.optOut();
+    await unsubscribe();
     localStorage.clear();
     await signOut(auth);
     await terminate(db);
