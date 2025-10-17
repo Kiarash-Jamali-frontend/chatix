@@ -58,9 +58,9 @@ export default function MakeStickerPackModalContent({ setIsActive }: { setIsActi
                 let urls: string[] = [];
                 for (let i = 0; i < packItems.length; i++) {
                     const file = packItems[i];
-                    const profileRef = ref(storage, `sticker_packs/${docRef.id}/${uuid()}.${getFileExt(file.name)}`);
-                    await uploadBytes(profileRef, file);
-                    const url = await getDownloadURL(profileRef);
+                    const stickerRef = ref(storage, `sticker_packs/${docRef.id}/${uuid()}.${getFileExt(file.name)}`);
+                    await uploadBytes(stickerRef, file);
+                    const url = await getDownloadURL(stickerRef);
                     urls.push(url);
                 }
                 await runTransaction(db, async (transaction) => {
