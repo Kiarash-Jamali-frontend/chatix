@@ -6,7 +6,7 @@ import { RootState } from "../redux/store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSmile } from "@fortawesome/free-regular-svg-icons";
 import EmojiPicker, { SuggestionMode, Theme } from "emoji-picker-react";
-import { faClose, faMicrophone, faPaperclip, faPaperPlane, faReply, faSquare } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faMicrophone, faPaperclip, faPaperPlane, faPlus, faReply, faSquare } from "@fortawesome/free-solid-svg-icons";
 import ContentEditable from 'react-contenteditable'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../helpers/files/getFileExt";
@@ -25,6 +25,9 @@ import { toast, ToastContainer } from "react-toastify";
 import toastConf from "../../utils/toastConfig";
 import MessageType from "../types/MessageType";
 import messageCollectionByType from "../constants/messageCollectionByType";
+import button from "../cva/button";
+import Modal from "./Modal";
+import MakeStickerPackModalContent from "./MakeStickerPackModalContent";
 
 export type ChatInputPropTypes = {
   type: MessageType;
@@ -86,6 +89,8 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
   const [recordingDuration, setRecordingDuration] = useState<number>(0);
   const [recordingTimer, setRecordingTimer] = useState<NodeJS.Timeout | null>(null);
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState<boolean | null>(null);
+  const [selectedPickerTab, setSelectedPickerTab] = useState<"emoji" | "sticker">("emoji");
+  const [makeStickerPackModalIsActive, setMakeStickerPackModalIsActive] = useState<boolean>(false);
 
   const messageTextHtmlBody = new DOMParser().parseFromString(messageText, "text/html").body;
   const showSendButton = (messageTextHtmlBody.innerText || childNodes.filter((cn) => cn.tagName == "IMG").length ? true : false);
@@ -521,6 +526,9 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
 
   return (
     <>
+      <Modal isActive={makeStickerPackModalIsActive} setIsActive={setMakeStickerPackModalIsActive}>
+        <MakeStickerPackModalContent setIsActive={setMakeStickerPackModalIsActive} />
+      </Modal>
       <ToastContainer />
       <div className={`relative flex items-stretch max-h-12`}
         onKeyDown={(e) => {
@@ -542,15 +550,49 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
               }
             }}
               transition={{ duration: 0.2 }} initial="hide" exit="hide" animate="open"
-              className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50">
-              <EmojiPicker open={emojiPickerIsOpen}
-                theme={theme == "dark" || (!theme && systemThemeIsDark) ? Theme.DARK : Theme.LIGHT}
-                height={300} previewConfig={{ showPreview: false }} lazyLoadEmojis={true} searchDisabled
-                suggestedEmojisMode={SuggestionMode.FREQUENT}
-                onEmojiClick={(e) => handleChangeMessageText(
-                  `<img crossOrigin="anonymous" src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`,
-                  true
-                )} />
+              className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50 bg-secondary">
+              {
+                selectedPickerTab == "emoji" && (
+                  <EmojiPicker open={emojiPickerIsOpen}
+                    theme={theme == "dark" || (!theme && systemThemeIsDark) ? Theme.DARK : Theme.LIGHT}
+                    height={300} previewConfig={{ showPreview: false }} lazyLoadEmojis={true} searchDisabled
+                    suggestedEmojisMode={SuggestionMode.FREQUENT}
+                    onEmojiClick={(e) => handleChangeMessageText(
+                      `<img crossOrigin="anonymous" src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`,
+                      true
+                    )} />
+                )
+              }
+              {
+                selectedPickerTab == "sticker" && (
+                  <div className="w-[350px] h-[300px] rounded-lg border bg-secondary">
+                    {
+                      !userProfile?.stickerPacksIds || !userProfile.stickerPacksIds.length ? (
+                        <div className="w-full h-full grid place-items-center">
+                          <div className="grid place-items-center">
+                            <button className={button({ className: "!size-16 !text-natural/60 !text-3xl !rounded-full !bg-base" })}
+                            onClick={() => {
+                              setEmojiPickerIsOpen(false);
+                              setMakeStickerPackModalIsActive(true);
+                            }}>
+                              <FontAwesomeIcon icon={faPlus} />
+                            </button>
+                            <p className="text-center text-sm text-natural/60 mt-4">
+                              Make your first sticker pack!
+                            </p>
+                          </div>
+                        </div>
+                      ) : null
+                    }
+                  </div>
+                )
+              }
+              <div className="grid grid-cols-2 p-1 gap-x-1 w-[350px]">
+                <button className={button({ size: "small", intent: selectedPickerTab == "emoji" ? "primary" : "default", className: "!border" })}
+                  onClick={() => setSelectedPickerTab("emoji")}>Emojis</button>
+                <button className={button({ size: "small", intent: selectedPickerTab == "sticker" ? "primary" : "default", className: "!border" })}
+                  onClick={() => setSelectedPickerTab("sticker")}>Stickers</button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

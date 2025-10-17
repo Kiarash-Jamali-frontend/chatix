@@ -6,7 +6,8 @@ type Profile = {
     notificationSettings?: { enabled: boolean };
     oneSignalUserIds?: string[]
     showOnlineStatus?: boolean;
-    isOnline: boolean
+    isOnline: boolean;
+    stickerPacksIds?: string[];
 }
 
 export default Profile;

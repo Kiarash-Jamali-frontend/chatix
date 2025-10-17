@@ -212,6 +212,13 @@ export default function Settings() {
                             <span>Show last seen and online status</span>
                             <SwitchButton enabled={showOnlineStatus} />
                         </div>
+                        <div className="flex items-center justify-between"
+                            onClick={changeShowLastSeenAndOnlineStatusHandler}>
+                            <span>Sticker packs</span>
+                            <button className={button({ size: "extraSmall" })}>
+                                Manage
+                            </button>
+                        </div>
                         <div className="flex items-center justify-between">
                             <span>Font size</span>
                             <div className="flex items-center">
