@@ -601,7 +601,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                               userProfile.stickerPacks?.map((p) => {
                                 return (
                                   <div key={p.id}>
-                                    <div className="text-sm" dir="auto">{p.name}</div>
+                                    <div className="text-sm font-Vazir" dir="auto">{p.name}</div>
                                     <div className="grid grid-cols-4 gap-2.5 mt-2.5">
                                       {
                                         p.urls.map((url) => {
