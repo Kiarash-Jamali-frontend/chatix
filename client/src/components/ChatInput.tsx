@@ -571,10 +571,10 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                         <div className="w-full h-full grid place-items-center">
                           <div className="grid place-items-center">
                             <button className={button({ className: "!size-16 !text-natural/60 !text-3xl !rounded-full !bg-base" })}
-                            onClick={() => {
-                              setEmojiPickerIsOpen(false);
-                              setMakeStickerPackModalIsActive(true);
-                            }}>
+                              onClick={() => {
+                                setEmojiPickerIsOpen(false);
+                                setMakeStickerPackModalIsActive(true);
+                              }}>
                               <FontAwesomeIcon icon={faPlus} />
                             </button>
                             <p className="text-center text-sm text-natural/60 mt-4">
@@ -582,7 +582,43 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                             </p>
                           </div>
                         </div>
-                      ) : null
+                      ) : (
+                        <div className="p-3.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold">
+                              Stickers
+                            </span>
+                            <button className={button({ size: "extraSmall" })}
+                              onClick={() => {
+                                setEmojiPickerIsOpen(false);
+                                setMakeStickerPackModalIsActive(true);
+                              }}>
+                              Make new pack
+                            </button>
+                          </div>
+                          <div className="mt-3.5">
+                            {
+                              userProfile.stickerPacks?.map((p) => {
+                                return (
+                                  <div key={p.id}>
+                                    <div className="text-sm">{p.name}</div>
+                                    <div className="grid grid-cols-5 gap-2.5 mt-2.5">
+                                      {
+                                        p.urls.map((url) => {
+                                          return (
+                                            <img src={url} className="aspect-square object-cover rounded-xl"
+                                              crossOrigin="anonymous" />
+                                          )
+                                        })
+                                      }
+                                    </div>
+                                  </div>
+                                )
+                              })
+                            }
+                          </div>
+                        </div>
+                      )
                     }
                   </div>
                 )

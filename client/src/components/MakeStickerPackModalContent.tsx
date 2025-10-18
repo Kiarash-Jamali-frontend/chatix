@@ -65,6 +65,7 @@ export default function MakeStickerPackModalContent({ setIsActive }: { setIsActi
                 }
                 await runTransaction(db, async (transaction) => {
                     transaction.update(doc(db, "sticker_pack", docRef.id), {
+                        id: docRef.id,
                         urls
                     });
                     transaction.update(doc(db, "profile", userEmail), {

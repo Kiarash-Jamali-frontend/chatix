@@ -1,15 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Profile from "../../types/Profile";
-import { doc, getDoc, runTransaction } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, runTransaction, where } from "firebase/firestore";
 import { db, storage } from "../../../utils/firebase";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../../helpers/files/getFileExt";
+import StickerPack from "../../types/StickerPack";
 
 export type UserState = {
     data: {
         email: string,
     } | null,
-    profile: (Profile & { id: string }) | null;
+    profile: (Profile & { id: string, stickerPacks?: StickerPack[] }) | null;
     status: "loading" | "authenticated" | "unauthenticated"
 }
 
@@ -22,9 +23,16 @@ const initialState: UserState = {
 export const getUserProfile = createAsyncThunk("user/getUserProfile", async (email: string) => {
     const docRef = doc(db, "profile", email);
     const docSnap = await getDoc(docRef);
+    const docSnapData = docSnap.data() as Profile;
+    const stickerPacksQuery = query(collection(db, "sticker_pack"), where("id", "in", docSnapData.stickerPacksIds));
+    const stickerPacksDocsSnap = await getDocs(stickerPacksQuery);
+    const stickerPacks = stickerPacksDocsSnap.docs.map((document) => {
+        return document.data() as StickerPack;
+    })
     return {
-        ...docSnap.data() as Profile,
-        id: docSnap.id
+        ...docSnapData,
+        id: docSnap.id,
+        stickerPacks
     }
 });
 

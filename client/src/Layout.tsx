@@ -263,6 +263,17 @@ const Layout: React.FC = () => {
     themeInLocalStorage && dispatch(changeTheme(themeInLocalStorage))
   }
 
+  const handleChangeIsConnecting = async () => {
+    const hasCacheData = localStorage.getItem("chatix_has_cache_data");
+    if (isConnecting && hasCacheData == "true") {
+      disableNetwork(db);
+    } else {
+      await enableNetwork(db);
+      const email = user.data?.email;
+      email && dispatch(getUserProfile(email));
+    }
+  }
+
   useLayoutEffect(() => {
     getGoogleSigninRedirectResult();
     const unsub = onAuthStateChanged(auth, async (user) => {
@@ -297,12 +308,7 @@ const Layout: React.FC = () => {
   }, [user, isOnline]);
 
   useEffect(() => {
-    const hasCacheData = localStorage.getItem("chatix_has_cache_data");
-    if (isConnecting && hasCacheData == "true") {
-      disableNetwork(db);
-    } else {
-      enableNetwork(db);
-    }
+    handleChangeIsConnecting();
   }, [isConnecting]);
 
   useEffect(() => {
