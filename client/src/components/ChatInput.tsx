@@ -135,11 +135,14 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  const sendMessageHandler = async () => {
+  const sendMessageHandler = async (msgType: "text" | "sticker", stickerData?: { packId: string, url: string }) => {
     setEmojiPickerIsOpen(false);
     setTextMessagePending(true);
     setMessageText("");
     removeMessageSelectedForRelpy();
+
+    const isTextMsg = msgType == "text";
+    const messageContent = isTextMsg ? messageText.trim() : stickerData?.packId!;
 
     try {
       let messageData: any = {
@@ -147,11 +150,12 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         seen: false,
         timestamp: Timestamp.now(),
         to: messageTo,
-        type: "text",
-        replyTo: messageSelectedForReply?.id || null
+        type: msgType,
+        replyTo: messageSelectedForReply?.id || null,
+        packId: !isTextMsg ? stickerData!.packId : undefined
       };
 
-      if (isPrivateChat) {
+      if (isPrivateChat && isTextMsg) {
         const chatSecret = getChatSecret(userEmail, oppositeProfile.email);
         const encryptedData = await encryptMessage(messageText.trim(), chatSecret);
         messageData = {
@@ -160,7 +164,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
           isEncrypted: true
         };
       } else {
-        messageData.content = messageText.trim();
+        messageData.content = messageContent
       }
 
       const docRef = await addDoc(collection(db, messageCollectionByType[type]), messageData);
@@ -205,16 +209,16 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     } catch (error) {
       console.error('Failed to send encrypted message:', error);
       await addDoc(collection(db, messageCollectionByType[type]), {
-        content: messageText.trim(),
+        content: messageContent,
         from: userEmail,
         seen: false,
         timestamp: Timestamp.now(),
         to: messageTo,
-        type: "text",
+        type: msgType,
         replyTo: messageSelectedForReply?.id || null
       });
 
-      if (draft) dispatch(removeDraft(messageTo));
+      if (draft && isTextMsg) dispatch(removeDraft(messageTo));
 
       setTextMessagePending(false);
     }
@@ -534,7 +538,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         onKeyDown={(e) => {
           if (e.key == "Enter" && !e.shiftKey && !pending) {
             e.preventDefault();
-            sendMessageHandler();
+            sendMessageHandler("text");
           }
         }}>
         <AnimatePresence>
@@ -607,7 +611,11 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                                         p.urls.map((url) => {
                                           return (
                                             <img src={url} className="aspect-square object-cover rounded-xl"
-                                              crossOrigin="anonymous" />
+                                              crossOrigin="anonymous"
+                                              onClick={() => sendMessageHandler("sticker", {
+                                                packId: p.id,
+                                                url
+                                              })} />
                                           )
                                         })
                                       }
@@ -726,7 +734,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
           className="size-12 min-w-12 disabled:opacity-75 transition-opacity border shadow-xs bg-linear-to-br from-primary-400 to-primary-600 text-white rounded-full flex items-center justify-center"
           onClick={() => {
             (messageText) ?
-              sendMessageHandler() : !isRecording ? handleStartRecording() : handleStopRecordingBeforeSendVoiceMessage()
+              sendMessageHandler("text") : !isRecording ? handleStartRecording() : handleStopRecordingBeforeSendVoiceMessage()
           }}
           disabled={pending}
         >
