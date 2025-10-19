@@ -50,7 +50,7 @@ export default function MakeStickerPackModalContent({ setIsActive }: { setIsActi
         try {
             setError("");
             setPending(true);
-            if (!isInvalidData && userEmail) {
+            if (!isInvalidData && userEmail && userProfile) {
                 const docRef = await addDoc(collection(db, "sticker_pack"), {
                     name: packName,
                     creator: userEmail
@@ -69,7 +69,7 @@ export default function MakeStickerPackModalContent({ setIsActive }: { setIsActi
                         urls
                     });
                     transaction.update(doc(db, "profile", userEmail), {
-                        stickerPacksIds: userProfile?.stickerPacksIds ? [...userProfile.stickerPacksIds, docRef.id] : [docRef.id]
+                        stickerPacksIds: [...userProfile.stickerPacksIds, docRef.id]
                     });
                 });
                 await dispatch(getUserProfile(userEmail));
