@@ -12,6 +12,7 @@ import { v4 as uuid } from "uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import getFileExt from "../../helpers/files/getFileExt";
 import { getUserProfile } from "../../redux/slices/user";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
 export default function ManageStickerPacksModalContent({ setIsActive }: { setIsActive: Dispatch<SetStateAction<boolean>> }) {
 
@@ -53,7 +54,28 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
         setSelectedPackItemsForDelete((prev) => [...prev, item]);
     }
 
-    const uploadStickerPack = async () => {
+    const removeStickerPack = async () => {
+        try {
+            setError("");
+            setPending(true);
+            if (userEmail && selectedPack && userProfile) {
+                await runTransaction(db, async (transaction) => {
+                    transaction.update(doc(db, "profile", userEmail), {
+                        urls: userProfile.stickerPacksIds?.filter((id) => id != selectedPack.id) || []
+                    });
+                });
+                await dispatch(getUserProfile(userEmail));
+                setSelectedPack(null);
+            }
+        } catch (e) {
+            const { message } = e as Error;
+            setError(message);
+        } finally {
+            setPending(false);
+        }
+    }
+
+    const updateStickerPack = async () => {
         try {
             setError("");
             setPending(true);
@@ -72,7 +94,6 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                     });
                 });
                 await dispatch(getUserProfile(userEmail));
-                setIsActive(false);
             }
         } catch (e) {
             const { message } = e as Error;
@@ -131,7 +152,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                                 })
                             }
                             {
-                                selectedPack.urls.map((item, index) => {
+                                selectedPack.urls.filter((item) => !selectedPackItemsForDelete.includes(item)).map((item, index) => {
                                     return (
                                         <div key={index} className="relative">
                                             <button
@@ -152,12 +173,18 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                                 </div>
                             )
                         }
-                        <div className="grid grid-cols-2 gap-x-2.5 mt-4">
+                        <button className={button({ className: "mt-4 w-full", intent: "danger" })}
+                            onClick={removeStickerPack}>
+                            <FontAwesomeIcon icon={faTrashCan} className="me-2" />
+                            Remove sticker pack
+                        </button>
+                        <div className="grid grid-cols-2 gap-x-2.5 mt-2.5">
 
                             <button disabled={pending}
                                 onClick={() => {
                                     setSelectedPack(null);
                                     setPackItems([]);
+                                    setSelectedPackItemsForDelete([]);
                                 }}
                                 className={button()}>
                                 <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
@@ -165,7 +192,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                             </button>
 
                             <button disabled={isInvalidData || pending}
-                                onClick={uploadStickerPack}
+                                onClick={updateStickerPack}
                                 className={button({ intent: "primary" })}>
                                 Submit changes
                             </button>
