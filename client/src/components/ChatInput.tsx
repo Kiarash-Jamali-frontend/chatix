@@ -79,7 +79,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     }
   });
 
-  const [emojiPickerIsOpen, setEmojiPickerIsOpen] = useState<boolean>(false);
+  const [emojiAndStickerPickerIsOpen, setEmojiAndStickerPickerIsOpen] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>(draftValue);
   const [filePending, setFilePending] = useState<boolean>(false);
   const [voiceMessagePending, setVoiceMessagePending] = useState<boolean>(false);
@@ -136,7 +136,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
   };
 
   const sendMessageHandler = async (msgType: "text" | "sticker", stickerData?: { packId: string, url: string }) => {
-    setEmojiPickerIsOpen(false);
+    setEmojiAndStickerPickerIsOpen(false);
     setTextMessagePending(true);
     setMessageText("");
     removeMessageSelectedForRelpy();
@@ -340,7 +340,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
 
   const handleStartRecording = async () => {
     setIsRecording(true);
-    setEmojiPickerIsOpen(false);
+    setEmojiAndStickerPickerIsOpen(false);
     if (isRecording) {
       return;
     }
@@ -526,7 +526,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         }
       }
     }
-  }, [emojiPickerIsOpen])
+  }, [emojiAndStickerPickerIsOpen])
 
   return (
     <>
@@ -542,7 +542,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
           }
         }}>
         <AnimatePresence>
-          {emojiPickerIsOpen && (
+          {emojiAndStickerPickerIsOpen && (
             <motion.div ref={emojiPickerContainerRef} variants={{
               hide: {
                 opacity: 0,
@@ -557,7 +557,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
               className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50 bg-secondary">
               {
                 selectedPickerTab == "emoji" && (
-                  <EmojiPicker open={emojiPickerIsOpen}
+                  <EmojiPicker open={emojiAndStickerPickerIsOpen}
                     theme={theme == "dark" || (!theme && systemThemeIsDark) ? Theme.DARK : Theme.LIGHT}
                     height={300} previewConfig={{ showPreview: false }} lazyLoadEmojis={true} searchDisabled
                     suggestedEmojisMode={SuggestionMode.FREQUENT}
@@ -576,7 +576,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                           <div className="grid place-items-center">
                             <button className={button({ className: "!size-16 !text-natural/60 !text-3xl !rounded-full !bg-base" })}
                               onClick={() => {
-                                setEmojiPickerIsOpen(false);
+                                setEmojiAndStickerPickerIsOpen(false);
                                 setMakeStickerPackModalIsActive(true);
                               }}>
                               <FontAwesomeIcon icon={faPlus} />
@@ -594,7 +594,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                             </span>
                             <button className={button({ size: "extraSmall" })}
                               onClick={() => {
-                                setEmojiPickerIsOpen(false);
+                                setEmojiAndStickerPickerIsOpen(false);
                                 setMakeStickerPackModalIsActive(true);
                               }}>
                               Make new pack
@@ -689,11 +689,11 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         <div className="grow flex flex-col me-2 relative">
           <div className="px-3 shadow-xs rounded-full border bg-secondary flex items-center grow">
             <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
-              onClick={() => { !isRecording ? setEmojiPickerIsOpen(prev => !prev) : handleCancelRecording() }}>
-              <span className={`absolute transition-all size-5 ${(!emojiPickerIsOpen && !isRecording) ? "opacity-0 scale-0" : ""}`}>
+              onClick={() => { !isRecording ? setEmojiAndStickerPickerIsOpen(prev => !prev) : handleCancelRecording() }}>
+              <span className={`absolute transition-all size-5 ${(!emojiAndStickerPickerIsOpen && !isRecording) ? "opacity-0 scale-0" : ""}`}>
                 <FontAwesomeIcon icon={faClose} className="!size-5" />
               </span>
-              <span className={`absolute transition-all size-5 ${(emojiPickerIsOpen || isRecording) ? "opacity-0 scale-0" : ""}`}>
+              <span className={`absolute transition-all size-5 ${(emojiAndStickerPickerIsOpen || isRecording) ? "opacity-0 scale-0" : ""}`}>
                 <FontAwesomeIcon icon={faFaceSmile} className="!size-5" />
               </span>
             </button>

@@ -91,7 +91,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                 }
                 await runTransaction(db, async (transaction) => {
                     transaction.update(doc(db, "sticker_pack", selectedPack.id), {
-                        urls: [...selectedPack.urls.filter((url) => !selectedPackItemsForDelete.includes(url)), urls]
+                        urls: [...selectedPack.urls.filter((url) => !selectedPackItemsForDelete.includes(url)), ...urls]
                     });
                 });
                 await dispatch(getUserProfile(userEmail));

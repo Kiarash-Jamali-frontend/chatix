@@ -22,6 +22,7 @@ import { useEncryption } from "../../hooks/useEncryption";
 import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
 import { motion } from "framer-motion";
 import MessageType from "../../types/MessageType";
+import StickerMessage from "./StickerMessage";
 
 type PropTypes = {
   message: any;
@@ -246,6 +247,11 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
             {
               message.type === "text" &&
               <TextMessage recipients={recipients} replayMessage={replyedMessage} key={message.id}
+                message={{ ...message, content: decryptedContent }} type={type} senderProfile={senderProfile} />
+            }
+            {
+              message.type === "sticker" &&
+              <StickerMessage recipients={recipients} replayMessage={replyedMessage} key={message.id}
                 message={{ ...message, content: decryptedContent }} type={type} senderProfile={senderProfile} />
             }
           </div>
