@@ -10,7 +10,7 @@ export type UserState = {
     data: {
         email: string,
     } | null,
-    profile: (Profile & { id: string, stickerPacks?: StickerPack[] }) | null;
+    profile: (Profile & { id: string, stickerPacks: StickerPack[] }) | null;
     status: "loading" | "authenticated" | "unauthenticated"
 }
 

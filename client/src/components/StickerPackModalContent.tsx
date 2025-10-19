@@ -71,7 +71,7 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
                                 <FontAwesomeIcon icon={faClose} />
                             </button>
                         </div>
-                        <div className="grid grid-cols-5 gap-2 mt-5 max-h-60 overflow-auto">
+                        <div className="grid grid-cols-5 gap-2 mt-4 max-h-60 overflow-auto">
                             {
                                 stickerPack.urls.map((item, index) => {
                                     return (
@@ -81,7 +81,7 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
                             }
                         </div>
 
-                        <div className="mt-5">
+                        <div className="mt-4">
                             {
                                 userHasCurrentStickerPack ? (
                                     <button disabled={addOrRemovePending}

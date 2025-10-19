@@ -131,92 +131,113 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
 
             {
                 selectedPack ? (
-                    <>
-                        <div className="mt-4">
-                            <label htmlFor="packNameInput" className="text-sm">Name:</label>
-                            <input dir="auto" type="text" className={input({ className: "mt-1" })}
-                                value={packName} onChange={({ target }) => setPackName(target.value)} />
-                        </div>
-                        <div className="mt-4">
-                            <label htmlFor="packItemsInput" className="text-sm">Items:</label>
-                            <input ref={fileInputRef} type="file" multiple id="packItemsInput" accept="image/*" hidden
-                                onChange={handleSelectFiles} />
-                        </div>
-                        <div className="grid grid-cols-5 gap-2 mt-1 max-h-60 overflow-auto">
+                    selectedPack.creator !== userEmail ? (
+                        <>
+                            <div className="mt-4">
+                                <label htmlFor="packNameInput" className="text-sm">Name:</label>
+                                <input dir="auto" type="text" className={input({ className: "mt-1" })}
+                                    value={packName} onChange={({ target }) => setPackName(target.value)} />
+                            </div>
+                            <div className="mt-4">
+                                <label htmlFor="packItemsInput" className="text-sm">Items:</label>
+                                <input ref={fileInputRef} type="file" multiple id="packItemsInput" accept="image/*" hidden
+                                    onChange={handleSelectFiles} />
+                            </div>
+                            <div className="grid grid-cols-5 gap-2 mt-1 max-h-60 overflow-auto">
+                                {
+                                    packItems.length < 120 && (
+                                        <label htmlFor="packItemsInput"
+                                            className="aspect-square h-full w-full bg-base rounded-xl border grid place-items-center">
+                                            <FontAwesomeIcon icon={faPlus} className="text-2xl text-natural/60" />
+                                        </label>
+                                    )
+                                }
+                                {
+                                    packItems.map((item, index) => {
+                                        return (
+                                            <div key={index} className="relative">
+                                                <button
+                                                    onClick={() => deleteNotUploadedStickerPackItem(index)}
+                                                    className="absolute top-2 right-2 bg-base size-6 shadow-sm border grid place-items-center rounded-full">
+                                                    <FontAwesomeIcon icon={faTrashAlt} size="xs" />
+                                                </button>
+                                                <img className="aspect-square object-cover rounded-lg" src={URL.createObjectURL(item)} />
+                                            </div>
+                                        )
+                                    })
+                                }
+                                {
+                                    selectedPackItems.map((item, index) => {
+                                        return (
+                                            <div key={index} className="relative">
+                                                <button
+                                                    onClick={() => deleteStickerPackItem(item)}
+                                                    className="absolute top-2 right-2 bg-base size-6 shadow-sm border grid place-items-center rounded-full">
+                                                    <FontAwesomeIcon icon={faTrashAlt} size="xs" />
+                                                </button>
+                                                <img crossOrigin="anonymous" className="aspect-square object-cover rounded-xl" src={item} />
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
                             {
-                                packItems.length < 120 && (
-                                    <label htmlFor="packItemsInput"
-                                        className="aspect-square h-full w-full bg-base rounded-xl border grid place-items-center">
-                                        <FontAwesomeIcon icon={faPlus} className="text-2xl text-natural/60" />
-                                    </label>
+                                !!error && (
+                                    <div className="mt-4 rounded-lg text-sm p-2 bg-red-500/5 border border-red-500/25 text-red-500 flex">
+                                        {error}
+                                    </div>
                                 )
                             }
-                            {
-                                packItems.map((item, index) => {
-                                    return (
-                                        <div key={index} className="relative">
-                                            <button
-                                                onClick={() => deleteNotUploadedStickerPackItem(index)}
-                                                className="absolute top-2 right-2 bg-base size-6 shadow-sm border grid place-items-center rounded-full">
-                                                <FontAwesomeIcon icon={faTrashAlt} size="xs" />
-                                            </button>
-                                            <img className="aspect-square object-cover rounded-lg" src={URL.createObjectURL(item)} />
-                                        </div>
-                                    )
-                                })
-                            }
-                            {
-                                selectedPackItems.map((item, index) => {
-                                    return (
-                                        <div key={index} className="relative">
-                                            <button
-                                                onClick={() => deleteStickerPackItem(item)}
-                                                className="absolute top-2 right-2 bg-base size-6 shadow-sm border grid place-items-center rounded-full">
-                                                <FontAwesomeIcon icon={faTrashAlt} size="xs" />
-                                            </button>
-                                            <img crossOrigin="anonymous" className="aspect-square object-cover rounded-xl" src={item} />
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                        {
-                            !!error && (
-                                <div className="mt-4 rounded-lg text-sm p-2 bg-red-500/5 border border-red-500/25 text-red-500 flex">
-                                    {error}
-                                </div>
-                            )
-                        }
-                        <button disabled={pending} className={button({ className: "mt-4 w-full", intent: "danger" })}
-                            onClick={removeStickerPack}>
-                            <FontAwesomeIcon icon={faTrashCan} className="me-2" />
-                            Remove sticker pack
-                        </button>
-                        <div className="grid grid-cols-2 gap-x-2.5 mt-2.5">
+                            <button disabled={pending} className={button({ className: "mt-4 w-full", intent: "danger" })}
+                                onClick={removeStickerPack}>
+                                <FontAwesomeIcon icon={faTrashCan} className="me-2" />
+                                Remove sticker pack
+                            </button>
+                            <div className="grid grid-cols-2 gap-x-2.5 mt-2.5">
+
+                                <button disabled={pending}
+                                    onClick={() => {
+                                        setSelectedPack(null);
+                                        setPackItems([]);
+                                        setSelectedPackItemsForDelete([]);
+                                        setError("");
+                                    }}
+                                    className={button()}>
+                                    <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
+                                    Back
+                                </button>
+
+                                <button disabled={isInvalidData || pending}
+                                    onClick={updateStickerPack}
+                                    className={button({ intent: "primary" })}>
+                                    Submit changes
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <div>
+                            <div className="grid grid-cols-5 gap-2 mt-4 max-h-60 overflow-auto">
+                                {
+                                    selectedPack.urls.map((item, index) => {
+                                        return (
+                                            <img key={index} crossOrigin="anonymous" className="aspect-square object-cover rounded-lg" src={item} />
+                                        )
+                                    })
+                                }
+                            </div>
 
                             <button disabled={pending}
-                                onClick={() => {
-                                    setSelectedPack(null);
-                                    setPackItems([]);
-                                    setSelectedPackItemsForDelete([]);
-                                    setError("");
-                                }}
-                                className={button()}>
-                                <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
-                                Back
-                            </button>
-
-                            <button disabled={isInvalidData || pending}
-                                onClick={updateStickerPack}
-                                className={button({ intent: "primary" })}>
-                                Submit changes
+                                onClick={removeStickerPack}
+                                className={button({ className: "w-full mt-5", intent: "danger" })}>
+                                <FontAwesomeIcon icon={faTrashCan} className="me-2" />
+                                Remove sticker pack
                             </button>
                         </div>
-                    </>
+                    )
                 ) : (
                     <div className="mt-5 space-y-2">
                         {
-                            userProfile?.stickerPacks?.filter((p) => p.creator == userEmail).map((p) => {
+                            userProfile?.stickerPacks?.map((p) => {
                                 return (
                                     <div key={p.id} className="font-Vazir flex items-center justify-between p-2 rounded-xl border"
                                         onClick={() => {
