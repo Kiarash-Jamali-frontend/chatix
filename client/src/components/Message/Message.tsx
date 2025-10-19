@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { doc, runTransaction } from "firebase/firestore";
 import { db } from "../../../utils/firebase";
 import { RootState } from "../../redux/store";
-import ImageMessage from "./ImageMessage";
+import ImageAndStickerMessage from "./ImageOrStickerMessage";
 import VideoMessage from "./VideoMessage";
 import TextMessage from "./TextMessage";
 import FileMessage from "./FileMessage";
@@ -22,7 +22,6 @@ import { useEncryption } from "../../hooks/useEncryption";
 import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
 import { motion } from "framer-motion";
 import MessageType from "../../types/MessageType";
-import StickerMessage from "./StickerMessage";
 
 type PropTypes = {
   message: any;
@@ -223,7 +222,9 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
               )
             }
             {
-              message.type === "image" && <ImageMessage recipients={recipients} key={message.id}
+              (message.type === "image" || message.type == "sticker") && <ImageAndStickerMessage
+                msgType={message.type}
+                recipients={recipients} key={message.id}
                 replayMessage={replyedMessage} message={message} type={type}
                 senderProfile={senderProfile}
                 scrollDown={scrollDown} />
@@ -247,11 +248,6 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
             {
               message.type === "text" &&
               <TextMessage recipients={recipients} replayMessage={replyedMessage} key={message.id}
-                message={{ ...message, content: decryptedContent }} type={type} senderProfile={senderProfile} />
-            }
-            {
-              message.type === "sticker" &&
-              <StickerMessage recipients={recipients} replayMessage={replyedMessage} key={message.id}
                 message={{ ...message, content: decryptedContent }} type={type} senderProfile={senderProfile} />
             }
           </div>

@@ -9,9 +9,10 @@ import MessageType from "../../types/MessageType";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
+    msgType: "sticker" | "image"
 }
 
-export default function ImageMessage({ message, scrollDown, type, recipients }: PropTypes) {
+export default function ImageOrStickerMessage({ message, scrollDown, type, recipients, msgType }: PropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
 
@@ -30,9 +31,10 @@ export default function ImageMessage({ message, scrollDown, type, recipients }: 
             >
                 <div className="relative">
                     <div className="relative rounded-lg overflow-hidden cursor-pointer"
-                        onClick={() => dispatch(changeImage({ ...message, type, recipients }))}>
+                        onClick={() => msgType == 'image' && dispatch(changeImage({ ...message, type, recipients }))}>
                         <img
-                            crossOrigin="anonymous" onLoad={scrollDown} src={message.content} className="object-cover max-w-[400px] max-h-[275px] w-full" />
+                            crossOrigin="anonymous" onLoad={scrollDown} src={message.content}
+                            className={`${msgType == "image" ? "max-w-[400px] max-h-[275px]" : "size-20"} object-cover w-full`} />
                     </div>
                 </div>
 
