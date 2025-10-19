@@ -28,7 +28,8 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const userProfile = useAppSelector((state: RootState) => state.user.profile);
 
-    const isInvalidData = !(packItems.length && packName.trim());
+    const selectedPackItems = selectedPack?.urls.filter((item) => !selectedPackItemsForDelete.includes(item)) || [];
+    const isInvalidData = (!packItems.length && !selectedPackItems.length) || !packName.trim() || (!packItems.length && packName == selectedPack?.name);
 
     const handleSelectFiles = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -152,7 +153,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                                 })
                             }
                             {
-                                selectedPack.urls.filter((item) => !selectedPackItemsForDelete.includes(item)).map((item, index) => {
+                                selectedPackItems.map((item, index) => {
                                     return (
                                         <div key={index} className="relative">
                                             <button
