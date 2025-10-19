@@ -20,6 +20,7 @@ import { Unsubscribe } from "firebase/firestore";
 import { Draft, setDraftsList } from "./redux/slices/drafts";
 import { changeFontSize } from "./redux/slices/fontSize";
 import firestoreDefaultDBAPIUrl from "./constants/firestoreDefaultDBAPIUrl";
+import StickerPackModalProvider from "./providers/StickerPackModalProvider";
 
 const Layout: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -163,7 +164,8 @@ const Layout: React.FC = () => {
                   email: oppositeUserEmail,
                   createdAt: chatData.createdAt,
                   showOnlineStatus: profile.showOnlineStatus,
-                  isOnline: profile.isOnline
+                  isOnline: profile.isOnline,
+                  stickerPacksIds: profile.stickerPacksIds
                 }
               ];
 
@@ -353,11 +355,13 @@ const Layout: React.FC = () => {
       <div
         className={`${((systemThemeIsDark && !theme) || theme == "dark") ? "dark" : ""} bg-base lg:flex min-h-svh before:absolute before:inset-0 dark:before:invert-100 before:bg-[url('/background.svg')] before:bg-contain before:bg-repeat before:opacity-20 before:z-0`}>
         <div className="relative z-10 w-full h-full flex">
-          <ProfileModal />
-          {
-            !isPublicRoute && <Sidebar />
-          }
-          <Outlet />
+          <StickerPackModalProvider>
+            <ProfileModal />
+            {
+              !isPublicRoute && <Sidebar />
+            }
+            <Outlet />
+          </StickerPackModalProvider>
         </div>
       </div>
     </>

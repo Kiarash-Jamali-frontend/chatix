@@ -10,6 +10,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import deleteMessage from "../../helpers/messages/deleteMessage";
+import button from "../../cva/button";
+import { useContext } from "react";
+import { StickerPackModalContext } from "../../providers/StickerPackModalProvider";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
@@ -21,6 +24,7 @@ export default function ImageOrStickerMessage({ message, scrollDown, type, recip
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
     const dispatch = useAppDispatch();
+    const { setIsActive, setPackId } = useContext(StickerPackModalContext);
 
     const deleteStickerHandler = () => {
         const { id, notificationId } = message;
@@ -40,7 +44,7 @@ export default function ImageOrStickerMessage({ message, scrollDown, type, recip
                     ? "bg-linear-to-br from-primary-400 to-primary-600 text-white"
                     : "bg-secondary"
                     }
-               w-fit min-w-32 px-3 pt-3 text-[0.925em] z-30 text-start transition-all font-light relative cursor-default`}
+               w-fit min-w-36 px-3 pt-3 text-[0.925em] z-30 text-start transition-all font-light relative cursor-default`}
                 onFocus={() => dispatch(changeSelectedMessage(message))}
                 onBlur={() => dispatch(changeSelectedMessage(null))}
             >
@@ -49,7 +53,7 @@ export default function ImageOrStickerMessage({ message, scrollDown, type, recip
                         onClick={() => msgType == 'image' && dispatch(changeImage({ ...message, type, recipients }))}>
                         <img
                             crossOrigin="anonymous" onLoad={scrollDown} src={message.content}
-                            className={`${msgType == "image" ? "max-w-[400px] max-h-[275px]" : "size-32 aspect-square"} object-cover w-full`} />
+                            className={`${msgType == "image" ? "max-w-[400px] max-h-[275px]" : "size-36 aspect-square"} object-cover w-full`} />
                     </div>
 
                     <AnimatePresence>
@@ -66,11 +70,20 @@ export default function ImageOrStickerMessage({ message, scrollDown, type, recip
                                             transform: "scale(1)"
                                         }
                                     }} initial="hide" animate="show" exit="hide" transition={{ duration: 0.2 }}
-                                    className="absolute inset-2">
+                                    className="absolute inset-2 flex flex-col">
                                     <button
                                         onClick={deleteStickerHandler}
-                                        className={`me-2 size-8 text-sm flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
+                                        className={`size-8 text-sm flex items-center justify-center bg-secondary hover:bg-base transition-all text-natural rounded-full`}>
                                         <FontAwesomeIcon icon={faTrashCan} />
+                                    </button>
+                                    <button
+                                    onClick={() => {
+                                        setIsActive(true);
+                                        setPackId(message.packId);
+                                        dispatch(changeSelectedMessage(null));
+                                    }}
+                                    className={button({ size: "extraSmall", className: "mt-auto" })}>
+                                        Show pack
                                     </button>
                                 </motion.div>
                             )

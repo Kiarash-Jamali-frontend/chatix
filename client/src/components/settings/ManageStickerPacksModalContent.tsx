@@ -160,7 +160,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                                                 className="absolute top-2 right-2 bg-base size-6 shadow-sm border grid place-items-center rounded-full">
                                                 <FontAwesomeIcon icon={faTrashAlt} size="xs" />
                                             </button>
-                                            <img className="aspect-square object-cover rounded-xl" src={URL.createObjectURL(item)} />
+                                            <img className="aspect-square object-cover rounded-lg" src={URL.createObjectURL(item)} />
                                         </div>
                                     )
                                 })

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { redirect, useParams } from "react-router-dom"
 import { changeSelectedChatOrGroupID } from "../redux/slices/selectedChatOrGroup";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -16,6 +16,9 @@ import { isSameDay } from "date-fns";
 import customFormatRelative from "../helpers/customFormatRelative";
 import { AnimatePresence } from "framer-motion";
 import MessageType from "../types/MessageType";
+import Modal from "../components/Modal";
+import StickerPackModalContent from "../components/StickerPackModalContent";
+import { StickerPackModalContext } from "../providers/StickerPackModalProvider";
 
 export type MemberProfile = (Profile & {
     id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
@@ -36,6 +39,8 @@ export default function Group() {
 
     const myMemberProfile = membersProfiles.find((mp) => mp.email == userEmail);
     const messagesListRef = useRef<HTMLDivElement>(null);
+
+  const { isActive, setIsActive } = useContext(StickerPackModalContext);
 
     const getGroupMembersRecipients = useCallback((removedFromGroup: boolean): string[] => {
         return membersProfiles?.filter((p) => p.notificationSettings?.enabled && p.email != userEmail && (removedFromGroup ? true : !p.removedFromGroup))
@@ -160,6 +165,9 @@ export default function Group() {
     if (groupData && membersProfiles.length) {
         return (
             <div className="w-full flex flex-col h-svh">
+                <Modal isActive={isActive} setIsActive={setIsActive}>
+                    <StickerPackModalContent setIsActive={setIsActive} />
+                </Modal>
                 <ImageModal />
                 <GroupHeader groupMembersRecipients={getGroupMembersRecipients(false)} groupData={groupData} membersProfiles={membersProfiles} />
                 <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}

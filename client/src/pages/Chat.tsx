@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { redirect, useParams } from "react-router-dom";
 import ChatHeader from "../components/chat/ChatHeader";
 import {
@@ -25,6 +25,9 @@ import customFormatRelative from "../helpers/customFormatRelative";
 import { AnimatePresence } from "framer-motion";
 import { getOneSignalUserIdsFromFirebase } from "../services/notificationService";
 import MessageType from "../types/MessageType";
+import Modal from "../components/Modal";
+import StickerPackModalContent from "../components/StickerPackModalContent";
+import { StickerPackModalContext } from "../providers/StickerPackModalProvider";
 
 const Chat: React.FC = () => {
   const userData = useAppSelector((state: RootState) => state.user.data);
@@ -39,6 +42,7 @@ const Chat: React.FC = () => {
   const [oneSignalUserIds, setOneSignalUserIds] = useState<string[]>([]);
   const messagesListRef = useRef<HTMLDivElement>(null);
 
+  const { isActive, setIsActive } = useContext(StickerPackModalContext);
 
   const scrollDownHandler = () => {
     messagesListRef.current?.scrollTo({ top: messagesListRef.current.scrollHeight });
@@ -133,6 +137,9 @@ const Chat: React.FC = () => {
   if (profile && roomData) {
     return (
       <div className={`w-full flex flex-col h-svh`}>
+        <Modal isActive={isActive} setIsActive={setIsActive}>
+          <StickerPackModalContent setIsActive={setIsActive} />
+        </Modal>
         <ChatHeader profile={profile} />
         <ImageModal />
         <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}

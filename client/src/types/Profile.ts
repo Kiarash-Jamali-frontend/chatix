@@ -7,7 +7,7 @@ type Profile = {
     oneSignalUserIds?: string[]
     showOnlineStatus?: boolean;
     isOnline: boolean;
-    stickerPacksIds?: string[];
+    stickerPacksIds: string[];
 }
 
 export default Profile;

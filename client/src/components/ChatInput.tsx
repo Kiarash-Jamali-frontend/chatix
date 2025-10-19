@@ -606,11 +606,11 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                                 return (
                                   <div key={p.id}>
                                     <div className="text-sm font-Vazir">{p.name}</div>
-                                    <div className="grid grid-cols-4 gap-2.5 mt-2.5">
+                                    <div className="grid grid-cols-4 gap-2 mt-2">
                                       {
                                         p.urls.map((url) => {
                                           return (
-                                            <img src={url} className="aspect-square object-cover rounded-xl"
+                                            <img src={url} className="aspect-square object-cover rounded-lg"
                                               crossOrigin="anonymous"
                                               onClick={() => sendMessageHandler("sticker", {
                                                 packId: p.id,

@@ -60,7 +60,8 @@ const CreateAccount: React.FC = () => {
                     name: "New user",
                     lastActivity: Timestamp.now(),
                     photoUrl: "",
-                    showOnlineStatus: false
+                    showOnlineStatus: false,
+                    stickerPacksIds: []
                 }).then(() => {
                     dispatch(changeUserData({ email }));
                     dispatch(getUserProfile(email)).then(async () => {
