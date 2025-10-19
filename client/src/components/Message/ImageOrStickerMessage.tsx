@@ -34,7 +34,7 @@ export default function ImageOrStickerMessage({ message, scrollDown, type, recip
                         onClick={() => msgType == 'image' && dispatch(changeImage({ ...message, type, recipients }))}>
                         <img
                             crossOrigin="anonymous" onLoad={scrollDown} src={message.content}
-                            className={`${msgType == "image" ? "max-w-[400px] max-h-[275px]" : "size-32"} object-cover w-full`} />
+                            className={`${msgType == "image" ? "max-w-[400px] max-h-[275px]" : "size-32 aspect-square"} object-cover w-full`} />
                     </div>
                 </div>
 
