@@ -31,7 +31,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
     const selectedPackItems = selectedPack?.urls.filter((item) => !selectedPackItemsForDelete.includes(item)) || [];
     const isInvalidData = (!packItems.length && !selectedPackItems.length && !selectedPackItemsForDelete.length)
         || !packName.trim()
-        || (!packItems.length && packName == selectedPack?.name);
+        || (!packItems.length && !selectedPackItemsForDelete.length && packName == selectedPack?.name);
 
     const handleSelectFiles = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
