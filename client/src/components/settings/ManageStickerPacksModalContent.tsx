@@ -89,12 +89,23 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                     const url = await getDownloadURL(stickerRef);
                     urls.push(url);
                 }
+                const newUrlsList = [...selectedPack.urls.filter((url) => !selectedPackItemsForDelete.includes(url)), ...urls];
                 await runTransaction(db, async (transaction) => {
                     transaction.update(doc(db, "sticker_pack", selectedPack.id), {
-                        urls: [...selectedPack.urls.filter((url) => !selectedPackItemsForDelete.includes(url)), ...urls]
+                        urls: newUrlsList
                     });
                 });
                 await dispatch(getUserProfile(userEmail));
+                setPackItems([]);
+                setSelectedPack((prev) => {
+                    if (prev) {
+                        return {
+                            ...prev,
+                            urls: newUrlsList
+                        }
+                    }
+                    return null;
+                });
             }
         } catch (e) {
             const { message } = e as Error;
