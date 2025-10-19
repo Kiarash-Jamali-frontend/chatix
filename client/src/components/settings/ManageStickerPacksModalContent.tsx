@@ -94,6 +94,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                 const newUrlsList = [...selectedPack.urls.filter((url) => !selectedPackItemsForDelete.includes(url)), ...urls];
                 await runTransaction(db, async (transaction) => {
                     transaction.update(doc(db, "sticker_pack", selectedPack.id), {
+                        name: packName,
                         urls: newUrlsList
                     });
                 });
@@ -103,6 +104,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                     if (prev) {
                         return {
                             ...prev,
+                            name: packName,
                             urls: newUrlsList
                         }
                     }
