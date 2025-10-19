@@ -131,7 +131,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
 
             {
                 selectedPack ? (
-                    selectedPack.creator !== userEmail ? (
+                    selectedPack.creator == userEmail ? (
                         <>
                             <div className="mt-4">
                                 <label htmlFor="packNameInput" className="text-sm">Name:</label>
