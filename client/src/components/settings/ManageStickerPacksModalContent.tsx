@@ -174,7 +174,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                                 </div>
                             )
                         }
-                        <button className={button({ className: "mt-4 w-full", intent: "danger" })}
+                        <button disabled={pending} className={button({ className: "mt-4 w-full", intent: "danger" })}
                             onClick={removeStickerPack}>
                             <FontAwesomeIcon icon={faTrashCan} className="me-2" />
                             Remove sticker pack
@@ -186,6 +186,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                                     setSelectedPack(null);
                                     setPackItems([]);
                                     setSelectedPackItemsForDelete([]);
+                                    setError("");
                                 }}
                                 className={button()}>
                                 <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
