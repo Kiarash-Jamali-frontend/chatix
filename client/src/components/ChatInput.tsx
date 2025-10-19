@@ -142,7 +142,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     removeMessageSelectedForRelpy();
 
     const isTextMsg = msgType == "text";
-    const messageContent = isTextMsg ? messageText.trim() : stickerData?.packId!;
+    const messageContent = isTextMsg ? messageText.trim() : stickerData?.url!;
 
     try {
       let messageData: any = {
