@@ -29,7 +29,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
     const userProfile = useAppSelector((state: RootState) => state.user.profile);
 
     const selectedPackItems = selectedPack?.urls.filter((item) => !selectedPackItemsForDelete.includes(item)) || [];
-    const isInvalidData = (!packItems.length && !selectedPackItems.length) || !packName.trim() || (!packItems.length && packName == selectedPack?.name);
+    const isInvalidData = (!packItems.length && !selectedPackItems.length && !selectedPackItemsForDelete.length) || !packName.trim() || (!packItems.length && packName == selectedPack?.name);
 
     const handleSelectFiles = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
