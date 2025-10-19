@@ -41,7 +41,7 @@ export default function ReactionsEmojiPicker({ message }: PropTypes) {
                     transition={{
                         duration: 0.2
                     }}>
-                        <EmojiPicker searchDisabled={true} reactionsDefaultOpen={true}
+                        <EmojiPicker lazyLoadEmojis searchDisabled={true} reactionsDefaultOpen={true}
                             allowExpandReactions={false}
                             className="bg-secondary! dark:!border-white/12"
                             onReactionClick={emojiAndReactionClickHandler} />

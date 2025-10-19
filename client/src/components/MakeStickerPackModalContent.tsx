@@ -111,6 +111,14 @@ export default function MakeStickerPackModalContent({ setIsActive }: { setIsActi
                     ) : (
                         <div className="grid grid-cols-5 gap-2 mt-1 max-h-60 overflow-auto">
                             {
+                                packItems.length < 120 && (
+                                    <label htmlFor="packItemsInput"
+                                        className="aspect-square h-full w-full bg-base rounded-xl border grid place-items-center">
+                                        <FontAwesomeIcon icon={faPlus} className="text-2xl text-natural/60" />
+                                    </label>
+                                )
+                            }
+                            {
                                 packItems.map((item, index) => {
                                     return (
                                         <div key={index} className="relative">
@@ -123,14 +131,6 @@ export default function MakeStickerPackModalContent({ setIsActive }: { setIsActi
                                         </div>
                                     )
                                 })
-                            }
-                            {
-                                packItems.length < 120 && (
-                                    <label htmlFor="packItemsInput"
-                                        className="aspect-square h-full w-full bg-base rounded-xl border grid place-items-center">
-                                        <FontAwesomeIcon icon={faPlus} className="text-2xl text-natural/60" />
-                                    </label>
-                                )
                             }
                         </div>
                     )

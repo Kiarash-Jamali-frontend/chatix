@@ -19,6 +19,8 @@ import SwitchButton from "../components/common/SwitchButton";
 import { doc, updateDoc } from "firebase/firestore";
 import { decreaseFontSize, increaseFontSize } from "../redux/slices/fontSize";
 import getDefaultShowOnlineStatus from "../helpers/getDefaultShowOnlineStatus";
+import Modal from "../components/Modal";
+import ManageStickerPacksModalContent from "../components/settings/ManageStickerPacksModalContent";
 
 export default function Settings() {
     const [pending, setPending] = useState<boolean>(false);
@@ -32,6 +34,7 @@ export default function Settings() {
     const [oldPassword, setOldPassword] = useState<string>("");
     const [newPassword, setNewPassword] = useState<string>("");
     const [newPasswordConfirm, setNewPasswordConfirm] = useState<string>("");
+    const [manageStickerPacksModalIsActive, setManageStickerPacksModalIsActive] = useState<boolean>(false);
     const profileImageInput = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
     const { value: theme } = useAppSelector((state: RootState) => state.theme);
@@ -116,6 +119,9 @@ export default function Settings() {
     if (profileData) {
         return (
             <>
+                <Modal isActive={manageStickerPacksModalIsActive} setIsActive={setManageStickerPacksModalIsActive}>
+                    <ManageStickerPacksModalContent setIsActive={setManageStickerPacksModalIsActive} />
+                </Modal>
                 <ToastContainer />
                 <div className="p-6 lg:p-8 lg:max-h-[600px] overflow-auto lg:rounded-xl dark:bg-black bg-secondary dark:lg:bg-secondary lg:shadow-xs lg:border w-full lg:max-w-2xl m-auto max-lg:h-full max-lg:min-h-svh flex flex-col">
                     <div className="flex items-center pb-[11px] border-b">
@@ -212,10 +218,10 @@ export default function Settings() {
                             <span>Show last seen and online status</span>
                             <SwitchButton enabled={showOnlineStatus} />
                         </div>
-                        <div className="flex items-center justify-between"
-                            onClick={changeShowLastSeenAndOnlineStatusHandler}>
+                        <div className="flex items-center justify-between">
                             <span>Sticker packs</span>
-                            <button className={button({ size: "extraSmall" })}>
+                            <button className={button({ size: "extraSmall" })}
+                                onClick={() => setManageStickerPacksModalIsActive(true)}>
                                 Manage
                             </button>
                         </div>
