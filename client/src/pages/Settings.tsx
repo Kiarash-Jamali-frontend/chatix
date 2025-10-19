@@ -21,6 +21,7 @@ import { decreaseFontSize, increaseFontSize } from "../redux/slices/fontSize";
 import getDefaultShowOnlineStatus from "../helpers/getDefaultShowOnlineStatus";
 import Modal from "../components/Modal";
 import ManageStickerPacksModalContent from "../components/settings/ManageStickerPacksModalContent";
+import MakeStickerPackModalContent from "../components/MakeStickerPackModalContent";
 
 export default function Settings() {
     const [pending, setPending] = useState<boolean>(false);
@@ -35,6 +36,7 @@ export default function Settings() {
     const [newPassword, setNewPassword] = useState<string>("");
     const [newPasswordConfirm, setNewPasswordConfirm] = useState<string>("");
     const [manageStickerPacksModalIsActive, setManageStickerPacksModalIsActive] = useState<boolean>(false);
+    const [makeStickerPackModalIsActive, setMakeStickerPackModalIsActive] = useState<boolean>(false);
     const profileImageInput = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
     const { value: theme } = useAppSelector((state: RootState) => state.theme);
@@ -119,8 +121,12 @@ export default function Settings() {
     if (profileData) {
         return (
             <>
+                <Modal isActive={makeStickerPackModalIsActive} setIsActive={setMakeStickerPackModalIsActive}>
+                    <MakeStickerPackModalContent setIsActive={setMakeStickerPackModalIsActive} />
+                </Modal>
                 <Modal isActive={manageStickerPacksModalIsActive} setIsActive={setManageStickerPacksModalIsActive}>
-                    <ManageStickerPacksModalContent setIsActive={setManageStickerPacksModalIsActive} />
+                    <ManageStickerPacksModalContent
+                        setIsActive={setManageStickerPacksModalIsActive} />
                 </Modal>
                 <ToastContainer />
                 <div className="p-6 lg:p-8 lg:max-h-[600px] overflow-auto lg:rounded-xl dark:bg-black bg-secondary dark:lg:bg-secondary lg:shadow-xs lg:border w-full lg:max-w-2xl m-auto max-lg:h-full max-lg:min-h-svh flex flex-col">
@@ -220,10 +226,17 @@ export default function Settings() {
                         </div>
                         <div className="flex items-center justify-between">
                             <span>Sticker packs</span>
-                            <button className={button({ size: "extraSmall" })}
-                                onClick={() => setManageStickerPacksModalIsActive(true)}>
-                                Manage
-                            </button>
+                            <div className="flex items-center gap-x-1.5">
+                                <button className={button({ size: "extraSmall" })}
+                                    onClick={() => setManageStickerPacksModalIsActive(true)}>
+                                    Manage
+                                </button>
+                                <button className={button({ size: "extraSmall", intent: "primary" })}
+                                    onClick={() => setMakeStickerPackModalIsActive(true)}>
+                                    <FontAwesomeIcon icon={faPlus} className="me-1.5" />
+                                    Make new
+                                </button>
+                            </div>
                         </div>
                         <div className="flex items-center justify-between">
                             <span>Font size</span>

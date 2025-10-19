@@ -14,7 +14,11 @@ import getFileExt from "../../helpers/files/getFileExt";
 import { getUserProfile } from "../../redux/slices/user";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
-export default function ManageStickerPacksModalContent({ setIsActive }: { setIsActive: Dispatch<SetStateAction<boolean>> }) {
+export default function ManageStickerPacksModalContent({ setIsActive }:
+    {
+        setIsActive: Dispatch<SetStateAction<boolean>>;
+    }
+) {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -237,22 +241,31 @@ export default function ManageStickerPacksModalContent({ setIsActive }: { setIsA
                         </div>
                     )
                 ) : (
-                    <div className="mt-5 space-y-2">
-                        {
-                            userProfile?.stickerPacks?.map((p) => {
-                                return (
-                                    <div key={p.id} className="font-Vazir flex items-center justify-between p-2 rounded-xl border"
-                                        onClick={() => {
-                                            setSelectedPack(p);
-                                            setPackName(p.name);
-                                        }}>
-                                        {p.name}
-                                        <div className="size-7 bg-zinc-100 border rounded-full flex justify-center items-center">
-                                            <FontAwesomeIcon icon={faChevronRight} />
-                                        </div>
+                    <div>
+                        <div className="mt-4 space-y-2">
+                            {
+                                userProfile?.stickerPacks.length ? (
+                                    userProfile?.stickerPacks?.map((p) => {
+                                        return (
+                                            <div key={p.id} className="font-Vazir flex items-center justify-between p-2 rounded-xl border"
+                                                onClick={() => {
+                                                    setSelectedPack(p);
+                                                    setPackName(p.name);
+                                                }}>
+                                                {p.name}
+                                                <div className="size-7 bg-zinc-100 border rounded-full flex justify-center items-center">
+                                                    <FontAwesomeIcon icon={faChevronRight} />
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                ) : (
+                                    <div className="text-sm text-center p-3 border rounded-xl">
+                                        You don't have any sticker packs
                                     </div>
                                 )
-                            })}
+                            }
+                        </div>
                     </div>
                 )
             }
