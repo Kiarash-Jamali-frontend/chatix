@@ -6,6 +6,10 @@ import MessagePropTypes from "../../types/MessagePropTypes";
 import { changeSelectedMessage } from "../../redux/slices/selectedMessage";
 import { changeImage } from "../../redux/slices/openedImage";
 import MessageType from "../../types/MessageType";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { AnimatePresence, motion } from "framer-motion";
+import deleteMessage from "../../helpers/messages/deleteMessage";
 
 type PropTypes = MessagePropTypes & {
     scrollDown: () => void;
@@ -15,8 +19,19 @@ type PropTypes = MessagePropTypes & {
 export default function ImageOrStickerMessage({ message, scrollDown, type, recipients, msgType }: PropTypes) {
 
     const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
-
+    const selectedMessage = useAppSelector((state: RootState) => state.selectedMessage.data);
     const dispatch = useAppDispatch();
+
+    const deleteStickerHandler = () => {
+        const { id, notificationId } = message;
+        deleteMessage(
+            {
+                id,
+                notificationId,
+                recipientIds: recipients,
+                type
+            });
+    }
 
     return (
         <>
@@ -36,6 +51,31 @@ export default function ImageOrStickerMessage({ message, scrollDown, type, recip
                             crossOrigin="anonymous" onLoad={scrollDown} src={message.content}
                             className={`${msgType == "image" ? "max-w-[400px] max-h-[275px]" : "size-32 aspect-square"} object-cover w-full`} />
                     </div>
+
+                    <AnimatePresence>
+                        {
+                            selectedMessage && msgType == "sticker" && selectedMessage.id == message.id && (
+                                <motion.div
+                                    variants={{
+                                        hide: {
+                                            opacity: 0,
+                                            transform: "scale(0.9)"
+                                        },
+                                        show: {
+                                            opacity: 1,
+                                            transform: "scale(1)"
+                                        }
+                                    }} initial="hide" animate="show" exit="hide" transition={{ duration: 0.2 }}
+                                    className="absolute inset-2">
+                                    <button
+                                        onClick={deleteStickerHandler}
+                                        className={`me-2 size-8 text-sm flex items-center justify-center bg-white hover:bg-gray-50 text-black rounded-full`}>
+                                        <FontAwesomeIcon icon={faTrashCan} />
+                                    </button>
+                                </motion.div>
+                            )
+                        }
+                    </AnimatePresence>
                 </div>
 
                 <div className="flex justify-end items-center my-2">
