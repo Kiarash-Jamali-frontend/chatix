@@ -569,7 +569,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
               }
               {
                 selectedPickerTab == "sticker" && (
-                  <div className="w-[350px] h-[300px] rounded-lg border bg-secondary">
+                  <div className="w-[350px] h-[300px] overflow-y-auto rounded-lg border bg-secondary">
                     {
                       !userProfile?.stickerPacksIds || !userProfile.stickerPacksIds.length ? (
                         <div className="w-full h-full grid place-items-center">
@@ -600,7 +600,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                               Make new pack
                             </button>
                           </div>
-                          <div className="mt-3.5 space-y-5 h-full overflow-y-auto">
+                          <div className="mt-3.5 space-y-5">
                             {
                               userProfile.stickerPacks?.map((p) => {
                                 return (
