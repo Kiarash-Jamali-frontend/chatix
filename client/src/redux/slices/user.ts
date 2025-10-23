@@ -24,11 +24,14 @@ export const getUserProfile = createAsyncThunk("user/getUserProfile", async (ema
     const docRef = doc(db, "profile", email);
     const docSnap = await getDoc(docRef);
     const docSnapData = docSnap.data() as Profile;
-    const stickerPacksQuery = query(collection(db, "sticker_pack"), where("id", "in", docSnapData.stickerPacksIds));
-    const stickerPacksDocsSnap = await getDocs(stickerPacksQuery);
-    const stickerPacks = stickerPacksDocsSnap.docs.map((document) => {
-        return document.data() as StickerPack;
-    })
+    let stickerPacks: StickerPack[] = [];
+    if (docSnapData.stickerPacksIds) {
+        const stickerPacksQuery = query(collection(db, "sticker_pack"), where("id", "in", docSnapData.stickerPacksIds));
+        const stickerPacksDocsSnap = await getDocs(stickerPacksQuery);
+        stickerPacks = stickerPacksDocsSnap.docs.map((document) => {
+            return document.data() as StickerPack;
+        });
+    }
     return {
         ...docSnapData,
         id: docSnap.id,
