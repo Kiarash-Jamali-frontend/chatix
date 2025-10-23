@@ -22,7 +22,7 @@ import SearchBox from "./SearchBox";
 import AppUpdateMessage from "./AppUpdateMessage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { useEncryption } from "../../hooks/useEncryption";
-import { clearIndexedDbPersistence, doc, terminate, updateDoc } from "firebase/firestore";
+import { clearIndexedDbPersistence, doc, runTransaction, terminate } from "firebase/firestore";
 import { changeChatsList } from "../../redux/slices/chats";
 import { changeGroupsList } from "../../redux/slices/groups";
 import { useOneSignal } from "../../hooks/useOneSignal";
@@ -52,12 +52,12 @@ const Sidebar: React.FC = () => {
       const { oneSignalUserIds } = user.profile;
       const userDocRef = doc(db, 'profile', user.data!.email);
       const oneSignalUserId = await getUserId();
-      await updateDoc(userDocRef, {
-        oneSignalUserIds: oneSignalUserIds ? oneSignalUserIds.filter((id) => oneSignalUserId != id) : []
+      await runTransaction(db, async (transaction) => {
+        transaction.update(userDocRef, {
+          oneSignalUserIds: oneSignalUserIds ? oneSignalUserIds.filter((id) => oneSignalUserId != id) : [],
+          isOnline: false
+        })
       });
-      await updateDoc(doc(db, "profile", user.profile.id), {
-        isOnline: false,
-      })
     }
     await unsubscribe();
     localStorage.removeItem("chatix_has_cache_data");
