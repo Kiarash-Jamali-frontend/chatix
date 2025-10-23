@@ -25,7 +25,6 @@ import { useEncryption } from "../../hooks/useEncryption";
 import { clearIndexedDbPersistence, doc, terminate, updateDoc } from "firebase/firestore";
 import { changeChatsList } from "../../redux/slices/chats";
 import { changeGroupsList } from "../../redux/slices/groups";
-import { changeToSystemDefaultTheme } from "../../redux/slices/theme";
 import { useOneSignal } from "../../hooks/useOneSignal";
 
 const Sidebar: React.FC = () => {
@@ -48,7 +47,6 @@ const Sidebar: React.FC = () => {
     setLogoutPending(true);
     dispatch(changeChatsList([]));
     dispatch(changeGroupsList([]));
-    dispatch(changeToSystemDefaultTheme());
     clearAllSecrets();
     if (user.profile) {
       const { oneSignalUserIds } = user.profile;
@@ -62,7 +60,11 @@ const Sidebar: React.FC = () => {
       })
     }
     await unsubscribe();
-    localStorage.clear();
+    localStorage.removeItem("chatix_has_cache_data");
+    localStorage.removeItem("chatix_chat_secrets");
+    localStorage.removeItem("chatix_drafts");
+    localStorage.removeItem("chatix_user_data");
+    localStorage.removeItem("chatix_user_profile");
     await signOut(auth);
     await terminate(db);
     await clearIndexedDbPersistence(db).then(() => {
