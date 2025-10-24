@@ -25,7 +25,7 @@ export const getUserProfile = createAsyncThunk("user/getUserProfile", async (ema
     const docSnap = await getDoc(docRef);
     const docSnapData = docSnap.data() as Profile;
     let stickerPacks: StickerPack[] = [];
-    if (docSnapData.stickerPacksIds) {
+    if (docSnapData.stickerPacksIds.length) {
         const stickerPacksQuery = query(collection(db, "sticker_pack"), where("id", "in", docSnapData.stickerPacksIds));
         const stickerPacksDocsSnap = await getDocs(stickerPacksQuery);
         stickerPacks = stickerPacksDocsSnap.docs.map((document) => {
