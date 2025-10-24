@@ -152,8 +152,11 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         to: messageTo,
         type: msgType,
         replyTo: messageSelectedForReply?.id || null,
-        packId: !isTextMsg ? stickerData!.packId : undefined
       };
+
+      if (!isTextMsg && stickerData) {
+        messageData.packId = stickerData.packId;
+      }
 
       if (isPrivateChat && isTextMsg) {
         const chatSecret = getChatSecret(userEmail, oppositeProfile.email);
