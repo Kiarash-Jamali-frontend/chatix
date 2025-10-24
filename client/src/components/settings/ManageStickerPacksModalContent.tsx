@@ -6,7 +6,7 @@ import { RootState } from "../../redux/store";
 import StickerPack from "../../types/StickerPack";
 import input from "../../cva/input";
 import button from "../../cva/button";
-import { doc, runTransaction } from "firebase/firestore";
+import { doc, runTransaction, updateDoc } from "firebase/firestore";
 import { db, storage } from "../../../utils/firebase";
 import { v4 as uuid } from "uuid";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -66,10 +66,8 @@ export default function ManageStickerPacksModalContent({ setIsActive }:
             setError("");
             setPending(true);
             if (userEmail && selectedPack && userProfile) {
-                await runTransaction(db, async (transaction) => {
-                    transaction.update(doc(db, "profile", userEmail), {
-                        urls: userProfile.stickerPacksIds?.filter((id) => id != selectedPack.id) || []
-                    });
+                await updateDoc(doc(db, "profile", userEmail), {
+                    urls: userProfile.stickerPacksIds?.filter((id) => id != selectedPack.id) || []
                 });
                 await dispatch(getUserProfile(userEmail));
                 setSelectedPack(null);
