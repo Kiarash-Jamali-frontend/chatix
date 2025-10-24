@@ -70,19 +70,19 @@ export default function ImageOrStickerMessage({ message, scrollDown, type, recip
                                             transform: "scale(1)"
                                         }
                                     }} initial="hide" animate="show" exit="hide" transition={{ duration: 0.2 }}
-                                    className="absolute inset-2 flex flex-col">
+                                    className="absolute inset-2 flex h-fit gap-x-1.5 mt-auto">
                                     <button
                                         onClick={deleteStickerHandler}
-                                        className={`size-8 text-sm flex items-center justify-center bg-secondary hover:bg-base transition-all text-natural rounded-full`}>
+                                        className={`size-8 text-sm flex items-center justify-center bg-secondary hover:bg-base border transition-all text-natural rounded-full`}>
                                         <FontAwesomeIcon icon={faTrashCan} />
                                     </button>
                                     <button
-                                    onClick={() => {
-                                        setIsActive(true);
-                                        setPackId(message.packId);
-                                        dispatch(changeSelectedMessage(null));
-                                    }}
-                                    className={button({ size: "extraSmall", className: "mt-auto" })}>
+                                        onClick={() => {
+                                            setIsActive(true);
+                                            setPackId(message.packId);
+                                            dispatch(changeSelectedMessage(null));
+                                        }}
+                                        className={button({ size: "extraSmall", className: "grow !rounded-full" })}>
                                         Show pack
                                     </button>
                                 </motion.div>
