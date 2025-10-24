@@ -5,14 +5,17 @@ import { doc, getDoc, runTransaction } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import button from "../cva/button";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { getUserProfile } from "../redux/slices/user";
 
 export default function StickerPackModalContent({ setIsActive }: { setIsActive: Dispatch<SetStateAction<boolean>> }) {
 
     const userProfile = useAppSelector((state: RootState) => state.user.profile);
+    const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
+    const dispatch = useAppDispatch();
     const { packId } = useContext(StickerPackModalContext);
     const [pending, setPending] = useState<boolean>(true);
     const [addOrRemovePending, setAddOrRemovePending] = useState<boolean>(false);
@@ -29,7 +32,7 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
     }
 
     const addAndRemoveStickerPack = async () => {
-        if (userProfile) {
+        if (userProfile && userEmail) {
             setAddOrRemovePending(true);
 
             await runTransaction(db, async (transaction) => {
@@ -38,6 +41,8 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
                         : [...userProfile.stickerPacksIds, packId]
                 })
             });
+            
+            await dispatch(getUserProfile(userEmail));
 
             setAddOrRemovePending(false);
             setIsActive(false);
