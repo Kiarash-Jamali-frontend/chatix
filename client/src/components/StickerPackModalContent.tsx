@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import StickerPack from "../types/StickerPack";
 import { StickerPackModalContext } from "../providers/StickerPackModalProvider";
-import { doc, getDoc, runTransaction } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -20,7 +20,7 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
     const [addOrRemovePending, setAddOrRemovePending] = useState<boolean>(false);
     const [stickerPack, setStickerPack] = useState<StickerPack | null>(null);
 
-    const userHasCurrentStickerPack = userProfile?.stickerPacksIds?.includes(packId);
+    const userHasCurrentStickerPack = userProfile?.stickerPacksIds.includes(packId);
 
     const getStickerPack = async () => {
         setPending(true);
@@ -34,13 +34,15 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
         if (userProfile) {
             setAddOrRemovePending(true);
 
-            await runTransaction(db, async (transaction) => {
-                transaction.update(doc(db, "profile", userProfile.id), {
-                    stickerPacksIds: userHasCurrentStickerPack ? userProfile.stickerPacksIds.filter((id) => id != packId)
-                        : [...userProfile.stickerPacksIds, packId]
-                })
+            console.log(userHasCurrentStickerPack ? userProfile.stickerPacksIds.filter((id) => id != packId)
+                : [...userProfile.stickerPacksIds, packId]);
+
+
+            await updateDoc(doc(db, "profile", userProfile.id), {
+                stickerPacksIds: userHasCurrentStickerPack ? userProfile.stickerPacksIds.filter((id) => id != packId)
+                    : [...userProfile.stickerPacksIds, packId]
             });
-            
+
             await dispatch(getUserProfile(userProfile.id));
 
             setAddOrRemovePending(false);
@@ -50,7 +52,7 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
 
     useEffect(() => {
         getStickerPack();
-    }, [packId]);
+    }, [packId, userProfile]);
 
     return (
         <div>
