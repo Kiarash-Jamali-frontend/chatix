@@ -67,7 +67,7 @@ export default function ManageStickerPacksModalContent({ setIsActive }:
             setPending(true);
             if (userEmail && selectedPack && userProfile) {
                 await updateDoc(doc(db, "profile", userEmail), {
-                    urls: userProfile.stickerPacksIds?.filter((id) => id != selectedPack.id) || []
+                    stickerPacksIds: userProfile.stickerPacksIds.filter((id) => id != selectedPack.id) || []
                 });
                 await dispatch(getUserProfile(userEmail));
                 setSelectedPack(null);
