@@ -14,7 +14,6 @@ import { getUserProfile } from "../redux/slices/user";
 export default function StickerPackModalContent({ setIsActive }: { setIsActive: Dispatch<SetStateAction<boolean>> }) {
 
     const userProfile = useAppSelector((state: RootState) => state.user.profile);
-    const userEmail = useAppSelector((state: RootState) => state.user.data?.email);
     const dispatch = useAppDispatch();
     const { packId } = useContext(StickerPackModalContext);
     const [pending, setPending] = useState<boolean>(true);
@@ -32,7 +31,7 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
     }
 
     const addAndRemoveStickerPack = async () => {
-        if (userProfile && userEmail) {
+        if (userProfile) {
             setAddOrRemovePending(true);
 
             await runTransaction(db, async (transaction) => {
@@ -42,7 +41,7 @@ export default function StickerPackModalContent({ setIsActive }: { setIsActive: 
                 })
             });
             
-            await dispatch(getUserProfile(userEmail));
+            await dispatch(getUserProfile(userProfile.id));
 
             setAddOrRemovePending(false);
             setIsActive(false);
