@@ -174,7 +174,6 @@ const Layout: React.FC = () => {
           }
 
           dispatch(changeChatsStatus("success"));
-          localStorage.setItem("chatix_has_cache_data", "true");
         });
         profileUnsubs.push(profileUnsub);
       });
@@ -228,7 +227,6 @@ const Layout: React.FC = () => {
             dispatch(changeGroupsList([...groupsList]));
           }
           dispatch(changeGroupsStatus("success"));
-          localStorage.setItem("chatix_has_cache_data", "true");
         });
         groupUnsubs.push(unsub);
       });
@@ -266,8 +264,7 @@ const Layout: React.FC = () => {
   }
 
   const handleChangeIsConnecting = async () => {
-    const hasCacheData = localStorage.getItem("chatix_has_cache_data");
-    if (isConnecting && hasCacheData == "true") {
+    if (isConnecting) {
       disableNetwork(db);
     } else {
       await enableNetwork(db);
