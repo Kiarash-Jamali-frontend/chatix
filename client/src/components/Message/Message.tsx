@@ -183,7 +183,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
                   <img
                     crossOrigin="anonymous"
                     src={senderProfile.photoUrl} className="min-w-10 size-10 object-cover rounded-full object-center" />
-                ) : (
+                ) : senderProfile.name && (
                   <GradiantProfile name={senderProfile.name} size={ProfileImageSizes.SMALL} />
                 )
               }
