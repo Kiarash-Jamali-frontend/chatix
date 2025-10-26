@@ -26,6 +26,7 @@ import { clearIndexedDbPersistence, doc, runTransaction, terminate } from "fireb
 import { changeChatsList } from "../../redux/slices/chats";
 import { changeGroupsList } from "../../redux/slices/groups";
 import { useOneSignal } from "../../hooks/useOneSignal";
+import { collapseAnimation } from "../../animations/variants";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -94,16 +95,7 @@ const Sidebar: React.FC = () => {
         <AnimatePresence>
           {
             isConnecting && (
-              <motion.div variants={{
-                hide: {
-                  opacity: 0,
-                  height: 0
-                },
-                open: {
-                  opacity: 1,
-                  height: "auto"
-                }
-              }} initial="hide" animate="open" exit="hide">
+              <motion.div variants={collapseAnimation} initial="invisible" animate="visible" exit="invisible">
                 <div className="bg-primary-500 py-3 px-4 text-center flex items-center justify-center text-white text-sm">
                   <div className="size-4 bg-transparent border border-white rounded-full border-e-transparent animate-spin me-2">
 
