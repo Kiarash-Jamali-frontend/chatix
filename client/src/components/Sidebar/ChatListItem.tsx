@@ -17,6 +17,7 @@ import { useEncryption } from "../../hooks/useEncryption";
 import { getDraft } from "../../redux/slices/drafts";
 import { AnimatePresence, motion } from "framer-motion";
 import useUserIsOnline from "../../hooks/useUserIsOnline";
+import { scaleAndOpacity } from "../../animations/variants";
 
 type PropTypes = {
     chat: ChatData;
@@ -136,16 +137,7 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
                             {
                                 isOnline && chat.showOnlineStatus ? (
                                     <motion.div
-                                        variants={{
-                                            hide: {
-                                                opacity: 0,
-                                                transform: "scale(0)"
-                                            },
-                                            open: {
-                                                opacity: 1,
-                                                transform: "scale(1)"
-                                            }
-                                        }} initial="hide" animate="open" exit="hide"
+                                        variants={scaleAndOpacity} initial="invisible" animate="visible" exit="invisible"
                                         className={`${chatIsSelected ? "bg-white" : "bg-green-500"} absolute right-0 bottom-2.5 lg:right-1 lg:bottom-0 size-2.5 rounded-full`}>
                                     </motion.div>
                                 ) : null

@@ -26,7 +26,7 @@ import { clearIndexedDbPersistence, doc, runTransaction, terminate } from "fireb
 import { changeChatsList } from "../../redux/slices/chats";
 import { changeGroupsList } from "../../redux/slices/groups";
 import { useOneSignal } from "../../hooks/useOneSignal";
-import { collapseAnimation } from "../../animations/variants";
+import { collapse } from "../../animations/variants";
 
 const Sidebar: React.FC = () => {
   const isOnline = useOnlineStatus();
@@ -95,7 +95,7 @@ const Sidebar: React.FC = () => {
         <AnimatePresence>
           {
             isConnecting && (
-              <motion.div variants={collapseAnimation} initial="invisible" animate="visible" exit="invisible">
+              <motion.div variants={collapse} initial="invisible" animate="visible" exit="invisible">
                 <div className="bg-primary-500 py-3 px-4 text-center flex items-center justify-center text-white text-sm">
                   <div className="size-4 bg-transparent border border-white rounded-full border-e-transparent animate-spin me-2">
 
@@ -109,16 +109,7 @@ const Sidebar: React.FC = () => {
         <AnimatePresence>
           {
             user.profile && (
-              <motion.div variants={{
-                hide: {
-                  opacity: 0,
-                  height: 0
-                },
-                open: {
-                  opacity: 1,
-                  height: "auto"
-                }
-              }} initial="hide" animate="open" exit="hide" className="w-full min-w-0">
+              <motion.div variants={collapse} initial="invisible" animate="visible" exit="invisible" className="w-full min-w-0">
                 <div className="px-6 pt-6 flex items-center justify-between">
                   <div className="flex items-center w-full grow min-w-0">
                     <div className="relative basis-16 min-w-16">

@@ -2,6 +2,7 @@ import { faClose, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 import { Dispatch, SetStateAction, useState } from "react";
+import { scaleAndOpacity } from "../../animations/variants";
 
 type PropTypes = {
     search: string;
@@ -32,16 +33,7 @@ export default function SearchBox({ search, setSearch }: PropTypes) {
                         search && (
                             <motion.button
                                 onClick={() => setSearch("")}
-                                variants={{
-                                    disabled: {
-                                        opacity: 0,
-                                        transform: "scale(0)"
-                                    },
-                                    enabled: {
-                                        opacity: 1,
-                                        transform: "scale(1)"
-                                    }
-                                }} initial="disabled" animate="enabled" exit="disabled"
+                                variants={scaleAndOpacity} initial="invisible" animate="visible" exit="invisible"
                                 transition={{
                                     duration: 0.15
                                 }}
