@@ -101,48 +101,65 @@ const Sidebar: React.FC = () => {
             </div>
           )
         }
-        <div className="px-6 pt-6 pb-4 flex items-center justify-between w-full min-w-0">
-          <div className="flex items-center w-full grow min-w-0">
-            <div className="relative basis-16 min-w-16">
-              {/*Profile image*/}
-              {user.profile?.photoUrl && (
-                <SidebarProfileImage />
-              )}
-              {
-                user.profile?.name && !user.profile.photoUrl && (
-                  <GradiantProfile size={ProfileImageSizes.EXTRA_LARGE} name={user.profile?.name} />
-                )
-              }
-              <Link viewTransition
-                to={"/settings"}
-                className="absolute bottom-0 right-0 bg-black/85 text-white border-white/30 border rounded-full flex items-center justify-center text-center size-[22px]"
-              >
-                <FontAwesomeIcon icon={faGear} size="2xs" />
-              </Link>
-            </div>
-            <div className="px-4 min-w-0">
-              {/*user name*/}
-              <div className="flex items-center">
-                <span className="font-bold font-Vazir">
-                  {user.profile?.name}
-                </span>
-                <button className="ms-1 cursor-pointer size-6 flex items-center justify-center bg-zinc-100 border rounded-full"
-                  onClick={shareUserProfileHandler}>
-                  <FontAwesomeIcon icon={faShareNodes} className="text-natural/85" size="sm" />
-                </button>
-              </div>
-              {/*email*/}
-              <div className="text-xs w-full min-w-0 mt-2 text-natural/60 whitespace-nowrap overflow-hidden text-ellipsis break-all">
-                {user.data?.email}
-              </div>
-            </div>
-          </div>
-          <button className={button()}
-            disabled={logoutPending}
-            onClick={signoutFromChatix}>
-            Logout
-          </button>
-        </div>
+        <AnimatePresence>
+          {
+            user.profile && (
+              <motion.div variants={{
+                hide: {
+                  opacity: 0,
+                  height: 0
+                },
+                open: {
+                  opacity: 1,
+                  height: "auto"
+                }
+              }} initial="hide" animate="open" exit="hide" className="w-full min-w-0">
+                <div className="px-6 pt-6 pb-4 flex items-center justify-between">
+                  <div className="flex items-center w-full grow min-w-0">
+                    <div className="relative basis-16 min-w-16">
+                      {/*Profile image*/}
+                      {user.profile?.photoUrl && (
+                        <SidebarProfileImage />
+                      )}
+                      {
+                        user.profile?.name && !user.profile.photoUrl && (
+                          <GradiantProfile size={ProfileImageSizes.EXTRA_LARGE} name={user.profile?.name} />
+                        )
+                      }
+                      <Link viewTransition
+                        to={"/settings"}
+                        className="absolute bottom-0 right-0 bg-black/85 text-white border-white/30 border rounded-full flex items-center justify-center text-center size-[22px]"
+                      >
+                        <FontAwesomeIcon icon={faGear} size="2xs" />
+                      </Link>
+                    </div>
+                    <div className="px-4 min-w-0">
+                      {/*user name*/}
+                      <div className="flex items-center">
+                        <span className="font-bold font-Vazir">
+                          {user.profile?.name}
+                        </span>
+                        <button className="ms-1 cursor-pointer size-6 flex items-center justify-center bg-zinc-100 border rounded-full"
+                          onClick={shareUserProfileHandler}>
+                          <FontAwesomeIcon icon={faShareNodes} className="text-natural/85" size="sm" />
+                        </button>
+                      </div>
+                      {/*email*/}
+                      <div className="text-xs w-full min-w-0 mt-2 text-natural/60 whitespace-nowrap overflow-hidden text-ellipsis break-all">
+                        {user.data?.email}
+                      </div>
+                    </div>
+                  </div>
+                  <button className={button()}
+                    disabled={logoutPending}
+                    onClick={signoutFromChatix}>
+                    Logout
+                  </button>
+                </div>
+              </motion.div>
+            )
+          }
+        </AnimatePresence>
         <SearchBox search={search} setSearch={setSearch} />
         <div className={`flex flex-col grow overflow-auto`}>
           <div className={`grow overflow-auto`}>
