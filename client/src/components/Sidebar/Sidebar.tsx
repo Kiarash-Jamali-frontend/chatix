@@ -91,16 +91,29 @@ const Sidebar: React.FC = () => {
       <ToastContainer />
       <div className={`w-full relative lg:max-w-[435px] h-svh dark:bg-base bg-secondary dark:lg:bg-secondary border-e flex flex-col shadow-xl ${location.pathname !== "/" && "max-lg:hidden"}`}>
         <AppUpdateMessage isInSidebar />
-        {
-          isConnecting && (
-            <div className="bg-primary-500 py-3 px-4 text-center flex items-center justify-center text-white text-sm">
-              <div className="size-4 bg-transparent border border-white rounded-full border-e-transparent animate-spin me-2">
+        <AnimatePresence>
+          {
+            isConnecting && (
+              <motion.div variants={{
+                hide: {
+                  opacity: 0,
+                  height: 0
+                },
+                open: {
+                  opacity: 1,
+                  height: "auto"
+                }
+              }} initial="hide" animate="open" exit="hide">
+                <div className="bg-primary-500 py-3 px-4 text-center flex items-center justify-center text-white text-sm">
+                  <div className="size-4 bg-transparent border border-white rounded-full border-e-transparent animate-spin me-2">
 
-              </div>
-              Connecting ...
-            </div>
-          )
-        }
+                  </div>
+                  Connecting ...
+                </div>
+              </motion.div>
+            )
+          }
+        </AnimatePresence>
         <AnimatePresence>
           {
             user.profile && (
