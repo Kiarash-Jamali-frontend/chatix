@@ -114,7 +114,7 @@ const Sidebar: React.FC = () => {
                   height: "auto"
                 }
               }} initial="hide" animate="open" exit="hide" className="w-full min-w-0">
-                <div className="px-6 pt-6 pb-4 flex items-center justify-between">
+                <div className="px-6 pt-6 flex items-center justify-between">
                   <div className="flex items-center w-full grow min-w-0">
                     <div className="relative basis-16 min-w-16">
                       {/*Profile image*/}
@@ -160,7 +160,9 @@ const Sidebar: React.FC = () => {
             )
           }
         </AnimatePresence>
-        <SearchBox search={search} setSearch={setSearch} />
+        <div className="mt-4">
+          <SearchBox search={search} setSearch={setSearch} />
+        </div>
         <div className={`flex flex-col grow overflow-auto`}>
           <div className={`grow overflow-auto`}>
             <div className="flex flex-col overflow-auto h-full font-Vazir">
