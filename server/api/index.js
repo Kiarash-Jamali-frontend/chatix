@@ -19,16 +19,18 @@ const ONESIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
 const ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID = process.env.ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID;
 const APP_URL = process.env.APP_URL;
 
-const replaceImgTags = (message) => {
+const replaceHTMLTags = (message) => {
   if (!message || typeof message !== 'string') return message;
-  
-  const imgTagRegex = /<img[^>]*>/g;
-  
-  return message.replace(imgTagRegex, (match) => {
-    const altMatch = match.match(/alt=["']([^"']*)["']/);
-    
-    if (altMatch && altMatch[1]) {
-      return altMatch[1];
+
+  const htmlTagRegex = /<[^>]+>/g;
+
+  return message.replace(htmlTagRegex, (match) => {
+    if (match.toLowerCase().startsWith('<img')) {
+      const altMatch = match.match(/alt=["']([^"']*)["']/);
+      
+      if (altMatch && altMatch[1]) {
+        return altMatch[1];
+      }
     }
     
     return ' ';
@@ -38,9 +40,6 @@ const replaceImgTags = (message) => {
 // Send notification to multiple users
 const sendNotificationToUsers = async (recipientIds, title, message, icon, webPushTopic, channelId, data = {}) => {
   try {
-    // Process message to replace img tags
-    const processedMessage = replaceImgTags(message);
-    
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
       headers: {
@@ -54,7 +53,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
         },
         target_channel: "push",
         headings: { en: title },
-        contents: { en: processedMessage },
+        contents: { en: message },
         data: data,
         url: data.url || '/',
         chrome_web_icon: icon,
@@ -180,6 +179,8 @@ app.post('/api/notifications/message', async (req, res) => {
       messageId
     } = req.body;
 
+    const processedMessage = replaceHTMLTags(messageContent);
+
     if (!recipientIds || !Array.isArray(recipientIds) || !senderName || typeof type != 'number') {
       return res.status(400).json({
         success: false,
@@ -187,14 +188,14 @@ app.post('/api/notifications/message', async (req, res) => {
       });
     }
 
-    // Create notification content
-    let title = '';
-    let message = '';
     let data = {};
+    let title = '';
+    let message = (messageType === 'text' && processedMessage.trim())
+      ? processedMessage
+      : `Sent a ${messageType}`;
 
     if (type == 1 && groupName) {
       title = `${senderName} in ${groupName}`;
-      message = messageType === 'text' ? messageContent : `Sent a ${messageType}`;
       data = {
         type: 'group_message',
         groupId,
@@ -204,7 +205,6 @@ app.post('/api/notifications/message', async (req, res) => {
 
     if (type == 0) {
       title = senderName;
-      message = messageType === 'text' ? messageContent : `Sent a ${messageType}`;
       data = {
         type: 'private_message',
         chatId,
