@@ -19,9 +19,28 @@ const ONESIGNAL_REST_API_KEY = process.env.ONESIGNAL_REST_API_KEY;
 const ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID = process.env.ONESIGNAL_ANDROID_HUAWEI_CHANNEL_ID;
 const APP_URL = process.env.APP_URL;
 
+const replaceImgTags = (message) => {
+  if (!message || typeof message !== 'string') return message;
+  
+  const imgTagRegex = /<img[^>]*>/g;
+  
+  return message.replace(imgTagRegex, (match) => {
+    const altMatch = match.match(/alt=["']([^"']*)["']/);
+    
+    if (altMatch && altMatch[1]) {
+      return altMatch[1];
+    }
+    
+    return ' ';
+  });
+};
+
 // Send notification to multiple users
 const sendNotificationToUsers = async (recipientIds, title, message, icon, webPushTopic, channelId, data = {}) => {
   try {
+    // Process message to replace img tags
+    const processedMessage = replaceImgTags(message);
+    
     const response = await fetch('https://api.onesignal.com/notifications?c=push', {
       method: 'POST',
       headers: {
@@ -35,7 +54,7 @@ const sendNotificationToUsers = async (recipientIds, title, message, icon, webPu
         },
         target_channel: "push",
         headings: { en: title },
-        contents: { en: message },
+        contents: { en: processedMessage },
         data: data,
         url: data.url || '/',
         chrome_web_icon: icon,
