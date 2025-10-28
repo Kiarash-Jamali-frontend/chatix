@@ -565,7 +565,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                     height={300} previewConfig={{ showPreview: false }} lazyLoadEmojis={true} searchDisabled
                     suggestedEmojisMode={SuggestionMode.FREQUENT}
                     onEmojiClick={(e) => handleChangeMessageText(
-                      `<img crossOrigin="anonymous" src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`,
+                      `<img alt="${e.emoji}" crossOrigin="anonymous" src="${e.getImageUrl()}" style="display:inline;width:1.4em;height:1.4em" />`,
                       true
                     )} />
                 )
