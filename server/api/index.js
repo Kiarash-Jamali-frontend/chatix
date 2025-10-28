@@ -179,7 +179,8 @@ app.post('/api/notifications/message', async (req, res) => {
       messageId
     } = req.body;
 
-    const processedMessage = replaceHTMLTags(messageContent.length > 100 ? messageContent.substring(0, 100) + '...' : messageContent);
+    const processedMessage = replaceHTMLTags(messageContent);
+    const validMessageContent = processedMessage.length > 100 ? processedMessage.substring(0, 100) + '...' : processedMessage;
 
     if (!recipientIds || !Array.isArray(recipientIds) || !senderName || typeof type != 'number') {
       return res.status(400).json({
@@ -190,8 +191,8 @@ app.post('/api/notifications/message', async (req, res) => {
 
     let data = {};
     let title = '';
-    let message = (messageType === 'text' && processedMessage.trim())
-      ? processedMessage
+    let message = (messageType === 'text' && validMessageContent.trim())
+      ? validMessageContent
       : `Sent a ${messageType}`;
 
     if (type == 1 && groupName) {
