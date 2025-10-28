@@ -27,12 +27,12 @@ const replaceHTMLTags = (message) => {
   return message.replace(htmlTagRegex, (match) => {
     if (match.toLowerCase().startsWith('<img')) {
       const altMatch = match.match(/alt=["']([^"']*)["']/);
-      
+
       if (altMatch && altMatch[1]) {
         return altMatch[1];
       }
     }
-    
+
     return ' ';
   });
 };
@@ -179,7 +179,7 @@ app.post('/api/notifications/message', async (req, res) => {
       messageId
     } = req.body;
 
-    const processedMessage = replaceHTMLTags(messageContent);
+    const processedMessage = replaceHTMLTags(messageContent.length > 100 ? messageContent.substring(0, 100) + '...' : messageContent);
 
     if (!recipientIds || !Array.isArray(recipientIds) || !senderName || typeof type != 'number') {
       return res.status(400).json({
