@@ -138,8 +138,7 @@ export const shouldSendNotification = async (recipientEmail: string): Promise<bo
 // Get notification content based on message type
 export const getNotificationContent = (messageType: string, content?: string): string => {
   if (messageType === 'text' && content) {
-    // Truncate long messages
-    return content.length > 100 ? content.substring(0, 100).split("<br>").join(" ") + '...' : content;
+    return content;
   }
 
   switch (messageType) {
