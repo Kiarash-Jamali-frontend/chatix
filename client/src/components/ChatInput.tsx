@@ -157,8 +157,8 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         messageData.packId = stickerData.packId;
       }
 
-      if (isPrivateChat && isTextMsg) {
-        const chatSecret = getChatSecret(userEmail, oppositeProfile.email);
+      if (isTextMsg) {
+        const chatSecret = getChatSecret(userEmail, isPrivateChat ? oppositeProfile.email : groupId);
         const encryptedData = await encryptMessage(messageText.trim(), chatSecret);
         messageData = {
           ...messageData,

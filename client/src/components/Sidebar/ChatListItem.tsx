@@ -88,7 +88,6 @@ const ChatListItem: React.FC<PropTypes> = ({ chat, search }) => {
         }
     }, [chat.email])
 
-    // Handle decryption of last message for preview
     useEffect(() => {
         const handleDecryption = async () => {
             if (lastMessage && isEncryptedMessage(lastMessage) && lastMessage.type === "text") {

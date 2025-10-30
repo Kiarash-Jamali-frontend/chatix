@@ -60,8 +60,8 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
     });
   };
 
-  const handleDecryption = async (msg: any, type: MessageType): Promise<string> => {
-    if (isEncryptedMessage(msg) && type == MessageType.PRIVATE) {
+  const handleDecryption = async (msg: any): Promise<string> => {
+    if (isEncryptedMessage(msg)) {
       try {
         const chatSecret = getChatSecret(msg.from, msg.to);
         const decrypted = await decryptMessage(
@@ -83,12 +83,12 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
   };
 
   const handleDecryptionMessage = async () => {
-    const decrypted = await handleDecryption(message, type);
+    const decrypted = await handleDecryption(message);
     setDecryptedContent(decrypted);
   }
 
   const handleDecryptionReplyedMessage = async () => {
-    const decrypted = await handleDecryption(replyedMessage, type);
+    const decrypted = await handleDecryption(replyedMessage);
     setDecryptedReplayedMessageContent(decrypted);
   }
 

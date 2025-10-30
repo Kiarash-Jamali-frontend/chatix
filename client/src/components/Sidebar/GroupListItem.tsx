@@ -14,6 +14,8 @@ import customFormatRelative from "../../helpers/customFormatRelative";
 import ProfileImage from "../common/ProfileImage";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
 import { getDraft } from "../../redux/slices/drafts";
+import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
+import { useEncryption } from "../../hooks/useEncryption";
 
 type PropTypes = {
     group: SidebarGroupData;
@@ -27,6 +29,8 @@ export default function GroupListItem({ group, search }: PropTypes) {
     const groupIsSelected = selectedChatOrGroupID === group.id;
     const [lastMessage, setLastMessage] = useState<{ [key: string]: any } | null>();
     const [notSeenedMessagesCount, setNotSeenedMessagesCount] = useState<number>(0);
+    const [decryptedLastMessage, setDecryptedLastMessage] = useState<string>("");
+    const { getChatSecret } = useEncryption();
     const draft = useAppSelector((state: RootState) => getDraft(state, group.id));
     const { value: draftValue, timestamp } = Object.values(draft || [])[0] || { value: "", timestamp: undefined };
     const order = `-${draftValue ? timestamp : (lastMessage?.timestamp?.seconds || group.createdAt?.seconds || 0)}`;
@@ -71,6 +75,34 @@ export default function GroupListItem({ group, search }: PropTypes) {
             unsubscribeLastMessage();
         }
     }, [group.id])
+
+    useEffect(() => {
+        const handleDecryption = async () => {
+            if (lastMessage && isEncryptedMessage(lastMessage) && lastMessage.type === "text") {
+                try {
+                    const chatSecret = getChatSecret(lastMessage.from, lastMessage.to);
+                    const decrypted = await decryptMessage(
+                        {
+                            encryptedContent: lastMessage.encryptedContent,
+                            iv: lastMessage.iv,
+                            salt: lastMessage.salt
+                        },
+                        chatSecret
+                    );
+                    setDecryptedLastMessage(decrypted);
+                } catch (error) {
+                    console.error('Failed to decrypt last message:', error);
+                    setDecryptedLastMessage('[Message]');
+                }
+            } else if (lastMessage?.type === "text") {
+                setDecryptedLastMessage(lastMessage.content || '');
+            } else {
+                setDecryptedLastMessage('');
+            }
+        };
+
+        handleDecryption();
+    }, [lastMessage, getChatSecret]);
 
     return (
         <>
@@ -135,7 +167,7 @@ export default function GroupListItem({ group, search }: PropTypes) {
                                         }
                                         {
                                             draftValue ? parse(draftValue?.split("<br>").join(" ")) : (
-                                                lastMessage?.type === "text" && parse(lastMessage.content.split("<br>").join(" "))
+                                                lastMessage?.type === "text" && parse(decryptedLastMessage?.split("<br>").join(" "))
                                             )
                                         }
                                     </div>
