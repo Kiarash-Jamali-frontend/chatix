@@ -28,6 +28,7 @@ import messageCollectionByType from "../constants/messageCollectionByType";
 import button from "../cva/button";
 import Modal from "./Modal";
 import MakeStickerPackModalContent from "./MakeStickerPackModalContent";
+import useIsMobile from "../hooks/useIsMobile";
 
 export type ChatInputPropTypes = {
   type: MessageType;
@@ -53,6 +54,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
   const isPrivateChat = type == MessageType.PRIVATE;
   const messageTo = isPrivateChat ? oppositeProfile.email : groupId;
 
+  const { isMobile } = useIsMobile();
   const { parse } = Parser();
   const userEmail = useAppSelector((state: RootState) => state.user.data!.email);
   const userProfile = useAppSelector((state: RootState) => state.user.profile);
@@ -84,7 +86,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
   const [filePending, setFilePending] = useState<boolean>(false);
   const [voiceMessagePending, setVoiceMessagePending] = useState<boolean>(false);
   const [childNodes, setChildsNodes] = useState<Element[]>([]);
-  const [textMessagePending, setTextMessagePending] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordingDuration, setRecordingDuration] = useState<number>(0);
   const [recordingTimer, setRecordingTimer] = useState<NodeJS.Timeout | null>(null);
@@ -98,7 +99,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
   const emojiPickerContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const pending = textMessagePending || filePending || voiceMessagePending;
   const uploadPending = filePending || voiceMessagePending;
 
   const checkMicrophonePermission = async () => {
@@ -137,7 +137,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
 
   const sendMessageHandler = async (msgType: "text" | "sticker", stickerData?: { packId: string, url: string }) => {
     setEmojiAndStickerPickerIsOpen(false);
-    setTextMessagePending(true);
     setMessageText("");
     removeMessageSelectedForRelpy();
 
@@ -173,8 +172,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
       const docRef = await addDoc(collection(db, messageCollectionByType[type]), messageData);
 
       if (draft) dispatch(removeDraft(messageTo));
-
-      setTextMessagePending(false);
 
       let notificationId: string = "";
       if (isPrivateChat && oppositeProfile.notificationSettings?.enabled && userProfile) {
@@ -222,8 +219,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
       });
 
       if (draft && isTextMsg) dispatch(removeDraft(messageTo));
-
-      setTextMessagePending(false);
     }
   };
 
@@ -539,7 +534,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
       <ToastContainer />
       <div className={`relative flex items-stretch max-h-12`}
         onKeyDown={(e) => {
-          if (e.key == "Enter" && !e.shiftKey && !pending) {
+          if (e.key == "Enter" && !e.shiftKey && !isMobile) {
             e.preventDefault();
             sendMessageHandler("text");
           }
@@ -739,7 +734,6 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
             (messageText) ?
               sendMessageHandler("text") : !isRecording ? handleStartRecording() : handleStopRecordingBeforeSendVoiceMessage()
           }}
-          disabled={pending}
         >
 
           <FontAwesomeIcon icon={faSquare} size="lg"
