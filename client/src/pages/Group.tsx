@@ -19,6 +19,8 @@ import MessageType from "../types/MessageType";
 import Modal from "../components/Modal";
 import StickerPackModalContent from "../components/StickerPackModalContent";
 import { StickerPackModalContext } from "../providers/StickerPackModalProvider";
+import { decryptMessage, isEncryptedMessage } from "../utils/crypto";
+import { useEncryption } from "../hooks/useEncryption";
 
 export type MemberProfile = (Profile & {
     id: string; email: string, groupMemberDocId: string, removedFromGroup: boolean,
@@ -40,7 +42,11 @@ export default function Group() {
     const myMemberProfile = membersProfiles.find((mp) => mp.email == userEmail);
     const messagesListRef = useRef<HTMLDivElement>(null);
 
-  const { isActive, setIsActive } = useContext(StickerPackModalContext);
+    const { isActive, setIsActive } = useContext(StickerPackModalContext);
+    const { getChatSecret } = useEncryption();
+    const [isFirstDecrypting, setIsFirstDecrypting] = useState<boolean>(true);
+    const [isDecryptingAll, setIsDecryptingAll] = useState<boolean>(true);
+    const [messagesDecrypted, setMessagesDecrypted] = useState<any[]>([]);
 
     const getGroupMembersRecipients = useCallback((removedFromGroup: boolean): string[] => {
         return membersProfiles?.filter((p) => p.notificationSettings?.enabled && p.email != userEmail && (removedFromGroup ? true : !p.removedFromGroup))
@@ -79,7 +85,43 @@ export default function Group() {
         }
     }, [groupId]);
 
+    // Pre-decrypt all group messages
     useEffect(() => {
+        const run = async () => {
+            if (!messages.length) {
+                setMessagesDecrypted([]);
+                setIsDecryptingAll(false);
+                return;
+            }
+            setIsDecryptingAll(true);
+            try {
+                const decrypted = await Promise.all(messages.map(async (m) => {
+                    if (isEncryptedMessage(m)) {
+                        try {
+                            const secret = getChatSecret(m.from, m.to);
+                            const content = await decryptMessage({
+                                encryptedContent: m.encryptedContent,
+                                iv: m.iv,
+                                salt: m.salt
+                            }, secret);
+                            return { ...m, content };
+                        } catch {
+                            return { ...m, content: '[Encrypted Message - Unable to decrypt]' };
+                        }
+                    }
+                    return { ...m };
+                }));
+                setMessagesDecrypted(decrypted);
+            } finally {
+                setIsFirstDecrypting(false);
+                setIsDecryptingAll(false);
+            }
+        };
+        run();
+    }, [messages, getChatSecret]);
+
+    useEffect(() => {
+        setIsFirstDecrypting(true);
         if (groupId) {
             const groupMembersQuery = query(collection(db, "group_member"), where("groupId", "==", groupId))
             const unsubGroupMembers = onSnapshot(groupMembersQuery, { includeMetadataChanges: true }, (snapshot) => {
@@ -174,41 +216,43 @@ export default function Group() {
                     ref={messagesListRef}
                     id="messagesList"
                 >
-                    <AnimatePresence>
-                        {messages.map((m, i) => {
-                            const replyToMessage = messages.find((message) => m.replyTo === message.id);
-                            const messageSender = membersProfiles.find((p) => p.email == m.from);
-                            const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
-                            const beforeMessageDate = messages[i - 1] && Timestamp.fromMillis(messages[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
-                            return (
-                                <React.Fragment key={m.id}>
-                                    {
-                                        (!messages[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
-                                        && (
-                                            <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} z-40 sticky top-0 text-xs text-natural/60 bg-secondary border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
-                                                {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
-                                            </div>
-                                        )
-                                    }
+                    {(isFirstDecrypting && isDecryptingAll) && (
+                        <AnimatePresence>
+                            {messagesDecrypted.map((m, i) => {
+                                const replyToMessage = messagesDecrypted.find((message) => m.replyTo === message.id);
+                                const messageSender = membersProfiles.find((p) => p.email == m.from);
+                                const currentMessageTimestamp = Timestamp.fromMillis(m.timestamp.seconds * 10 ** 3);
+                                const beforeMessageDate = messagesDecrypted[i - 1] && Timestamp.fromMillis(messagesDecrypted[i - 1]?.timestamp.seconds * 10 ** 3).toDate();
+                                return (
+                                    <React.Fragment key={m.id}>
+                                        {
+                                            (!messagesDecrypted[i - 1] || !isSameDay(currentMessageTimestamp.toDate(), beforeMessageDate))
+                                            && (
+                                                <div className={`text-center ${i == 0 ? "mb-3" : "my-3"} z-40 sticky top-0 text-xs text-natural/60 bg-secondary border rounded-full px-3 py-1.5 w-fit mx-auto font-Inter`}>
+                                                    {customFormatRelative(currentMessageTimestamp, { today: "'Today'" })}
+                                                </div>
+                                            )
+                                        }
 
-                                    <Message senderProfile={messageSender}
-                                        type={MessageType.GROUP}
-                                        nextMessageSender={messages[i + 1]?.from}
-                                        message={m}
-                                        scrollDown={scrollDownHandler}
-                                        recipients={getGroupMembersRecipients(true)}
-                                        replyedMessage={
-                                            replyToMessage ? {
-                                                ...replyToMessage,
-                                                sender: replyToMessage.from === userEmail ?
-                                                    userProfile :
-                                                    membersProfiles.find((p) => p.id == replyToMessage.from)
-                                            } : null
-                                        } />
-                                </React.Fragment>
-                            )
-                        })}
-                    </AnimatePresence>
+                                        <Message senderProfile={messageSender}
+                                            type={MessageType.GROUP}
+                                            nextMessageSender={messagesDecrypted[i + 1]?.from}
+                                            message={m}
+                                            scrollDown={scrollDownHandler}
+                                            recipients={getGroupMembersRecipients(true)}
+                                            replyedMessage={
+                                                replyToMessage ? {
+                                                    ...replyToMessage,
+                                                    sender: replyToMessage.from === userEmail ?
+                                                        userProfile :
+                                                        membersProfiles.find((p) => p.id == replyToMessage.from)
+                                                } : null
+                                            } />
+                                    </React.Fragment>
+                                )
+                            })}
+                        </AnimatePresence>
+                    )}
                     <div className={`${selectedMessageForReply ? "pb-11" : "pb-0"} transition-all`}></div>
                 </div>
                 <div className="px-3 md:px-5 max-w-[810px] mx-auto w-full">

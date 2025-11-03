@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { doc, runTransaction } from "firebase/firestore";
 import { db } from "../../../utils/firebase";
 import { RootState } from "../../redux/store";
@@ -18,8 +18,7 @@ import Profile from "../../types/Profile";
 import GradiantProfile from "../GradiantProfile";
 import ReactionsEmojiPicker from "./ReactionsEmojiPicker";
 import ProfileImageSizes from "../../types/ProfileImageSizes";
-import { useEncryption } from "../../hooks/useEncryption";
-import { decryptMessage, isEncryptedMessage } from "../../utils/crypto";
+// Decryption is handled by parent pages; this component renders provided content
 import { motion } from "framer-motion";
 import MessageType from "../../types/MessageType";
 
@@ -43,9 +42,6 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { getChatSecret } = useEncryption();
-  const [decryptedContent, setDecryptedContent] = useState<string>("");
-  const [decryptedReplayedMessageContent, setDecryptedReplayedMessageContent] = useState<string>("");
 
   const isGroupMessage = type == MessageType.GROUP;
 
@@ -60,44 +56,12 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
     });
   };
 
-  const handleDecryption = async (msg: any): Promise<string> => {
-    if (isEncryptedMessage(msg)) {
-      try {
-        const chatSecret = getChatSecret(msg.from, msg.to);
-        const decrypted = await decryptMessage(
-          {
-            encryptedContent: msg.encryptedContent,
-            iv: msg.iv,
-            salt: msg.salt
-          },
-          chatSecret
-        );
-        return decrypted;
-      } catch (error) {
-        console.error('Failed to decrypt message:', error);
-        return '[Encrypted Message - Unable to decrypt]';
-      }
-    } else {
-      return msg.content || '';
-    }
-  };
-
-  const handleDecryptionMessage = async () => {
-    const decrypted = await handleDecryption(message);
-    setDecryptedContent(decrypted);
-  }
-
-  const handleDecryptionReplyedMessage = async () => {
-    const decrypted = await handleDecryption(replyedMessage);
-    setDecryptedReplayedMessageContent(decrypted);
-  }
-
   const selectMessageForReply = () => {
     if (isGroupMessage && senderProfile) {
       dispatch(changeMessageSelectedForReply({ ...message, senderName: senderProfile.name }));
     }
     if (!isGroupMessage) {
-      dispatch(changeMessageSelectedForReply({ ...message, content: decryptedContent }));
+      dispatch(changeMessageSelectedForReply({ ...message }));
     }
   }
 
@@ -145,21 +109,10 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
   }, [location.search]);
 
   useEffect(() => {
-    handleDecryptionMessage();
-  }, [message, isGroupMessage, getChatSecret]);
-
-  useEffect(() => {
-    if (replyedMessage) {
-      handleDecryptionReplyedMessage();
-    }
-  }, [replyedMessage, isGroupMessage, getChatSecret]);
-
-  useEffect(() => {
     scrollDown();
-  }, [decryptedContent, decryptedReplayedMessageContent]);
+  }, []);
 
   return (
-    ((decryptedContent && !replyedMessage) || (decryptedContent && replyedMessage && decryptedReplayedMessageContent)) && (
       <motion.div id={message.id}
         variants={{
           hide: {
@@ -214,7 +167,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
                   <p className="text-xs mt-1 text-start" dir="auto">
                     {
                       replyedMessage.type !== "text" ? <span className="capitalize">{replyedMessage.type}</span> : (
-                        parse(decryptedReplayedMessageContent.split("<br>").join(""))
+                        parse(replyedMessage.content.split("<br>").join(""))
                       )
                     }
                   </p>
@@ -248,7 +201,7 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
             {
               message.type === "text" &&
               <TextMessage recipients={recipients} replayMessage={replyedMessage} key={message.id}
-                message={{ ...message, content: decryptedContent }} type={type} senderProfile={senderProfile} />
+                message={message} type={type} senderProfile={senderProfile} />
             }
           </div>
         </div>
@@ -258,7 +211,6 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
           )
         }
       </motion.div>
-    )
   )
 };
 
