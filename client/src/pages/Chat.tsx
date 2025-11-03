@@ -40,7 +40,6 @@ const Chat: React.FC = () => {
   const [pending, setPending] = useState<boolean>(true);
   const [profile, setProfile] = useState<any>();
   const [messages, setMessages] = useState<Array<any>>([]);
-  const [isFirstDecrypting, setIsFirstDecrypting] = useState<boolean>(true);
   const [isDecryptingAll, setIsDecryptingAll] = useState<boolean>(true);
   const [messagesDecrypted, setMessagesDecrypted] = useState<Array<any>>([]);
   const [roomData, setRoomData] = useState<any>();
@@ -70,7 +69,6 @@ const Chat: React.FC = () => {
   }, [email])
 
   useEffect(() => {
-    setIsFirstDecrypting(true);
     if (userData?.email) {
       const q = query(
         collection(db, "chat_message"),
@@ -107,7 +105,6 @@ const Chat: React.FC = () => {
       if (!messages.length) {
         setMessagesDecrypted([]);
         setIsDecryptingAll(false);
-        setIsFirstDecrypting(false);
         return;
       }
       setIsDecryptingAll(true);
@@ -131,7 +128,6 @@ const Chat: React.FC = () => {
         setMessagesDecrypted(decrypted);
       } finally {
         setIsDecryptingAll(false);
-        setIsFirstDecrypting(false);
       }
     };
     run();
@@ -188,7 +184,7 @@ const Chat: React.FC = () => {
         <div className={`overflow-auto p-3 md:p-5 max-w-[810px] mx-auto w-full mt-auto scrollbar-hidden transition-all scroll-smooth`}
           id="messagesList"
           ref={messagesListRef}>
-          {(isFirstDecrypting && isDecryptingAll) && (
+          {isDecryptingAll && (
             <AnimatePresence>
               {messagesDecrypted.map((m, i) => {
                 const replyToMessage = messagesDecrypted.find((message) => m.replyTo === message.id);
