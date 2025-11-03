@@ -107,6 +107,7 @@ const Chat: React.FC = () => {
       if (!messages.length) {
         setMessagesDecrypted([]);
         setIsDecryptingAll(false);
+        setIsFirstDecrypting(false);
         return;
       }
       setIsDecryptingAll(true);

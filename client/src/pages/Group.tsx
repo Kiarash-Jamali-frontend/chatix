@@ -91,6 +91,7 @@ export default function Group() {
             if (!messages.length) {
                 setMessagesDecrypted([]);
                 setIsDecryptingAll(false);
+                setIsFirstDecrypting(false);
                 return;
             }
             setIsDecryptingAll(true);
