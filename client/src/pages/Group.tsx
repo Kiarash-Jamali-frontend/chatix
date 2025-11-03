@@ -44,6 +44,7 @@ export default function Group() {
 
     const { isActive, setIsActive } = useContext(StickerPackModalContext);
     const { getChatSecret } = useEncryption();
+    const [isFirstDecrypting, setIsFirstDecrypting] = useState<boolean>(true);
     const [isDecryptingAll, setIsDecryptingAll] = useState<boolean>(true);
     const [messagesDecrypted, setMessagesDecrypted] = useState<any[]>([]);
 
@@ -89,6 +90,7 @@ export default function Group() {
         const run = async () => {
             if (!messages.length) {
                 setMessagesDecrypted([]);
+                setIsFirstDecrypting(false);
                 setIsDecryptingAll(false);
                 return;
             }
@@ -113,12 +115,14 @@ export default function Group() {
                 setMessagesDecrypted(decrypted);
             } finally {
                 setIsDecryptingAll(false);
+                setIsFirstDecrypting(false);
             }
         };
         run();
     }, [messages, getChatSecret]);
 
     useEffect(() => {
+        setIsFirstDecrypting(true);
         if (groupId) {
             const groupMembersQuery = query(collection(db, "group_member"), where("groupId", "==", groupId))
             const unsubGroupMembers = onSnapshot(groupMembersQuery, { includeMetadataChanges: true }, (snapshot) => {
@@ -213,7 +217,7 @@ export default function Group() {
                     ref={messagesListRef}
                     id="messagesList"
                 >
-                    {isDecryptingAll && (
+                    {(!isFirstDecrypting || !isDecryptingAll) && (
                         <AnimatePresence>
                             {messagesDecrypted.map((m, i) => {
                                 const replyToMessage = messagesDecrypted.find((message) => m.replyTo === message.id);
