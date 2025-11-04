@@ -164,10 +164,10 @@ const Message: React.FC<PropTypes> = ({ message, scrollDown, replyedMessage, typ
                     <FontAwesomeIcon icon={faReply} className="rotate-180 me-1" />
                     {replyedMessage.sender?.name}
                   </span>
-                  <p className="text-xs mt-1 text-start" dir="auto">
+                  <p className="w-full text-xs mt-1 text-start" dir="auto">
                     {
                       replyedMessage.type !== "text" ? <span className="capitalize">{replyedMessage.type}</span> : (
-                        parse(replyedMessage.content.split("<br>").join(""))
+                        parse(replyedMessage.content.split("<br>").join(" "))
                       )
                     }
                   </p>

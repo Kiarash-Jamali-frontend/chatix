@@ -136,7 +136,7 @@ export default function AudioMessage({ message, type, replayMessage, recipients 
                     ? "bg-linear-to-br from-primary-400 to-primary-600 text-white"
                     : "bg-secondary"
                     } ${messageIsSelected ? "opacity-90" : ""} ${(messageIsForCurrentUser && messageIsSelected) ? "rounded-s-none!" : ""}
-             w-fit min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default`}
+             w-fit grow min-w-32 pt-3 px-3 pb-1.5 text-[0.925em] z-30 text-start transition-all relative cursor-default`}
             >
                 <div className="flex relative">
                     <button onClick={changeIsPlayingHandler} onDoubleClick={(e) => {
@@ -148,7 +148,7 @@ export default function AudioMessage({ message, type, replayMessage, recipients 
                         <FontAwesomeIcon icon={faPlay} size="lg"
                             className={`absolute transition-all ${!isStopped ? "opacity-0 scale-0" : ""}`} />
                     </button>
-                    <div className="ms-2">
+                    <div className="ms-2 grow">
                         <div className="flex items-center">
                             <div className="font-light break-words max-w-52 me-1 overflow-hidden text-ellipsis whitespace-nowrap lg:max-w-60 text-sm">
                                 {message.type == "voice" ? "Voice" : message.fileName}
