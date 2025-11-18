@@ -29,7 +29,7 @@ import button from "../cva/button";
 import Modal from "./Modal";
 import MakeStickerPackModalContent from "./MakeStickerPackModalContent";
 import useIsMobile from "../hooks/useIsMobile";
-import {useOnClickOutside} from "usehooks-ts";
+import { useOnClickOutside } from "usehooks-ts";
 
 export type ChatInputPropTypes = {
   type: MessageType;
@@ -99,6 +99,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
 
   const emojiPickerContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cancelRecordAndEmojiAndStickerPickerButtonRef = useRef<HTMLButtonElement>(null);
 
   const uploadPending = filePending || voiceMessagePending;
 
@@ -467,7 +468,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
     }
   };
 
-  useOnClickOutside(emojiPickerContainerRef, () => setEmojiAndStickerPickerIsOpen(false));
+  useOnClickOutside([emojiPickerContainerRef, cancelRecordAndEmojiAndStickerPickerButtonRef], () => setEmojiAndStickerPickerIsOpen(false));
 
   useEffect(() => {
     removeMessageSelectedForRelpy();
@@ -689,8 +690,8 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         </AnimatePresence>
         <div className="grow flex flex-col me-2 relative">
           <div className="px-3 shadow-xs rounded-full border bg-secondary flex items-center grow">
-            <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
-              onClick={() => { !isRecording ? !emojiAndStickerPickerIsOpen ? setEmojiAndStickerPickerIsOpen(true) : undefined : handleCancelRecording() }}>
+            <button ref={cancelRecordAndEmojiAndStickerPickerButtonRef} className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
+              onClick={() => { !isRecording ? setEmojiAndStickerPickerIsOpen((prev) => !prev) : handleCancelRecording() }}>
               <span className={`absolute transition-all size-5 ${(!emojiAndStickerPickerIsOpen && !isRecording) ? "opacity-0 scale-0" : ""}`}>
                 <FontAwesomeIcon icon={faClose} className="!size-5" />
               </span>
