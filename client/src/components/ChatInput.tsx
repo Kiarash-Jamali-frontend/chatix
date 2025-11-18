@@ -554,7 +554,7 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
                 transform: "scale(1) translate(0px, 0px)"
               }
             }}
-              transition={{ duration: 0.1 }} initial="hide" exit="hide" animate="open"
+              transition={{ duration: 0.15 }} initial="hide" exit="hide" animate="open"
               className="absolute! bottom-14 md:max-w-[calc(100%-1.25rem*2)]! overflow-hidden! shadow-xl rounded-xl! z-50 bg-secondary">
               {
                 selectedPickerTab == "emoji" && (

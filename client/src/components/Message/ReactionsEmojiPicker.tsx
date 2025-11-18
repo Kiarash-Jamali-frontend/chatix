@@ -39,7 +39,7 @@ export default function ReactionsEmojiPicker({ message }: PropTypes) {
                         transform: "scale(0.9) translateX(-1rem)"
                     }}
                     transition={{
-                        duration: 0.1
+                        duration: 0.15
                     }}>
                         <EmojiPicker lazyLoadEmojis searchDisabled={true} reactionsDefaultOpen={true}
                             allowExpandReactions={false}
