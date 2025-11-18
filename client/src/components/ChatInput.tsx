@@ -689,8 +689,8 @@ const ChatInput: React.FC<ChatInputPropTypes> = ({
         </AnimatePresence>
         <div className="grow flex flex-col me-2 relative">
           <div className="px-3 shadow-xs rounded-full border bg-secondary flex items-center grow">
-            <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden" disabled={emojiAndStickerPickerIsOpen}
-              onClick={() => { !isRecording ? setEmojiAndStickerPickerIsOpen(true) : handleCancelRecording() }}>
+            <button className="me-2 size-7 flex items-center text-natural/50 relative overflow-hidden"
+              onClick={() => { !isRecording ? setEmojiAndStickerPickerIsOpen(emojiAndStickerPickerIsOpen ? false : true) : handleCancelRecording() }}>
               <span className={`absolute transition-all size-5 ${(!emojiAndStickerPickerIsOpen && !isRecording) ? "opacity-0 scale-0" : ""}`}>
                 <FontAwesomeIcon icon={faClose} className="!size-5" />
               </span>
